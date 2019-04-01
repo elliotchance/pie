@@ -28,29 +28,42 @@ func TestStrings_Contains(t *testing.T) {
 	}
 }
 
+var ifUnlessTests = []struct {
+	ss             pie.Strings
+	condition      func(string) bool
+	expectedIf     pie.Strings
+	expectedUnless pie.Strings
+}{
+	{
+		nil,
+		func(s string) bool {
+			return s == ""
+		},
+		nil,
+		nil,
+	},
+	{
+		pie.Strings{"a", "b", "c"},
+		func(s string) bool {
+			return s != "b"
+		},
+		pie.Strings{"a", "c"},
+		pie.Strings{"b"},
+	},
+}
+
 func TestStrings_If(t *testing.T) {
-	for _, test := range []struct {
-		ss        pie.Strings
-		condition func(string) bool
-		expected  pie.Strings
-	}{
-		{
-			nil,
-			func(s string) bool {
-				return s == ""
-			},
-			nil,
-		},
-		{
-			pie.Strings{"a", "b", "c"},
-			func(s string) bool {
-				return s != "b"
-			},
-			pie.Strings{"a", "c"},
-		},
-	} {
+	for _, test := range ifUnlessTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expected, test.ss.If(test.condition))
+			assert.Equal(t, test.expectedIf, test.ss.If(test.condition))
+		})
+	}
+}
+
+func TestStrings_Unless(t *testing.T) {
+	for _, test := range ifUnlessTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.expectedUnless, test.ss.Unless(test.condition))
 		})
 	}
 }
