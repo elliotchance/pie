@@ -21,6 +21,9 @@ package pie
 //
 type Strings []string
 
+// StringsConditionFunc allows strings to be filtered or checked by value.
+type StringsConditionFunc func(string) bool
+
 // Contains returns true if the string exists in the slice. The strings must be
 // exactly equal (case-sensitive).
 func (ss Strings) Contains(lookingFor string) bool {
@@ -37,7 +40,7 @@ func (ss Strings) Contains(lookingFor string) bool {
 // the condition. The returned slice may contain zero elements (nil).
 //
 // Unless works in the opposite way as If.
-func (ss Strings) If(condition func(s string) bool) (ss2 Strings) {
+func (ss Strings) If(condition StringsConditionFunc) (ss2 Strings) {
 	for _, s := range ss {
 		if condition(s) {
 			ss2 = append(ss2, s)
