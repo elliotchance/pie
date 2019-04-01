@@ -35,9 +35,24 @@ func (ss Strings) Contains(lookingFor string) bool {
 
 // If will return a new slice containing only the elements that return true from
 // the condition. The returned slice may contain zero elements (nil).
+//
+// Unless works in the opposite way as If.
 func (ss Strings) If(condition func(s string) bool) (ss2 Strings) {
 	for _, s := range ss {
 		if condition(s) {
+			ss2 = append(ss2, s)
+		}
+	}
+
+	return
+}
+
+// Unless works the same as If, with a negated condition. That it, it will
+// return a new slice only containing the elements that returned false from the
+// condition.
+func (ss Strings) Unless(condition func(s string) bool) (ss2 Strings) {
+	for _, s := range ss {
+		if !condition(s) {
 			ss2 = append(ss2, s)
 		}
 	}
