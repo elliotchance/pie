@@ -1,10 +1,15 @@
 // Package pie is a utility library for dealing with slices that focuses only on
 // type safety and performance:
 //
-//   namesStartingWithJ := pie.Strings{"Bob", "Sally", "John", "Jane"}.
+//   shortNames := pie.Strings{"Bob", "Sally", "John", "Jane"}.
 //   	If(func(s string) bool {
-//   		return s[0] == 'J'
+//   		return len(s) <= 3
 //   	})
+//
+// There are also helper methods for common filters, like:
+//
+//   namesNotStartingWithJ := pie.Strings{"Bob", "Sally", "John", "Jane"}.
+//   	Unless(pie.HasPrefix("J"))
 //
 package pie
 
