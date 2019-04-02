@@ -45,3 +45,30 @@ func TestSuffix(t *testing.T) {
 		})
 	}
 }
+
+var upperAndLowerTests = []struct {
+	s     string
+	upper string
+	lower string
+}{
+	{"", "", ""},
+	{"a", "A", "a"},
+	{"Foo", "FOO", "foo"},
+	{"BAR ", "BAR ", "bar "},
+}
+
+func TestToUpper(t *testing.T) {
+	for _, test := range upperAndLowerTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.upper, pie.ToUpper()(test.s))
+		})
+	}
+}
+
+func TestToLower(t *testing.T) {
+	for _, test := range upperAndLowerTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.lower, pie.ToLower()(test.s))
+		})
+	}
+}

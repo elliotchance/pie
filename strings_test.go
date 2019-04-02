@@ -29,16 +29,18 @@ func TestStrings_Contains(t *testing.T) {
 }
 
 var onlyAndWithoutTests = []struct {
-	ss             pie.Strings
-	condition      func(string) bool
-	expectedOnly     pie.Strings
-	expectedWithout pie.Strings
+	ss                pie.Strings
+	condition         func(string) bool
+	expectedOnly      pie.Strings
+	expectedWithout   pie.Strings
+	expectedTransform pie.Strings
 }{
 	{
 		nil,
 		func(s string) bool {
 			return s == ""
 		},
+		nil,
 		nil,
 		nil,
 	},
@@ -49,6 +51,7 @@ var onlyAndWithoutTests = []struct {
 		},
 		pie.Strings{"a", "c"},
 		pie.Strings{"b"},
+		pie.Strings{"A", "B", "C"},
 	},
 }
 
@@ -64,6 +67,14 @@ func TestStrings_Without(t *testing.T) {
 	for _, test := range onlyAndWithoutTests {
 		t.Run("", func(t *testing.T) {
 			assert.Equal(t, test.expectedWithout, test.ss.Without(test.condition))
+		})
+	}
+}
+
+func TestStrings_Transform(t *testing.T) {
+	for _, test := range onlyAndWithoutTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.expectedTransform, test.ss.Transform(pie.ToUpper()))
 		})
 	}
 }
