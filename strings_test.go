@@ -78,3 +78,45 @@ func TestStrings_Transform(t *testing.T) {
 		})
 	}
 }
+
+var firstAndLastTests = []struct {
+	ss          pie.Strings
+	first, last string
+}{
+	{
+		nil,
+		"default",
+		"default",
+	},
+	{
+		pie.Strings{"foo"},
+		"foo",
+		"foo",
+	},
+	{
+		pie.Strings{"a", "b"},
+		"a",
+		"b",
+	},
+	{
+		pie.Strings{"a", "b", "c"},
+		"a",
+		"c",
+	},
+}
+
+func TestStrings_First(t *testing.T) {
+	for _, test := range firstAndLastTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.first, test.ss.First("default"))
+		})
+	}
+}
+
+func TestStrings_Last(t *testing.T) {
+	for _, test := range firstAndLastTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.last, test.ss.Last("default"))
+		})
+	}
+}
