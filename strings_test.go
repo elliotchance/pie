@@ -80,35 +80,60 @@ func TestStrings_Transform(t *testing.T) {
 }
 
 var firstAndLastTests = []struct {
-	ss          pie.Strings
-	first, last string
+	ss             pie.Strings
+	first, firstOr string
+	last, lastOr   string
 }{
 	{
 		nil,
-		"default",
-		"default",
+		"",
+		"default1",
+		"",
+		"default2",
 	},
 	{
 		pie.Strings{"foo"},
+		"foo",
+		"foo",
 		"foo",
 		"foo",
 	},
 	{
 		pie.Strings{"a", "b"},
 		"a",
+		"a",
+		"b",
 		"b",
 	},
 	{
 		pie.Strings{"a", "b", "c"},
 		"a",
+		"a",
+		"c",
 		"c",
 	},
+}
+
+func TestStrings_FirstOr(t *testing.T) {
+	for _, test := range firstAndLastTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.firstOr, test.ss.FirstOr("default1"))
+		})
+	}
+}
+
+func TestStrings_LastOr(t *testing.T) {
+	for _, test := range firstAndLastTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.lastOr, test.ss.LastOr("default2"))
+		})
+	}
 }
 
 func TestStrings_First(t *testing.T) {
 	for _, test := range firstAndLastTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.first, test.ss.First("default"))
+			assert.Equal(t, test.first, test.ss.First())
 		})
 	}
 }
@@ -116,7 +141,7 @@ func TestStrings_First(t *testing.T) {
 func TestStrings_Last(t *testing.T) {
 	for _, test := range firstAndLastTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.last, test.ss.Last("default"))
+			assert.Equal(t, test.last, test.ss.Last())
 		})
 	}
 }
