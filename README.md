@@ -5,7 +5,7 @@ that focuses only on type safety and performance:
 
 ```go
 shortNames := pie.Strings{"Bob", "Sally", "John", "Jane"}.
-	If(func(s string) bool {
+	Only(func(s string) bool {
 		return len(s) <= 3
 	})
 ```
@@ -14,7 +14,7 @@ There are also helper methods for common filters, like:
 
 ```go
 namesNotStartingWithJ := pie.Strings{"Bob", "Sally", "John", "Jane"}.
-	Unless(pie.HasPrefix("J"))
+	Without(pie.Prefix("J"))
 ```
 
 See the [go docs](https://godoc.org/github.com/elliotchance/pie) for full API.
