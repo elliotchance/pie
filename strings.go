@@ -2,14 +2,14 @@
 // type safety and performance:
 //
 //   shortNames := pie.Strings{"Bob", "Sally", "John", "Jane"}.
-//   	If(func(s string) bool {
+//   	Only(func(s string) bool {
 //   		return len(s) <= 3
 //   	})
 //
 // There are also helper methods for common filters, like:
 //
 //   namesNotStartingWithJ := pie.Strings{"Bob", "Sally", "John", "Jane"}.
-//   	Unless(pie.HasPrefix("J"))
+//   	Without(pie.Prefix("J"))
 //
 package pie
 
@@ -41,11 +41,11 @@ func (ss Strings) Contains(lookingFor string) bool {
 	return false
 }
 
-// If will return a new slice containing only the elements that return true from
-// the condition. The returned slice may contain zero elements (nil).
+// Only will return a new slice containing only the elements that return true
+// from the condition. The returned slice may contain zero elements (nil).
 //
-// Unless works in the opposite way as If.
-func (ss Strings) If(condition StringsConditionFunc) (ss2 Strings) {
+// Without works in the opposite way as Only.
+func (ss Strings) Only(condition StringsConditionFunc) (ss2 Strings) {
 	for _, s := range ss {
 		if condition(s) {
 			ss2 = append(ss2, s)
@@ -55,10 +55,10 @@ func (ss Strings) If(condition StringsConditionFunc) (ss2 Strings) {
 	return
 }
 
-// Unless works the same as If, with a negated condition. That it, it will
+// Without works the same as Only, with a negated condition. That it, it will
 // return a new slice only containing the elements that returned false from the
-// condition.
-func (ss Strings) Unless(condition func(s string) bool) (ss2 Strings) {
+// condition. The returned slice may contain zero elements (nil).
+func (ss Strings) Without(condition func(s string) bool) (ss2 Strings) {
 	for _, s := range ss {
 		if !condition(s) {
 			ss2 = append(ss2, s)

@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestHasPrefix(t *testing.T) {
+func TestPrefix(t *testing.T) {
 	for _, test := range []struct {
 		s        string
 		prefix   string
@@ -21,12 +21,12 @@ func TestHasPrefix(t *testing.T) {
 		{"ab", "b", false},
 	} {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expected, pie.HasPrefix(test.prefix)(test.s))
+			assert.Equal(t, test.expected, pie.Prefix(test.prefix)(test.s))
 		})
 	}
 }
 
-func TestHasSuffix(t *testing.T) {
+func TestSuffix(t *testing.T) {
 	for _, test := range []struct {
 		s        string
 		suffix   string
@@ -41,7 +41,7 @@ func TestHasSuffix(t *testing.T) {
 		{"ab", "b", true},
 	} {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expected, pie.HasSuffix(test.suffix)(test.s))
+			assert.Equal(t, test.expected, pie.Suffix(test.suffix)(test.s))
 		})
 	}
 }

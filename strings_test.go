@@ -28,11 +28,11 @@ func TestStrings_Contains(t *testing.T) {
 	}
 }
 
-var ifUnlessTests = []struct {
+var onlyAndWithoutTests = []struct {
 	ss             pie.Strings
 	condition      func(string) bool
-	expectedIf     pie.Strings
-	expectedUnless pie.Strings
+	expectedOnly     pie.Strings
+	expectedWithout pie.Strings
 }{
 	{
 		nil,
@@ -52,18 +52,18 @@ var ifUnlessTests = []struct {
 	},
 }
 
-func TestStrings_If(t *testing.T) {
-	for _, test := range ifUnlessTests {
+func TestStrings_Only(t *testing.T) {
+	for _, test := range onlyAndWithoutTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expectedIf, test.ss.If(test.condition))
+			assert.Equal(t, test.expectedOnly, test.ss.Only(test.condition))
 		})
 	}
 }
 
-func TestStrings_Unless(t *testing.T) {
-	for _, test := range ifUnlessTests {
+func TestStrings_Without(t *testing.T) {
+	for _, test := range onlyAndWithoutTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expectedUnless, test.ss.Unless(test.condition))
+			assert.Equal(t, test.expectedWithout, test.ss.Without(test.condition))
 		})
 	}
 }
