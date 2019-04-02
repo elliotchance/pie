@@ -80,3 +80,21 @@ func (ss Strings) Transform(fn StringsTransformFunc) (ss2 Strings) {
 
 	return
 }
+
+// First returns the first element or a default value if there are no elements.
+func (ss Strings) First(defaultValue string) string {
+	if len(ss) == 0 {
+		return defaultValue
+	}
+
+	return ss[0]
+}
+
+// Last returns the last element or a default value if there are no elements.
+func (ss Strings) Last(defaultValue string) string {
+	if len(ss) == 0 {
+		return defaultValue
+	}
+
+	return ss[len(ss)-1]
+}
