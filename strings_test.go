@@ -3,6 +3,7 @@ package pie_test
 import (
 	"github.com/elliotchance/pie"
 	"github.com/stretchr/testify/assert"
+	"strings"
 	"testing"
 )
 
@@ -38,7 +39,7 @@ func TestStringsContains(t *testing.T) {
 	}
 }
 
-var onlyAndWithoutTests = []struct {
+var stringsOnlyAndWithoutTests = []struct {
 	ss                pie.Strings
 	condition         func(string) bool
 	expectedOnly      pie.Strings
@@ -66,7 +67,7 @@ var onlyAndWithoutTests = []struct {
 }
 
 func TestStrings_Only(t *testing.T) {
-	for _, test := range onlyAndWithoutTests {
+	for _, test := range stringsOnlyAndWithoutTests {
 		t.Run("", func(t *testing.T) {
 			assert.Equal(t, test.expectedOnly, test.ss.Only(test.condition))
 		})
@@ -74,7 +75,7 @@ func TestStrings_Only(t *testing.T) {
 }
 
 func TestStringsOnly(t *testing.T) {
-	for _, test := range onlyAndWithoutTests {
+	for _, test := range stringsOnlyAndWithoutTests {
 		t.Run("", func(t *testing.T) {
 			assert.Equal(t, []string(test.expectedOnly), pie.StringsOnly(test.ss, test.condition))
 		})
@@ -82,7 +83,7 @@ func TestStringsOnly(t *testing.T) {
 }
 
 func TestStrings_Without(t *testing.T) {
-	for _, test := range onlyAndWithoutTests {
+	for _, test := range stringsOnlyAndWithoutTests {
 		t.Run("", func(t *testing.T) {
 			assert.Equal(t, test.expectedWithout, test.ss.Without(test.condition))
 		})
@@ -90,7 +91,7 @@ func TestStrings_Without(t *testing.T) {
 }
 
 func TestStringsWithout(t *testing.T) {
-	for _, test := range onlyAndWithoutTests {
+	for _, test := range stringsOnlyAndWithoutTests {
 		t.Run("", func(t *testing.T) {
 			assert.Equal(t, []string(test.expectedWithout), pie.StringsWithout(test.ss, test.condition))
 		})
@@ -98,17 +99,17 @@ func TestStringsWithout(t *testing.T) {
 }
 
 func TestStrings_Transform(t *testing.T) {
-	for _, test := range onlyAndWithoutTests {
+	for _, test := range stringsOnlyAndWithoutTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expectedTransform, test.ss.Transform(pie.ToUpper()))
+			assert.Equal(t, test.expectedTransform, test.ss.Transform(strings.ToUpper))
 		})
 	}
 }
 
 func TestStringsTransform(t *testing.T) {
-	for _, test := range onlyAndWithoutTests {
+	for _, test := range stringsOnlyAndWithoutTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, []string(test.expectedTransform), pie.StringsTransform(test.ss, pie.ToUpper()))
+			assert.Equal(t, []string(test.expectedTransform), pie.StringsTransform(test.ss, strings.ToUpper))
 		})
 	}
 }

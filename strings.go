@@ -37,7 +37,7 @@ type Strings []string
 // StringsConditionFunc allows strings to be filtered or checked by value.
 type StringsConditionFunc func(string) bool
 
-// StringsApplyFunc transforms a string value.
+// StringsTransformFunc transforms a string value.
 type StringsTransformFunc func(string) string
 
 // StringsContains returns true if the string exists in the slice. The strings

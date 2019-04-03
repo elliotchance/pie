@@ -29,30 +29,44 @@ pie.Strings{"Bob", "Sally", "John", "Jane"}.
 
 ## Slices
 
-| Function | Description | Performance |
-| -------- | ----------- | ----------- |
-| [`StringsContains`](https://godoc.org/github.com/elliotchance/pie#StringsContains) | Check if the string exists in the slice. | O(n) |
-| [`StringsFirst`](https://godoc.org/github.com/elliotchance/pie#StringsFirst) | The first element, or an empty string. | O(1) |
-| [`StringsFirstOr`](https://godoc.org/github.com/elliotchance/pie#StringsFirstOr) | The first element, or a default value. | O(1) |
-| [`StringsLast`](https://godoc.org/github.com/elliotchance/pie#StringsLast) | The last element, or an empty string. | O(1) |
-| [`StringsLastOr`](https://godoc.org/github.com/elliotchance/pie#StringsLastOr) | The last element, or a default value. | O(1) |
-| [`StringsOnly`](https://godoc.org/github.com/elliotchance/pie#StringsOnly) | A new slice containing only the elements that returned true from the condition. | O(n) |
-| [`StringsTransform`](https://godoc.org/github.com/elliotchance/pie#StringsTransform) | A new slice where each element has been transformed. | O(n) |
-| [`StringsWithout`](https://godoc.org/github.com/elliotchance/pie#StringsWithout) | A new slice containing only the elements that returned false from the condition. | O(n) |
+| Strings | Ints | Description | Performance |
+| ------- | ---- | ----------- | ----------- |
+| [`StringsContains`](https://godoc.org/github.com/elliotchance/pie#StringsContains) | [`IntsContains`](https://godoc.org/github.com/elliotchance/pie#IntsContains) | Check if the value exists in the slice. | O(n) |
+| [`StringsFirst`](https://godoc.org/github.com/elliotchance/pie#StringsFirst) | [`IntsFirst`](https://godoc.org/github.com/elliotchance/pie#IntsFirst) | The first element, or a zeroed value. | O(1) |
+| [`StringsFirstOr`](https://godoc.org/github.com/elliotchance/pie#StringsFirstOr) | [`IntsFirstOr`](https://godoc.org/github.com/elliotchance/pie#IntsFirstOr) | The first element, or a default value. | O(1) |
+| [`StringsLast`](https://godoc.org/github.com/elliotchance/pie#StringsLast) | [`IntsLast`](https://godoc.org/github.com/elliotchance/pie#IntsLast) | The last element, or a zeroed string. | O(1) |
+| [`StringsLastOr`](https://godoc.org/github.com/elliotchance/pie#StringsLastOr) | [`IntsLastOr`](https://godoc.org/github.com/elliotchance/pie#IntsLastOr) | The last element, or a default value. | O(1) |
+| [`StringsOnly`](https://godoc.org/github.com/elliotchance/pie#StringsOnly) | [`IntsOnly`](https://godoc.org/github.com/elliotchance/pie#IntsOnly) | A new slice containing only the elements that returned true from the condition. | O(n) |
+| [`StringsTransform`](https://godoc.org/github.com/elliotchance/pie#StringsTransform) | [`IntsTransform`](https://godoc.org/github.com/elliotchance/pie#IntsTransform) | A new slice where each element has been transformed. | O(n) |
+| [`StringsWithout`](https://godoc.org/github.com/elliotchance/pie#StringsWithout) | [`IntsWithout`](https://godoc.org/github.com/elliotchance/pie#IntsWithout) | A new slice containing only the elements that returned false from the condition. | O(n) |
 
 ## Conditional
 
-| Function | Description |
-| -------- | ----------- |
-| [`Prefix`](https://godoc.org/github.com/elliotchance/pie#Prefix) | Check if the string starts with another string. |
-| [`Suffix`](https://godoc.org/github.com/elliotchance/pie#Suffix) | Check if the string ends with another string. |
+| Strings | Ints | Description |
+| ------- | ---- | ----------- |
+| [`EqualString`](https://godoc.org/github.com/elliotchance/pie#EqualString) | [`EqualInt`](https://godoc.org/github.com/elliotchance/pie#EqualInt) | Check if the values are equal. |
+| [`Prefix`](https://godoc.org/github.com/elliotchance/pie#Prefix) |  | Check if the string starts with another string. |
+| [`Suffix`](https://godoc.org/github.com/elliotchance/pie#Suffix) |  | Check if the string ends with another string. |
 
 ## Transforms
 
+Some of the functions listed here are part of the Go native libraries, but they
+are useful to list.
+
+### Strings
+
 | Function | Description |
 | -------- | ----------- |
-| [`ToUpper`](https://godoc.org/github.com/elliotchance/pie#ToUpper) | Convert string to uppercase. |
-| [`ToLower`](https://godoc.org/github.com/elliotchance/pie#ToLower) | Convert string to lowercase. |
+| [`strings.ToLower`](https://golang.org/pkg/strings/#ToLower) | Convert string to lower case. |
+| [`strings.ToTitle`](https://golang.org/pkg/strings/#ToTitle) | Convert string to title case. |
+| [`strings.ToUpper`](https://golang.org/pkg/strings/#ToUpper) | Convert string to upper case. |
+| [`strings.TrimSpace`](https://golang.org/pkg/strings/#TrimSpace) | Trim leading and trailing whitespace. |
+
+### Ints
+
+| Function | Description |
+| -------- | ----------- |
+| [`AddInt`](https://godoc.org/github.com/elliotchance/pie#AddInt) | Addition. |
 
 # FAQ
 
