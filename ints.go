@@ -13,12 +13,6 @@ package pie
 //
 type Ints []int
 
-// IntsConditionFunc allows ints to be filtered or checked by value.
-type IntsConditionFunc func(int) bool
-
-// IntsTransformFunc transforms an int value.
-type IntsTransformFunc func(int) int
-
 // IntsContains returns true if the int exists in the slice.
 func IntsContains(ss []int, lookingFor int) bool {
 	for _, s := range ss {
@@ -39,7 +33,7 @@ func (ss Ints) Contains(lookingFor int) bool {
 // true from the condition. The returned slice may contain zero elements (nil).
 //
 // IntsWithout works in the opposite way as IntsOnly.
-func IntsOnly(ss []int, condition IntsConditionFunc) (ss2 []int) {
+func IntsOnly(ss []int, condition IntConditionFunc) (ss2 []int) {
 	for _, s := range ss {
 		if condition(s) {
 			ss2 = append(ss2, s)
@@ -50,14 +44,14 @@ func IntsOnly(ss []int, condition IntsConditionFunc) (ss2 []int) {
 }
 
 // Only is the chained version of IntsOnly.
-func (ss Ints) Only(condition IntsConditionFunc) (ss2 Ints) {
+func (ss Ints) Only(condition IntConditionFunc) (ss2 Ints) {
 	return IntsOnly(ss, condition)
 }
 
 // IntsWithout works the same as IntsOnly, with a negated condition. That is, it
 // will return a new slice only containing the elements that returned false from
 // the condition. The returned slice may contain zero elements (nil).
-func IntsWithout(ss []int, condition IntsConditionFunc) (ss2 []int) {
+func IntsWithout(ss []int, condition IntConditionFunc) (ss2 []int) {
 	for _, s := range ss {
 		if !condition(s) {
 			ss2 = append(ss2, s)
@@ -68,14 +62,14 @@ func IntsWithout(ss []int, condition IntsConditionFunc) (ss2 []int) {
 }
 
 // Without is the chained version of IntsWithout.
-func (ss Ints) Without(condition IntsConditionFunc) (ss2 Ints) {
+func (ss Ints) Without(condition IntConditionFunc) (ss2 Ints) {
 	return IntsWithout(ss, condition)
 }
 
 // IntsTransform will return a new slice where each element has been
 // transformed. The number of element returned will always be the same as the
 // input.
-func IntsTransform(ss []int, fn IntsTransformFunc) (ss2 []int) {
+func IntsTransform(ss []int, fn IntTransformFunc) (ss2 []int) {
 	if ss == nil {
 		return nil
 	}
@@ -89,7 +83,7 @@ func IntsTransform(ss []int, fn IntsTransformFunc) (ss2 []int) {
 }
 
 // Transform is the chained version of IntsTransform.
-func (ss Ints) Transform(fn IntsTransformFunc) (ss2 Ints) {
+func (ss Ints) Transform(fn IntTransformFunc) (ss2 Ints) {
 	return IntsTransform(ss, fn)
 }
 
