@@ -1,4 +1,4 @@
-# 🥧 `github.com/elliotchance/pie` [![GoDoc](https://godoc.org/github.com/elliotchance/pie?status.svg)](https://godoc.org/github.com/elliotchance/pie)
+# 🍕 `github.com/elliotchance/pie` [![GoDoc](https://godoc.org/github.com/elliotchance/pie?status.svg)](https://godoc.org/github.com/elliotchance/pie)
 
 **Enjoy a slice!** `pie` is a utility library for dealing with slices that
 focuses on type safety and performance.
@@ -118,4 +118,13 @@ there will need to be duplicate code in `pie` to compensate.
 
 ## Can I contribute?
 
-Absolutely. Pull requests are always welcome.
+Absolutely. Pull requests are always welcome. Your PR must include:
+
+1. The package functions and chainable functions. Such as `pie.StringsSort` and `Strings.Sort`.
+2. You should implement that function for all of Strings, Ints and Float64s.
+3. You must include tests.
+4. Update the README to list the new functions.
+
+## Why is the emoji a slice of pizza instead of a pie?
+
+I wanted to pick a name for the project that was short and had an associated emoji. I liked pie, but then I found out that the pie emoji is not fully supported everywhere. I didn't want to change the name of the project to cake, but pizza pie still made sense. I'm not sure if I will change it back to a pie later.
