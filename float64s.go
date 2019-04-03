@@ -142,3 +142,79 @@ func Float64sLast(ss []float64) float64 {
 func (ss Float64s) Last() float64 {
 	return Float64sLast(ss)
 }
+
+// Float64sSum is the sum of all of the elements.
+func Float64sSum(ss []float64) (sum float64) {
+	for _, s := range ss {
+		sum += s
+	}
+
+	return
+}
+
+// Sum is the chained version of Float64sSum.
+func (ss Float64s) Sum() float64 {
+	return Float64sSum(ss)
+}
+
+// Len returns the number of elements.
+func (ss Float64s) Len() int {
+	return len(ss)
+}
+
+// Float64sAverage is the average of all of the elements, or zero if there are no
+// elements.
+func Float64sAverage(ss []float64) float64 {
+	if l := float64(len(ss)); l > 0 {
+		return Float64sSum(ss) / l
+	}
+
+	return 0
+}
+
+// Average is the chained version of Float64sAverage.
+func (ss Float64s) Average() float64 {
+	return Float64sAverage(ss)
+}
+
+// Float64sMin is the minimum value, or zero.
+func Float64sMin(ss []float64) (min float64) {
+	if len(ss) == 0 {
+		return
+	}
+
+	min = ss[0]
+	for _, s := range ss {
+		if s < min {
+			min = s
+		}
+	}
+
+	return
+}
+
+// Min is the chained version of Float64sMin.
+func (ss Float64s) Min() float64 {
+	return Float64sMin(ss)
+}
+
+// Float64sMax is the maximum value, or zero.
+func Float64sMax(ss []float64) (max float64) {
+	if len(ss) == 0 {
+		return
+	}
+
+	max = ss[0]
+	for _, s := range ss {
+		if s > max {
+			max = s
+		}
+	}
+
+	return
+}
+
+// Max is the chained version of Float64sMax.
+func (ss Float64s) Max() float64 {
+	return Float64sMax(ss)
+}

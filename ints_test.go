@@ -210,3 +210,114 @@ func TestIntsLast(t *testing.T) {
 		})
 	}
 }
+
+var intsStatsTests = []struct {
+	ss                 []int
+	min, max, sum, len int
+	average            float64
+}{
+	{
+		nil,
+		0,
+		0,
+		0,
+		0,
+		0,
+	},
+	{
+		[]int{},
+		0,
+		0,
+		0,
+		0,
+		0,
+	},
+	{
+		[]int{1},
+		1,
+		1,
+		1,
+		1,
+		1,
+	},
+	{
+		[]int{2, 3, 5, 1},
+		1,
+		5,
+		11,
+		4,
+		2.75,
+	},
+}
+
+func TestIntsMin(t *testing.T) {
+	for _, test := range intsStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.min, pie.IntsMin(test.ss))
+		})
+	}
+}
+
+func TestInts_Min(t *testing.T) {
+	for _, test := range intsStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.min, pie.Ints(test.ss).Min())
+		})
+	}
+}
+
+func TestIntsMax(t *testing.T) {
+	for _, test := range intsStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.max, pie.IntsMax(test.ss))
+		})
+	}
+}
+
+func TestInts_Max(t *testing.T) {
+	for _, test := range intsStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.max, pie.Ints(test.ss).Max())
+		})
+	}
+}
+
+func TestIntsSum(t *testing.T) {
+	for _, test := range intsStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.sum, pie.IntsSum(test.ss))
+		})
+	}
+}
+
+func TestInts_Sum(t *testing.T) {
+	for _, test := range intsStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.sum, pie.Ints(test.ss).Sum())
+		})
+	}
+}
+
+func TestInts_Len(t *testing.T) {
+	for _, test := range intsStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.len, pie.Ints(test.ss).Len())
+		})
+	}
+}
+
+func TestIntsAverage(t *testing.T) {
+	for _, test := range intsStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.average, pie.IntsAverage(test.ss))
+		})
+	}
+}
+
+func TestInts_Average(t *testing.T) {
+	for _, test := range intsStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.average, pie.Ints(test.ss).Average())
+		})
+	}
+}
