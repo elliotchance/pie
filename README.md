@@ -1,23 +1,58 @@
-# 🥧 `github.com/elliotchance/pie`
+# 🥧 `github.com/elliotchance/pie` [![GoDoc](https://godoc.org/github.com/elliotchance/pie?status.svg)](https://godoc.org/github.com/elliotchance/pie)
 
-**Enjoy a slice of pie!** `pie` is a utility library for dealing with slices
-that focuses only on type safety and performance:
+**Enjoy a slice!** `pie` is a utility library for dealing with slices that
+focuses on type safety and performance.
 
-```go
-shortNames := pie.Strings{"Bob", "Sally", "John", "Jane"}.
-	Only(func(s string) bool {
-		return len(s) <= 3
-	})
-```
-
-There are also helper methods for common filters, like:
+It can be used with the Go-style package functions:
 
 ```go
-namesNotStartingWithJ := pie.Strings{"Bob", "Sally", "John", "Jane"}.
-	Without(pie.Prefix("J"))
+names := []string{"Bob", "Sally", "John", "Jane"}
+shortNames := pie.StringsOnly(names, func(s string) bool {
+	return len(s) <= 3
+})
+
+// pie.Strings{"Bob"}
 ```
 
-See the [go docs](https://godoc.org/github.com/elliotchance/pie) for full API.
+Or, they can be chained for more complex operations:
+
+```go
+pie.Strings{"Bob", "Sally", "John", "Jane"}.
+	Without(pie.Prefix("J")).
+	Transform(pie.ToUpper()).
+	Last()
+
+// "SALLY"
+```
+
+# Functions
+
+## Slices
+
+| Function | Description | Performance |
+| -------- | ----------- | ----------- |
+| [`StringsContains`](https://godoc.org/github.com/elliotchance/pie#StringsContains) | Check if the string exists in the slice. | O(n) |
+| [`StringsFirst`](https://godoc.org/github.com/elliotchance/pie#StringsFirst) | The first element, or an empty string. | O(1) |
+| [`StringsFirstOr`](https://godoc.org/github.com/elliotchance/pie#StringsFirstOr) | The first element, or a default value. | O(1) |
+| [`StringsLast`](https://godoc.org/github.com/elliotchance/pie#StringsLast) | The last element, or an empty string. | O(1) |
+| [`StringsLastOr`](https://godoc.org/github.com/elliotchance/pie#StringsLastOr) | The last element, or a default value. | O(1) |
+| [`StringsOnly`](https://godoc.org/github.com/elliotchance/pie#StringsOnly) | A new slice containing only the elements that returned true from the condition. | O(n) |
+| [`StringsTransform`](https://godoc.org/github.com/elliotchance/pie#StringsTransform) | A new slice where each element has been transformed. | O(n) |
+| [`StringsWithout`](https://godoc.org/github.com/elliotchance/pie#StringsWithout) | A new slice containing only the elements that returned false from the condition. | O(n) |
+
+## Conditional
+
+| Function | Description |
+| -------- | ----------- |
+| [`Prefix`](https://godoc.org/github.com/elliotchance/pie#Prefix) | Check if the string starts with another string. |
+| [`Suffix`](https://godoc.org/github.com/elliotchance/pie#Suffix) | Check if the string ends with another string. |
+
+## Transforms
+
+| Function | Description |
+| -------- | ----------- |
+| [`ToUpper`](https://godoc.org/github.com/elliotchance/pie#ToUpper) | Convert string to uppercase. |
+| [`ToLower`](https://godoc.org/github.com/elliotchance/pie#ToLower) | Convert string to lowercase. |
 
 # FAQ
 
