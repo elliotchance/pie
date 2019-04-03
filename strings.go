@@ -166,3 +166,50 @@ func StringsLast(ss []string) string {
 func (ss Strings) Last() string {
 	return StringsLast(ss)
 }
+
+// Len returns the number of elements.
+func (ss Strings) Len() int {
+	return len(ss)
+}
+
+// StringsMin is the minimum value, or an empty string.
+func StringsMin(ss []string) (min string) {
+	if len(ss) == 0 {
+		return
+	}
+
+	min = ss[0]
+	for _, s := range ss {
+		if s < min {
+			min = s
+		}
+	}
+
+	return
+}
+
+// Min is the chained version of StringsMin.
+func (ss Strings) Min() string {
+	return StringsMin(ss)
+}
+
+// StringsMax is the maximum value, or en empty string.
+func StringsMax(ss []string) (max string) {
+	if len(ss) == 0 {
+		return
+	}
+
+	max = ss[0]
+	for _, s := range ss {
+		if s > max {
+			max = s
+		}
+	}
+
+	return
+}
+
+// Max is the chained version of StringsMax.
+func (ss Strings) Max() string {
+	return StringsMax(ss)
+}

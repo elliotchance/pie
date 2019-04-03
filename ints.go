@@ -142,3 +142,79 @@ func IntsLast(ss []int) int {
 func (ss Ints) Last() int {
 	return IntsLast(ss)
 }
+
+// IntsSum is the sum of all of the elements.
+func IntsSum(ss []int) (sum int) {
+	for _, s := range ss {
+		sum += s
+	}
+
+	return
+}
+
+// Sum is the chained version of IntsSum.
+func (ss Ints) Sum() int {
+	return IntsSum(ss)
+}
+
+// Len returns the number of elements.
+func (ss Ints) Len() int {
+	return len(ss)
+}
+
+// IntsAverage is the average of all of the elements, or zero if there are no
+// elements.
+func IntsAverage(ss []int) float64 {
+	if l := float64(len(ss)); l > 0 {
+		return float64(IntsSum(ss)) / l
+	}
+
+	return 0
+}
+
+// Average is the chained version of IntsAverage.
+func (ss Ints) Average() float64 {
+	return IntsAverage(ss)
+}
+
+// IntsMin is the minimum value, or zero.
+func IntsMin(ss []int) (min int) {
+	if len(ss) == 0 {
+		return
+	}
+
+	min = ss[0]
+	for _, s := range ss {
+		if s < min {
+			min = s
+		}
+	}
+
+	return
+}
+
+// Min is the chained version of IntsMin.
+func (ss Ints) Min() int {
+	return IntsMin(ss)
+}
+
+// IntsMax is the maximum value, or zero.
+func IntsMax(ss []int) (max int) {
+	if len(ss) == 0 {
+		return
+	}
+
+	max = ss[0]
+	for _, s := range ss {
+		if s > max {
+			max = s
+		}
+	}
+
+	return
+}
+
+// Max is the chained version of IntsMax.
+func (ss Ints) Max() int {
+	return IntsMax(ss)
+}

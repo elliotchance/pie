@@ -210,3 +210,115 @@ func TestFloat64sLast(t *testing.T) {
 		})
 	}
 }
+
+var float64sStatsTests = []struct {
+	ss            []float64
+	min, max, sum float64
+	len           int
+	average       float64
+}{
+	{
+		nil,
+		0,
+		0,
+		0,
+		0,
+		0,
+	},
+	{
+		[]float64{},
+		0,
+		0,
+		0,
+		0,
+		0,
+	},
+	{
+		[]float64{1.5},
+		1.5,
+		1.5,
+		1.5,
+		1,
+		1.5,
+	},
+	{
+		[]float64{2.2, 3.1, 5.1, 1.9},
+		1.9,
+		5.1,
+		12.3,
+		4,
+		3.075,
+	},
+}
+
+func TestFloat64sMin(t *testing.T) {
+	for _, test := range float64sStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.min, pie.Float64sMin(test.ss))
+		})
+	}
+}
+
+func TestFloat64s_Min(t *testing.T) {
+	for _, test := range float64sStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.min, pie.Float64s(test.ss).Min())
+		})
+	}
+}
+
+func TestFloat64sMax(t *testing.T) {
+	for _, test := range float64sStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.max, pie.Float64sMax(test.ss))
+		})
+	}
+}
+
+func TestFloat64s_Max(t *testing.T) {
+	for _, test := range float64sStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.max, pie.Float64s(test.ss).Max())
+		})
+	}
+}
+
+func TestFloat64sSum(t *testing.T) {
+	for _, test := range float64sStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.sum, pie.Float64sSum(test.ss))
+		})
+	}
+}
+
+func TestFloat64s_Sum(t *testing.T) {
+	for _, test := range float64sStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.sum, pie.Float64s(test.ss).Sum())
+		})
+	}
+}
+
+func TestFloat64s_Len(t *testing.T) {
+	for _, test := range float64sStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.len, pie.Float64s(test.ss).Len())
+		})
+	}
+}
+
+func TestFloat64sAverage(t *testing.T) {
+	for _, test := range float64sStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.average, pie.Float64sAverage(test.ss))
+		})
+	}
+}
+
+func TestFloat64s_Average(t *testing.T) {
+	for _, test := range float64sStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.average, pie.Float64s(test.ss).Average())
+		})
+	}
+}

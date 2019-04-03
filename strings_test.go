@@ -212,3 +212,75 @@ func TestStringsLast(t *testing.T) {
 		})
 	}
 }
+
+var stringsStatsTests = []struct {
+	ss       []string
+	min, max string
+	len      int
+}{
+	{
+		nil,
+		"",
+		"",
+		0,
+	},
+	{
+		[]string{},
+		"",
+		"",
+		0,
+	},
+	{
+		[]string{"foo"},
+		"foo",
+		"foo",
+		1,
+	},
+	{
+		[]string{"bar", "Baz", "qux", "foo"},
+		"Baz",
+		"qux",
+		4,
+	},
+}
+
+func TestStringsMin(t *testing.T) {
+	for _, test := range stringsStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.min, pie.StringsMin(test.ss))
+		})
+	}
+}
+
+func TestStrings_Min(t *testing.T) {
+	for _, test := range stringsStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.min, pie.Strings(test.ss).Min())
+		})
+	}
+}
+
+func TestStringsMax(t *testing.T) {
+	for _, test := range stringsStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.max, pie.StringsMax(test.ss))
+		})
+	}
+}
+
+func TestStrings_Max(t *testing.T) {
+	for _, test := range stringsStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.max, pie.Strings(test.ss).Max())
+		})
+	}
+}
+
+
+func TestStrings_Len(t *testing.T) {
+	for _, test := range stringsStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.len, pie.Strings(test.ss).Len())
+		})
+	}
+}
