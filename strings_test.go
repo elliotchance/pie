@@ -6,24 +6,34 @@ import (
 	"testing"
 )
 
+var stringsContainsTests = []struct {
+	ss       pie.Strings
+	contains string
+	expected bool
+}{
+	{nil, "a", false},
+	{nil, "", false},
+	{pie.Strings{"a", "b", "c"}, "a", true},
+	{pie.Strings{"a", "b", "c"}, "b", true},
+	{pie.Strings{"a", "b", "c"}, "c", true},
+	{pie.Strings{"a", "b", "c"}, "A", false},
+	{pie.Strings{"a", "b", "c"}, "", false},
+	{pie.Strings{"a", "b", "c"}, "d", false},
+	{pie.Strings{"a", "", "c"}, "", true},
+}
+
 func TestStrings_Contains(t *testing.T) {
-	for _, test := range []struct {
-		ss       pie.Strings
-		contains string
-		expected bool
-	}{
-		{nil, "a", false},
-		{nil, "", false},
-		{pie.Strings{"a", "b", "c"}, "a", true},
-		{pie.Strings{"a", "b", "c"}, "b", true},
-		{pie.Strings{"a", "b", "c"}, "c", true},
-		{pie.Strings{"a", "b", "c"}, "A", false},
-		{pie.Strings{"a", "b", "c"}, "", false},
-		{pie.Strings{"a", "b", "c"}, "d", false},
-		{pie.Strings{"a", "", "c"}, "", true},
-	} {
+	for _, test := range stringsContainsTests {
 		t.Run("", func(t *testing.T) {
 			assert.Equal(t, test.expected, test.ss.Contains(test.contains))
+		})
+	}
+}
+
+func TestStringsContains(t *testing.T) {
+	for _, test := range stringsContainsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.expected, pie.StringsContains(test.ss, test.contains))
 		})
 	}
 }
@@ -63,6 +73,14 @@ func TestStrings_Only(t *testing.T) {
 	}
 }
 
+func TestStringsOnly(t *testing.T) {
+	for _, test := range onlyAndWithoutTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, []string(test.expectedOnly), pie.StringsOnly(test.ss, test.condition))
+		})
+	}
+}
+
 func TestStrings_Without(t *testing.T) {
 	for _, test := range onlyAndWithoutTests {
 		t.Run("", func(t *testing.T) {
@@ -71,10 +89,26 @@ func TestStrings_Without(t *testing.T) {
 	}
 }
 
+func TestStringsWithout(t *testing.T) {
+	for _, test := range onlyAndWithoutTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, []string(test.expectedWithout), pie.StringsWithout(test.ss, test.condition))
+		})
+	}
+}
+
 func TestStrings_Transform(t *testing.T) {
 	for _, test := range onlyAndWithoutTests {
 		t.Run("", func(t *testing.T) {
 			assert.Equal(t, test.expectedTransform, test.ss.Transform(pie.ToUpper()))
+		})
+	}
+}
+
+func TestStringsTransform(t *testing.T) {
+	for _, test := range onlyAndWithoutTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, []string(test.expectedTransform), pie.StringsTransform(test.ss, pie.ToUpper()))
 		})
 	}
 }
@@ -122,10 +156,26 @@ func TestStrings_FirstOr(t *testing.T) {
 	}
 }
 
+func TestStringsFirstOr(t *testing.T) {
+	for _, test := range firstAndLastTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.firstOr, pie.StringsFirstOr(test.ss, "default1"))
+		})
+	}
+}
+
 func TestStrings_LastOr(t *testing.T) {
 	for _, test := range firstAndLastTests {
 		t.Run("", func(t *testing.T) {
 			assert.Equal(t, test.lastOr, test.ss.LastOr("default2"))
+		})
+	}
+}
+
+func TestStringsLastOr(t *testing.T) {
+	for _, test := range firstAndLastTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.lastOr, pie.StringsLastOr(test.ss, "default2"))
 		})
 	}
 }
@@ -138,10 +188,26 @@ func TestStrings_First(t *testing.T) {
 	}
 }
 
+func TestStringsFirst(t *testing.T) {
+	for _, test := range firstAndLastTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.first, pie.StringsFirst(test.ss))
+		})
+	}
+}
+
 func TestStrings_Last(t *testing.T) {
 	for _, test := range firstAndLastTests {
 		t.Run("", func(t *testing.T) {
 			assert.Equal(t, test.last, test.ss.Last())
+		})
+	}
+}
+
+func TestStringsLast(t *testing.T) {
+	for _, test := range firstAndLastTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.last, pie.StringsLast(test.ss))
 		})
 	}
 }
