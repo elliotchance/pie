@@ -9,8 +9,3 @@ import (
 func TestAddInt(t *testing.T) {
 	assert.Equal(t, 8, pie.AddInt(3)(5))
 }
-
-func TestEqualInt(t *testing.T) {
-	assert.False(t, pie.EqualInt(3)(5))
-	assert.True(t, pie.EqualInt(5)(5))
-}

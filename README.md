@@ -29,9 +29,9 @@ pie.Strings{"Bob", "Sally", "John", "Jane"}.
 
 ## Slices
 
-| Strings | Ints | Float64s | Description | Performance |
-| ------- | ---- | -------- | ----------- | ----------- |
-| - | [`IntsAverage`](https://godoc.org/github.com/elliotchance/pie#IntsAverage) | [`Float64sAverage`](https://godoc.org/github.com/elliotchance/pie#Float64sAverage) | The average (mean) value, or a zeroed value. | O(n) |
+| Strings | Ints | Float64s | Description |     |
+| ------- | ---- | -------- | ----------- | --- |
+| | [`IntsAverage`](https://godoc.org/github.com/elliotchance/pie#IntsAverage) | [`Float64sAverage`](https://godoc.org/github.com/elliotchance/pie#Float64sAverage) | The average (mean) value, or a zeroed value. | O(n) |
 | [`StringsContains`](https://godoc.org/github.com/elliotchance/pie#StringsContains) | [`IntsContains`](https://godoc.org/github.com/elliotchance/pie#IntsContains) | [`Float64sContains`](https://godoc.org/github.com/elliotchance/pie#Float64sContains) | Check if the value exists in the slice. | O(n) |
 | [`StringsFirst`](https://godoc.org/github.com/elliotchance/pie#StringsFirst) | [`IntsFirst`](https://godoc.org/github.com/elliotchance/pie#IntsFirst) | [`Float64sFirst`](https://godoc.org/github.com/elliotchance/pie#Float64sFirst) | The first element, or a zeroed value. | O(1) |
 | [`StringsFirstOr`](https://godoc.org/github.com/elliotchance/pie#StringsFirstOr) | [`IntsFirstOr`](https://godoc.org/github.com/elliotchance/pie#IntsFirstOr) | [`Float64sFirstOr`](https://godoc.org/github.com/elliotchance/pie#Float64sFirstOr) | The first element, or a default value. | O(1) |
@@ -40,7 +40,7 @@ pie.Strings{"Bob", "Sally", "John", "Jane"}.
 | [`StringsMax`](https://godoc.org/github.com/elliotchance/pie#StringsMax) | [`IntsMax`](https://godoc.org/github.com/elliotchance/pie#IntsMax) | [`Float64sMax`](https://godoc.org/github.com/elliotchance/pie#Float64sMax) | The maximum value, or a zeroes value. | O(n) |
 | [`StringsMin`](https://godoc.org/github.com/elliotchance/pie#StringsMin) | [`IntsMin`](https://godoc.org/github.com/elliotchance/pie#IntsMin) | [`Float64sMin`](https://godoc.org/github.com/elliotchance/pie#Float64sMin) | The minimum value, or a zeroed value. | O(n) |
 | [`StringsOnly`](https://godoc.org/github.com/elliotchance/pie#StringsOnly) | [`IntsOnly`](https://godoc.org/github.com/elliotchance/pie#IntsOnly) | [`Float64sOnly`](https://godoc.org/github.com/elliotchance/pie#Float64sOnly) | A new slice containing only the elements that returned true from the condition. | O(n) |
-| - | [`IntsSum`](https://godoc.org/github.com/elliotchance/pie#IntsSum) | [`Float64sSum`](https://godoc.org/github.com/elliotchance/pie#Float64sSum) | Sum (total) of all elements. | O(n) |
+| | [`IntsSum`](https://godoc.org/github.com/elliotchance/pie#IntsSum) | [`Float64sSum`](https://godoc.org/github.com/elliotchance/pie#Float64sSum) | Sum (total) of all elements. | O(n) |
 | [`StringsTransform`](https://godoc.org/github.com/elliotchance/pie#StringsTransform) | [`IntsTransform`](https://godoc.org/github.com/elliotchance/pie#IntsTransform) | [`Float64sTransform`](https://godoc.org/github.com/elliotchance/pie#Float64sTransform) | A new slice where each element has been transformed. | O(n) |
 | [`StringsWithout`](https://godoc.org/github.com/elliotchance/pie#StringsWithout) | [`IntsWithout`](https://godoc.org/github.com/elliotchance/pie#IntsWithout) | [`Float64sWithout`](https://godoc.org/github.com/elliotchance/pie#Float64sWithout) | A new slice containing only the elements that returned false from the condition. | O(n) |
 
@@ -49,6 +49,11 @@ pie.Strings{"Bob", "Sally", "John", "Jane"}.
 | Strings | Ints | Float64s | Description |
 | ------- | ---- | -------- | ----------- |
 | [`EqualString`](https://godoc.org/github.com/elliotchance/pie#EqualString) | [`EqualInt`](https://godoc.org/github.com/elliotchance/pie#EqualInt) | [`EqualFloat64`](https://godoc.org/github.com/elliotchance/pie#EqualFloat64) | Check if the values are equal. |
+| [`GreaterThanString`](https://godoc.org/github.com/elliotchance/pie#GreaterThanString) | [`GreaterThanInt`](https://godoc.org/github.com/elliotchance/pie#EqualInt) | [`GreaterThanFloat64`](https://godoc.org/github.com/elliotchance/pie#GreaterThanFloat64) | Check if the values are greater than. |
+| [`GreaterThanEqualString`](https://godoc.org/github.com/elliotchance/pie#GreaterThanEqualString) | [`GreaterThanEqualInt`](https://godoc.org/github.com/elliotchance/pie#GreaterThanEqualInt) | [`GreaterThanEqualFloat64`](https://godoc.org/github.com/elliotchance/pie#GreaterThanEqualFloat64) | Check if the values are greater than or equal to. |
+| [`LessThanString`](https://godoc.org/github.com/elliotchance/pie#LessThanString) | [`LessThanInt`](https://godoc.org/github.com/elliotchance/pie#LessThanInt) | [`LessThanFloat64`](https://godoc.org/github.com/elliotchance/pie#LessThanFloat64) | Check if the values are less than. |
+| [`LessThanEqualString`](https://godoc.org/github.com/elliotchance/pie#LessThanEqualString) | [`LessThanEqualInt`](https://godoc.org/github.com/elliotchance/pie#LessThanEqualInt) | [`LessThanEqualFloat64`](https://godoc.org/github.com/elliotchance/pie#LessThanEqualFloat64) | Check if the values are less than or equal to. |
+| [`NotEqualString`](https://godoc.org/github.com/elliotchance/pie#NotEqualString) | [`NotEqualInt`](https://godoc.org/github.com/elliotchance/pie#NotEqualInt) | [`NotEqualFloat64`](https://godoc.org/github.com/elliotchance/pie#NotEqualFloat64) | Check if the values are not equal. |
 | [`Prefix`](https://godoc.org/github.com/elliotchance/pie#Prefix) | | | Check if the string starts with another string. |
 | [`Suffix`](https://godoc.org/github.com/elliotchance/pie#Suffix) | | | Check if the string ends with another string. |
 

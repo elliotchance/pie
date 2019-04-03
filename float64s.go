@@ -13,12 +13,6 @@ package pie
 //
 type Float64s []float64
 
-// Float64sConditionFunc allows float64s to be filtered or checked by value.
-type Float64sConditionFunc func(float64) bool
-
-// Float64sTransformFunc transforms an float64 value.
-type Float64sTransformFunc func(float64) float64
-
 // Float64sContains returns true if the float64 exists in the slice.
 func Float64sContains(ss []float64, lookingFor float64) bool {
 	for _, s := range ss {
@@ -39,7 +33,7 @@ func (ss Float64s) Contains(lookingFor float64) bool {
 // true from the condition. The returned slice may contain zero elements (nil).
 //
 // Float64sWithout works in the opposite way as Float64sOnly.
-func Float64sOnly(ss []float64, condition Float64sConditionFunc) (ss2 []float64) {
+func Float64sOnly(ss []float64, condition Float64ConditionFunc) (ss2 []float64) {
 	for _, s := range ss {
 		if condition(s) {
 			ss2 = append(ss2, s)
@@ -50,14 +44,14 @@ func Float64sOnly(ss []float64, condition Float64sConditionFunc) (ss2 []float64)
 }
 
 // Only is the chained version of Float64sOnly.
-func (ss Float64s) Only(condition Float64sConditionFunc) (ss2 Float64s) {
+func (ss Float64s) Only(condition Float64ConditionFunc) (ss2 Float64s) {
 	return Float64sOnly(ss, condition)
 }
 
 // Float64sWithout works the same as Float64sOnly, with a negated condition. That is, it
 // will return a new slice only containing the elements that returned false from
 // the condition. The returned slice may contain zero elements (nil).
-func Float64sWithout(ss []float64, condition Float64sConditionFunc) (ss2 []float64) {
+func Float64sWithout(ss []float64, condition Float64ConditionFunc) (ss2 []float64) {
 	for _, s := range ss {
 		if !condition(s) {
 			ss2 = append(ss2, s)
@@ -68,14 +62,14 @@ func Float64sWithout(ss []float64, condition Float64sConditionFunc) (ss2 []float
 }
 
 // Without is the chained version of Float64sWithout.
-func (ss Float64s) Without(condition Float64sConditionFunc) (ss2 Float64s) {
+func (ss Float64s) Without(condition Float64ConditionFunc) (ss2 Float64s) {
 	return Float64sWithout(ss, condition)
 }
 
 // Float64sTransform will return a new slice where each element has been
 // transformed. The number of element returned will always be the same as the
 // input.
-func Float64sTransform(ss []float64, fn Float64sTransformFunc) (ss2 []float64) {
+func Float64sTransform(ss []float64, fn Float64TransformFunc) (ss2 []float64) {
 	if ss == nil {
 		return nil
 	}
@@ -89,7 +83,7 @@ func Float64sTransform(ss []float64, fn Float64sTransformFunc) (ss2 []float64) {
 }
 
 // Transform is the chained version of Float64sTransform.
-func (ss Float64s) Transform(fn Float64sTransformFunc) (ss2 Float64s) {
+func (ss Float64s) Transform(fn Float64TransformFunc) (ss2 Float64s) {
 	return Float64sTransform(ss, fn)
 }
 

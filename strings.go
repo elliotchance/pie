@@ -34,12 +34,6 @@ package pie
 //
 type Strings []string
 
-// StringsConditionFunc allows strings to be filtered or checked by value.
-type StringsConditionFunc func(string) bool
-
-// StringsTransformFunc transforms a string value.
-type StringsTransformFunc func(string) string
-
 // StringsContains returns true if the string exists in the slice. The strings
 // must be exactly equal (case-sensitive).
 func StringsContains(ss []string, lookingFor string) bool {
@@ -61,7 +55,7 @@ func (ss Strings) Contains(lookingFor string) bool {
 // true from the condition. The returned slice may contain zero elements (nil).
 //
 // StringsWithout works in the opposite way as StringsOnly.
-func StringsOnly(ss []string, condition StringsConditionFunc) (ss2 []string) {
+func StringsOnly(ss []string, condition StringConditionFunc) (ss2 []string) {
 	for _, s := range ss {
 		if condition(s) {
 			ss2 = append(ss2, s)
@@ -72,14 +66,14 @@ func StringsOnly(ss []string, condition StringsConditionFunc) (ss2 []string) {
 }
 
 // Only is the chained version of StringsOnly.
-func (ss Strings) Only(condition StringsConditionFunc) (ss2 Strings) {
+func (ss Strings) Only(condition StringConditionFunc) (ss2 Strings) {
 	return StringsOnly(ss, condition)
 }
 
 // StringsWithout works the same as StringsOnly, with a negated condition. That
 // is, it will return a new slice only containing the elements that returned
 // false from the condition. The returned slice may contain zero elements (nil).
-func StringsWithout(ss []string, condition StringsConditionFunc) (ss2 []string) {
+func StringsWithout(ss []string, condition StringConditionFunc) (ss2 []string) {
 	for _, s := range ss {
 		if !condition(s) {
 			ss2 = append(ss2, s)
@@ -90,14 +84,14 @@ func StringsWithout(ss []string, condition StringsConditionFunc) (ss2 []string) 
 }
 
 // Without is the chained version of StringsWithout.
-func (ss Strings) Without(condition StringsConditionFunc) (ss2 Strings) {
+func (ss Strings) Without(condition StringConditionFunc) (ss2 Strings) {
 	return StringsWithout(ss, condition)
 }
 
 // StringsTransform will return a new slice where each element has been
 // transformed. The number of element returned will always be the same as the
 // input.
-func StringsTransform(ss []string, fn StringsTransformFunc) (ss2 []string) {
+func StringsTransform(ss []string, fn StringTransformFunc) (ss2 []string) {
 	if ss == nil {
 		return nil
 	}
@@ -111,7 +105,7 @@ func StringsTransform(ss []string, fn StringsTransformFunc) (ss2 []string) {
 }
 
 // Transform is the chained version of StringsTransform.
-func (ss Strings) Transform(fn StringsTransformFunc) (ss2 Strings) {
+func (ss Strings) Transform(fn StringTransformFunc) (ss2 Strings) {
 	return StringsTransform(ss, fn)
 }
 
