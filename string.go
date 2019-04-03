@@ -2,8 +2,8 @@ package pie
 
 import "strings"
 
-// HasPrefix is a wrapper for strings.HasPrefix that can be used with any
-// function that accepts a StringsConditionFunc. For example:
+// Prefix is a wrapper for strings.HasPrefix that can be used with any function
+// that accepts a StringsConditionFunc. For example:
 //
 //   namesStartingWithJ := pie.Strings{"Bob", "Sally", "John", "Jane"}.
 //   	Only(func(s string) bool {
@@ -21,34 +21,16 @@ func Prefix(s string) StringsConditionFunc {
 	}
 }
 
-// HasSuffix is a wrapper for strings.HasSuffix. See HasPrefix for
-// documentation.
+// Suffix is a wrapper for strings.HasSuffix. See HasPrefix for documentation.
 func Suffix(s string) StringsConditionFunc {
 	return func(a string) bool {
 		return strings.HasSuffix(a, s)
 	}
 }
 
-// ToUpper is a wrapper for strings.ToUpper and can be used with any function
-// that accepts StringsTransformFunc:
-//
-//   pie.Strings{"Bob", "Sally", "John", "Jane"}.
-//   	Transform(pie.ToUpper)
-//
-func ToUpper() StringsTransformFunc {
-	return func (s string) string {
-		return strings.ToUpper(s)
-	}
-}
-
-// ToLower is a wrapper for strings.ToLower and can be used with any function
-// that accepts StringsTransformFunc:
-//
-//   pie.Strings{"Bob", "Sally", "John", "Jane"}.
-//   	Transform(pie.ToLower)
-//
-func ToLower() StringsTransformFunc {
-	return func (s string) string {
-		return strings.ToLower(s)
+// EqualString returns true if the strings are exactly equal (case-sensitive).
+func EqualString(s string) StringsConditionFunc {
+	return func(a string) bool {
+		return a == s
 	}
 }
