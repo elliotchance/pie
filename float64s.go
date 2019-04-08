@@ -1,6 +1,9 @@
 package pie
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"sort"
+)
 
 // Float64s is an alias for an float64 slice.
 //
@@ -166,4 +169,48 @@ func (ss Float64s) JSONString() string {
 	data, _ := json.Marshal(ss)
 
 	return string(data)
+}
+
+// Sort works similar to sort.Float64s(). However, unlike sort.Float64s the
+// slice returned will be reallocated as to not modify the input slice.
+//
+// See Reverse() and AreSorted().
+func (ss Float64s) Sort() Float64s {
+	// Avoid the allocation. If there is one element or less it is already
+	// sorted.
+	if len(ss) < 2 {
+		return ss
+	}
+
+	sorted := make([]float64, len(ss))
+	copy(sorted, ss)
+	sort.Float64s(sorted)
+
+	return sorted
+}
+
+// Reverse returns a new copy of the slice with the elements ordered in reverse.
+// This is useful when combined with Sort to get a descending sort order:
+//
+//   ss.Sort().Reverse()
+//
+func (ss Float64s) Reverse() Float64s {
+	// Avoid the allocation. If there is one element or less it is already
+	// reversed.
+	if len(ss) < 2 {
+		return ss
+	}
+
+	sorted := make([]float64, len(ss))
+	for i := 0; i < len(ss); i++ {
+		sorted[i] = ss[len(ss)-i-1]
+	}
+
+	return sorted
+}
+
+// AreSorted will return true if the slice is already sorted. It is a wrapper
+// for sort.Float64sAreSorted.
+func (ss Float64s) AreSorted() bool {
+	return sort.Float64sAreSorted(ss)
 }

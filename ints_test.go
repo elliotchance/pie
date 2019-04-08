@@ -256,3 +256,74 @@ func TestInts_JSONString(t *testing.T) {
 		})
 	}
 }
+
+var intsSortTests = []struct {
+	ss       pie.Ints
+	sorted   pie.Ints
+	reversed pie.Ints
+	areSorted bool
+}{
+	{
+		nil,
+		nil,
+		nil,
+		true,
+	},
+	{
+		pie.Ints{},
+		pie.Ints{},
+		pie.Ints{},
+		true,
+	},
+	{
+		pie.Ints{789},
+		pie.Ints{789},
+		pie.Ints{789},
+		true,
+	},
+	{
+		pie.Ints{12, -13, 789},
+		pie.Ints{-13, 12, 789},
+		pie.Ints{789, -13, 12},
+		false,
+	},
+	{
+		pie.Ints{12, -13, 1.234e6, 789},
+		pie.Ints{-13, 12, 789, 1.234e6},
+		pie.Ints{789, 1.234e6, -13, 12},
+		false,
+	},
+	{
+		pie.Ints{-13, 12},
+		pie.Ints{-13, 12},
+		pie.Ints{12, -13},
+		true,
+	},
+}
+
+func TestInts_Sort(t *testing.T) {
+	for _, test := range intsSortTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.sorted, test.ss.Sort())
+		})
+	}
+}
+
+func TestInts_Reverse(t *testing.T) {
+	for _, test := range intsSortTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.reversed, test.ss.Reverse())
+		})
+	}
+}
+
+func TestInts_AreSorted(t *testing.T) {
+	for _, test := range intsSortTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.areSorted, test.ss.AreSorted())
+		})
+	}
+}

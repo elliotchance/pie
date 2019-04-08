@@ -23,6 +23,7 @@ package pie
 
 import (
 	"encoding/json"
+	"sort"
 )
 
 // Strings is an alias for a string slice.
@@ -171,4 +172,48 @@ func (ss Strings) JSONString() string {
 	data, _ := json.Marshal(ss)
 
 	return string(data)
+}
+
+// Sort works similar to sort.Strings(). However, unlike sort.Strings the
+// slice returned will be reallocated as to not modify the input slice.
+//
+// See Reverse() and AreSorted().
+func (ss Strings) Sort() Strings {
+	// Avoid the allocation. If there is one element or less it is already
+	// sorted.
+	if len(ss) < 2 {
+		return ss
+	}
+
+	sorted := make([]string, len(ss))
+	copy(sorted, ss)
+	sort.Strings(sorted)
+
+	return sorted
+}
+
+// Reverse returns a new copy of the slice with the elements ordered in reverse.
+// This is useful when combined with Sort to get a descending sort order:
+//
+//   ss.Sort().Reverse()
+//
+func (ss Strings) Reverse() Strings {
+	// Avoid the allocation. If there is one element or less it is already
+	// reversed.
+	if len(ss) < 2 {
+		return ss
+	}
+
+	sorted := make([]string, len(ss))
+	for i := 0; i < len(ss); i++ {
+		sorted[i] = ss[len(ss)-i-1]
+	}
+
+	return sorted
+}
+
+// AreSorted will return true if the slice is already sorted. It is a wrapper
+// for sort.StringsAreSorted.
+func (ss Strings) AreSorted() bool {
+	return sort.StringsAreSorted(ss)
 }
