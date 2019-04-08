@@ -1,26 +1,25 @@
-package pie_test
+package main
 
 import (
-	"github.com/elliotchance/pie"
 	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
 )
 
 var stringsContainsTests = []struct {
-	ss       pie.Strings
+	ss       Strings
 	contains string
 	expected bool
 }{
 	{nil, "a", false},
 	{nil, "", false},
-	{pie.Strings{"a", "b", "c"}, "a", true},
-	{pie.Strings{"a", "b", "c"}, "b", true},
-	{pie.Strings{"a", "b", "c"}, "c", true},
-	{pie.Strings{"a", "b", "c"}, "A", false},
-	{pie.Strings{"a", "b", "c"}, "", false},
-	{pie.Strings{"a", "b", "c"}, "d", false},
-	{pie.Strings{"a", "", "c"}, "", true},
+	{Strings{"a", "b", "c"}, "a", true},
+	{Strings{"a", "b", "c"}, "b", true},
+	{Strings{"a", "b", "c"}, "c", true},
+	{Strings{"a", "b", "c"}, "A", false},
+	{Strings{"a", "b", "c"}, "", false},
+	{Strings{"a", "b", "c"}, "d", false},
+	{Strings{"a", "", "c"}, "", true},
 }
 
 func TestStrings_Contains(t *testing.T) {
@@ -33,11 +32,11 @@ func TestStrings_Contains(t *testing.T) {
 }
 
 var stringsOnlyAndWithoutTests = []struct {
-	ss                pie.Strings
+	ss                Strings
 	condition         func(string) bool
-	expectedOnly      pie.Strings
-	expectedWithout   pie.Strings
-	expectedTransform pie.Strings
+	expectedOnly      Strings
+	expectedWithout   Strings
+	expectedTransform Strings
 }{
 	{
 		nil,
@@ -49,13 +48,13 @@ var stringsOnlyAndWithoutTests = []struct {
 		nil,
 	},
 	{
-		pie.Strings{"a", "b", "c"},
+		Strings{"a", "b", "c"},
 		func(s string) bool {
 			return s != "b"
 		},
-		pie.Strings{"a", "c"},
-		pie.Strings{"b"},
-		pie.Strings{"A", "B", "C"},
+		Strings{"a", "c"},
+		Strings{"b"},
+		Strings{"A", "B", "C"},
 	},
 }
 
@@ -87,7 +86,7 @@ func TestStrings_Transform(t *testing.T) {
 }
 
 var firstAndLastTests = []struct {
-	ss             pie.Strings
+	ss             Strings
 	first, firstOr string
 	last, lastOr   string
 }{
@@ -99,21 +98,21 @@ var firstAndLastTests = []struct {
 		"default2",
 	},
 	{
-		pie.Strings{"foo"},
+		Strings{"foo"},
 		"foo",
 		"foo",
 		"foo",
 		"foo",
 	},
 	{
-		pie.Strings{"a", "b"},
+		Strings{"a", "b"},
 		"a",
 		"a",
 		"b",
 		"b",
 	},
 	{
-		pie.Strings{"a", "b", "c"},
+		Strings{"a", "b", "c"},
 		"a",
 		"a",
 		"c",
@@ -158,7 +157,7 @@ func TestStrings_Last(t *testing.T) {
 }
 
 var stringsStatsTests = []struct {
-	ss       pie.Strings
+	ss       Strings
 	min, max string
 	len      int
 }{
@@ -192,7 +191,7 @@ func TestStrings_Min(t *testing.T) {
 	for _, test := range stringsStatsTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
-			assert.Equal(t, test.min, pie.Strings(test.ss).Min())
+			assert.Equal(t, test.min, Strings(test.ss).Min())
 		})
 	}
 }
@@ -201,7 +200,7 @@ func TestStrings_Max(t *testing.T) {
 	for _, test := range stringsStatsTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
-			assert.Equal(t, test.max, pie.Strings(test.ss).Max())
+			assert.Equal(t, test.max, Strings(test.ss).Max())
 		})
 	}
 }
@@ -210,13 +209,13 @@ func TestStrings_Len(t *testing.T) {
 	for _, test := range stringsStatsTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
-			assert.Equal(t, test.len, pie.Strings(test.ss).Len())
+			assert.Equal(t, test.len, Strings(test.ss).Len())
 		})
 	}
 }
 
 var stringsJSONTests = []struct {
-	ss         pie.Strings
+	ss         Strings
 	jsonString string
 }{
 	{
@@ -224,15 +223,15 @@ var stringsJSONTests = []struct {
 		`[]`, // Instead of null.
 	},
 	{
-		pie.Strings{},
+		Strings{},
 		`[]`,
 	},
 	{
-		pie.Strings{"foo"},
+		Strings{"foo"},
 		`["foo"]`,
 	},
 	{
-		pie.Strings{"bar", "Baz", "qux", "foo"},
+		Strings{"bar", "Baz", "qux", "foo"},
 		`["bar","Baz","qux","foo"]`,
 	},
 }
@@ -247,9 +246,9 @@ func TestStrings_JSONString(t *testing.T) {
 }
 
 var stringsSortTests = []struct {
-	ss        pie.Strings
-	sorted    pie.Strings
-	reversed  pie.Strings
+	ss        Strings
+	sorted    Strings
+	reversed  Strings
 	areSorted bool
 }{
 	{
@@ -259,33 +258,33 @@ var stringsSortTests = []struct {
 		true,
 	},
 	{
-		pie.Strings{},
-		pie.Strings{},
-		pie.Strings{},
+		Strings{},
+		Strings{},
+		Strings{},
 		true,
 	},
 	{
-		pie.Strings{"foo"},
-		pie.Strings{"foo"},
-		pie.Strings{"foo"},
+		Strings{"foo"},
+		Strings{"foo"},
+		Strings{"foo"},
 		true,
 	},
 	{
-		pie.Strings{"bar", "Baz", "foo"},
-		pie.Strings{"Baz", "bar", "foo"},
-		pie.Strings{"foo", "Baz", "bar"},
+		Strings{"bar", "Baz", "foo"},
+		Strings{"Baz", "bar", "foo"},
+		Strings{"foo", "Baz", "bar"},
 		false,
 	},
 	{
-		pie.Strings{"bar", "Baz", "qux", "foo"},
-		pie.Strings{"Baz", "bar", "foo", "qux"},
-		pie.Strings{"foo", "qux", "Baz", "bar"},
+		Strings{"bar", "Baz", "qux", "foo"},
+		Strings{"Baz", "bar", "foo", "qux"},
+		Strings{"foo", "qux", "Baz", "bar"},
 		false,
 	},
 	{
-		pie.Strings{"Baz", "bar"},
-		pie.Strings{"Baz", "bar"},
-		pie.Strings{"bar", "Baz"},
+		Strings{"Baz", "bar"},
+		Strings{"Baz", "bar"},
+		Strings{"bar", "Baz"},
 		true,
 	},
 }
