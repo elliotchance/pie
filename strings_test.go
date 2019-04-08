@@ -245,3 +245,74 @@ func TestStrings_JSONString(t *testing.T) {
 		})
 	}
 }
+
+var stringsSortTests = []struct {
+	ss        pie.Strings
+	sorted    pie.Strings
+	reversed  pie.Strings
+	areSorted bool
+}{
+	{
+		nil,
+		nil,
+		nil,
+		true,
+	},
+	{
+		pie.Strings{},
+		pie.Strings{},
+		pie.Strings{},
+		true,
+	},
+	{
+		pie.Strings{"foo"},
+		pie.Strings{"foo"},
+		pie.Strings{"foo"},
+		true,
+	},
+	{
+		pie.Strings{"bar", "Baz", "foo"},
+		pie.Strings{"Baz", "bar", "foo"},
+		pie.Strings{"foo", "Baz", "bar"},
+		false,
+	},
+	{
+		pie.Strings{"bar", "Baz", "qux", "foo"},
+		pie.Strings{"Baz", "bar", "foo", "qux"},
+		pie.Strings{"foo", "qux", "Baz", "bar"},
+		false,
+	},
+	{
+		pie.Strings{"Baz", "bar"},
+		pie.Strings{"Baz", "bar"},
+		pie.Strings{"bar", "Baz"},
+		true,
+	},
+}
+
+func TestStrings_Sort(t *testing.T) {
+	for _, test := range stringsSortTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.sorted, test.ss.Sort())
+		})
+	}
+}
+
+func TestStrings_Reverse(t *testing.T) {
+	for _, test := range stringsSortTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.reversed, test.ss.Reverse())
+		})
+	}
+}
+
+func TestStrings_AreSorted(t *testing.T) {
+	for _, test := range stringsSortTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.areSorted, test.ss.AreSorted())
+		})
+	}
+}
