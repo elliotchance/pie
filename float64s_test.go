@@ -270,3 +270,74 @@ func TestFloat64s_JSONString(t *testing.T) {
 		})
 	}
 }
+
+var float64sSortTests = []struct {
+	ss       pie.Float64s
+	sorted   pie.Float64s
+	reversed pie.Float64s
+	areSorted bool
+}{
+	{
+		nil,
+		nil,
+		nil,
+		true,
+	},
+	{
+		pie.Float64s{},
+		pie.Float64s{},
+		pie.Float64s{},
+		true,
+	},
+	{
+		pie.Float64s{789},
+		pie.Float64s{789},
+		pie.Float64s{789},
+		true,
+	},
+	{
+		pie.Float64s{12.789, -13.2, 789},
+		pie.Float64s{-13.2, 12.789, 789},
+		pie.Float64s{789, -13.2, 12.789},
+		false,
+	},
+	{
+		pie.Float64s{12.789, -13.2, 1.234e6, 789},
+		pie.Float64s{-13.2, 12.789, 789, 1.234e6},
+		pie.Float64s{789, 1.234e6, -13.2, 12.789},
+		false,
+	},
+	{
+		pie.Float64s{-13.2, 12.789},
+		pie.Float64s{-13.2, 12.789},
+		pie.Float64s{12.789, -13.2},
+		true,
+	},
+}
+
+func TestFloat64s_Sort(t *testing.T) {
+	for _, test := range float64sSortTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, test.sorted, test.ss.Sort())
+		})
+	}
+}
+
+func TestFloat64s_Reverse(t *testing.T) {
+	for _, test := range float64sSortTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, test.reversed, test.ss.Reverse())
+		})
+	}
+}
+
+func TestFloat64s_AreSorted(t *testing.T) {
+	for _, test := range float64sSortTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, test.areSorted, test.ss.AreSorted())
+		})
+	}
+}

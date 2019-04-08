@@ -1,6 +1,9 @@
 package pie
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"sort"
+)
 
 // Ints is an alias for an int slice.
 //
@@ -166,4 +169,48 @@ func (ss Ints) JSONString() string {
 	data, _ := json.Marshal(ss)
 
 	return string(data)
+}
+
+// Sort works similar to sort.Ints(). However, unlike sort.Ints the slice
+// returned will be reallocated as to not modify the input slice.
+//
+// See Reverse() and AreSorted().
+func (ss Ints) Sort() Ints {
+	// Avoid the allocation. If there is one element or less it is already
+	// sorted.
+	if len(ss) < 2 {
+		return ss
+	}
+
+	sorted := make([]int, len(ss))
+	copy(sorted, ss)
+	sort.Ints(sorted)
+
+	return sorted
+}
+
+// Reverse returns a new copy of the slice with the elements ordered in reverse.
+// This is useful when combined with Sort to get a descending sort order:
+//
+//   ss.Sort().Reverse()
+//
+func (ss Ints) Reverse() Ints {
+	// Avoid the allocation. If there is one element or less it is already
+	// reversed.
+	if len(ss) < 2 {
+		return ss
+	}
+
+	sorted := make([]int, len(ss))
+	for i := 0; i < len(ss); i++ {
+		sorted[i] = ss[len(ss)-i-1]
+	}
+
+	return sorted
+}
+
+// AreSorted will return true if the slice is already sorted. It is a wrapper
+// for sort.IntsAreSorted.
+func (ss Ints) AreSorted() bool {
+	return sort.IntsAreSorted(ss)
 }
