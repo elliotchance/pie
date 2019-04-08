@@ -15,8 +15,8 @@ import "encoding/json"
 //
 type Float64s []float64
 
-// Float64sContains returns true if the float64 exists in the slice.
-func Float64sContains(ss []float64, lookingFor float64) bool {
+// Contains returns true if the float64 exists in the slice.
+func (ss Float64s) Contains(lookingFor float64) bool {
 	for _, s := range ss {
 		if s == lookingFor {
 			return true
@@ -26,16 +26,11 @@ func Float64sContains(ss []float64, lookingFor float64) bool {
 	return false
 }
 
-// Contains is the chained version of Float64sContains.
-func (ss Float64s) Contains(lookingFor float64) bool {
-	return Float64sContains(ss, lookingFor)
-}
-
-// Float64sOnly will return a new slice containing only the elements that return
+// Only will return a new slice containing only the elements that return
 // true from the condition. The returned slice may contain zero elements (nil).
 //
 // Float64sWithout works in the opposite way as Float64sOnly.
-func Float64sOnly(ss []float64, condition Float64ConditionFunc) (ss2 []float64) {
+func (ss Float64s) Only(condition Float64ConditionFunc) (ss2 Float64s) {
 	for _, s := range ss {
 		if condition(s) {
 			ss2 = append(ss2, s)
@@ -45,15 +40,10 @@ func Float64sOnly(ss []float64, condition Float64ConditionFunc) (ss2 []float64) 
 	return
 }
 
-// Only is the chained version of Float64sOnly.
-func (ss Float64s) Only(condition Float64ConditionFunc) (ss2 Float64s) {
-	return Float64sOnly(ss, condition)
-}
-
-// Float64sWithout works the same as Float64sOnly, with a negated condition. That is, it
+// Without works the same as Float64sOnly, with a negated condition. That is, it
 // will return a new slice only containing the elements that returned false from
 // the condition. The returned slice may contain zero elements (nil).
-func Float64sWithout(ss []float64, condition Float64ConditionFunc) (ss2 []float64) {
+func (ss Float64s) Without(condition Float64ConditionFunc) (ss2 Float64s) {
 	for _, s := range ss {
 		if !condition(s) {
 			ss2 = append(ss2, s)
@@ -63,15 +53,9 @@ func Float64sWithout(ss []float64, condition Float64ConditionFunc) (ss2 []float6
 	return
 }
 
-// Without is the chained version of Float64sWithout.
-func (ss Float64s) Without(condition Float64ConditionFunc) (ss2 Float64s) {
-	return Float64sWithout(ss, condition)
-}
-
-// Float64sTransform will return a new slice where each element has been
-// transformed. The number of element returned will always be the same as the
-// input.
-func Float64sTransform(ss []float64, fn Float64TransformFunc) (ss2 []float64) {
+// Transform will return a new slice where each element has been transformed.
+// The number of element returned will always be the same as the input.
+func (ss Float64s) Transform(fn Float64TransformFunc) (ss2 Float64s) {
 	if ss == nil {
 		return nil
 	}
@@ -84,14 +68,9 @@ func Float64sTransform(ss []float64, fn Float64TransformFunc) (ss2 []float64) {
 	return
 }
 
-// Transform is the chained version of Float64sTransform.
-func (ss Float64s) Transform(fn Float64TransformFunc) (ss2 Float64s) {
-	return Float64sTransform(ss, fn)
-}
-
-// Float64sFirstOr returns the first element or a default value if there are no
+// FirstOr returns the first element or a default value if there are no
 // elements.
-func Float64sFirstOr(ss []float64, defaultValue float64) float64 {
+func (ss Float64s) FirstOr(defaultValue float64) float64 {
 	if len(ss) == 0 {
 		return defaultValue
 	}
@@ -99,14 +78,8 @@ func Float64sFirstOr(ss []float64, defaultValue float64) float64 {
 	return ss[0]
 }
 
-// FirstOr is the chained version of Float64sFirstOr.
-func (ss Float64s) FirstOr(defaultValue float64) float64 {
-	return Float64sFirstOr(ss, defaultValue)
-}
-
-// Float64sLastOr returns the last element or a default value if there are no
-// elements.
-func Float64sLastOr(ss []float64, defaultValue float64) float64 {
+// LastOr returns the last element or a default value if there are no elements.
+func (ss Float64s) LastOr(defaultValue float64) float64 {
 	if len(ss) == 0 {
 		return defaultValue
 	}
@@ -114,33 +87,18 @@ func Float64sLastOr(ss []float64, defaultValue float64) float64 {
 	return ss[len(ss)-1]
 }
 
-// LastOr is the chained version of Float64sLastOr.
-func (ss Float64s) LastOr(defaultValue float64) float64 {
-	return Float64sLastOr(ss, defaultValue)
-}
-
-// Float64sFirst returns the first element, or zero. Also see Float64sFirstOr.
-func Float64sFirst(ss []float64) float64 {
-	return Float64sFirstOr(ss, 0)
-}
-
-// First is the chained version of Float64sFirst.
+// First returns the first element, or zero. Also see FirstOr().
 func (ss Float64s) First() float64 {
-	return Float64sFirst(ss)
+	return ss.FirstOr(0)
 }
 
-// Float64sLast returns the last element, or zero. Also see Float64sLastOr.
-func Float64sLast(ss []float64) float64 {
-	return Float64sLastOr(ss, 0)
-}
-
-// Last is the chained version of Float64sLast.
+// Last returns the last element, or zero. Also see LastOr().
 func (ss Float64s) Last() float64 {
-	return Float64sLast(ss)
+	return ss.LastOr(0)
 }
 
-// Float64sSum is the sum of all of the elements.
-func Float64sSum(ss []float64) (sum float64) {
+// Sum is the sum of all of the elements.
+func (ss Float64s) Sum() (sum float64) {
 	for _, s := range ss {
 		sum += s
 	}
@@ -148,33 +106,23 @@ func Float64sSum(ss []float64) (sum float64) {
 	return
 }
 
-// Sum is the chained version of Float64sSum.
-func (ss Float64s) Sum() float64 {
-	return Float64sSum(ss)
-}
-
 // Len returns the number of elements.
 func (ss Float64s) Len() int {
 	return len(ss)
 }
 
-// Float64sAverage is the average of all of the elements, or zero if there are no
+// Average is the average of all of the elements, or zero if there are no
 // elements.
-func Float64sAverage(ss []float64) float64 {
+func (ss Float64s) Average() float64 {
 	if l := float64(len(ss)); l > 0 {
-		return Float64sSum(ss) / l
+		return ss.Sum() / l
 	}
 
 	return 0
 }
 
-// Average is the chained version of Float64sAverage.
-func (ss Float64s) Average() float64 {
-	return Float64sAverage(ss)
-}
-
-// Float64sMin is the minimum value, or zero.
-func Float64sMin(ss []float64) (min float64) {
+// Min is the minimum value, or zero.
+func (ss Float64s) Min() (min float64) {
 	if len(ss) == 0 {
 		return
 	}
@@ -189,13 +137,8 @@ func Float64sMin(ss []float64) (min float64) {
 	return
 }
 
-// Min is the chained version of Float64sMin.
-func (ss Float64s) Min() float64 {
-	return Float64sMin(ss)
-}
-
-// Float64sMax is the maximum value, or zero.
-func Float64sMax(ss []float64) (max float64) {
+// Max is the maximum value, or zero.
+func (ss Float64s) Max() (max float64) {
 	if len(ss) == 0 {
 		return
 	}
@@ -208,11 +151,6 @@ func Float64sMax(ss []float64) (max float64) {
 	}
 
 	return
-}
-
-// Max is the chained version of Float64sMax.
-func (ss Float64s) Max() float64 {
-	return Float64sMax(ss)
 }
 
 // JSONString returns the JSON encoded array as a string.

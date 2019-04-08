@@ -29,14 +29,6 @@ func TestInts_Contains(t *testing.T) {
 	}
 }
 
-func TestIntsContains(t *testing.T) {
-	for _, test := range intsContainsTests {
-		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expected, pie.IntsContains(test.ss, test.contains))
-		})
-	}
-}
-
 var intsOnlyAndWithoutTests = []struct {
 	ss                pie.Ints
 	condition         func(int) bool
@@ -72,14 +64,6 @@ func TestInts_Only(t *testing.T) {
 	}
 }
 
-func TestIntsOnly(t *testing.T) {
-	for _, test := range intsOnlyAndWithoutTests {
-		t.Run("", func(t *testing.T) {
-			assert.Equal(t, []int(test.expectedOnly), pie.IntsOnly(test.ss, test.condition))
-		})
-	}
-}
-
 func TestInts_Without(t *testing.T) {
 	for _, test := range intsOnlyAndWithoutTests {
 		t.Run("", func(t *testing.T) {
@@ -88,26 +72,10 @@ func TestInts_Without(t *testing.T) {
 	}
 }
 
-func TestIntsWithout(t *testing.T) {
-	for _, test := range intsOnlyAndWithoutTests {
-		t.Run("", func(t *testing.T) {
-			assert.Equal(t, []int(test.expectedWithout), pie.IntsWithout(test.ss, test.condition))
-		})
-	}
-}
-
 func TestInts_Transform(t *testing.T) {
 	for _, test := range intsOnlyAndWithoutTests {
 		t.Run("", func(t *testing.T) {
 			assert.Equal(t, test.expectedTransform, test.ss.Transform(pie.AddInt(5)))
-		})
-	}
-}
-
-func TestIntsTransform(t *testing.T) {
-	for _, test := range intsOnlyAndWithoutTests {
-		t.Run("", func(t *testing.T) {
-			assert.Equal(t, []int(test.expectedTransform), pie.IntsTransform(test.ss, pie.AddInt(5)))
 		})
 	}
 }
@@ -155,26 +123,10 @@ func TestInts_FirstOr(t *testing.T) {
 	}
 }
 
-func TestIntsFirstOr(t *testing.T) {
-	for _, test := range intsFirstAndLastTests {
-		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.firstOr, pie.IntsFirstOr(test.ss, 102))
-		})
-	}
-}
-
 func TestInts_LastOr(t *testing.T) {
 	for _, test := range intsFirstAndLastTests {
 		t.Run("", func(t *testing.T) {
 			assert.Equal(t, test.lastOr, test.ss.LastOr(202))
-		})
-	}
-}
-
-func TestIntsLastOr(t *testing.T) {
-	for _, test := range intsFirstAndLastTests {
-		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.lastOr, pie.IntsLastOr(test.ss, 202))
 		})
 	}
 }
@@ -187,26 +139,10 @@ func TestInts_First(t *testing.T) {
 	}
 }
 
-func TestIntsFirst(t *testing.T) {
-	for _, test := range intsFirstAndLastTests {
-		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.first, pie.IntsFirst(test.ss))
-		})
-	}
-}
-
 func TestInts_Last(t *testing.T) {
 	for _, test := range intsFirstAndLastTests {
 		t.Run("", func(t *testing.T) {
 			assert.Equal(t, test.last, test.ss.Last())
-		})
-	}
-}
-
-func TestIntsLast(t *testing.T) {
-	for _, test := range intsFirstAndLastTests {
-		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.last, pie.IntsLast(test.ss))
 		})
 	}
 }
@@ -250,14 +186,6 @@ var intsStatsTests = []struct {
 	},
 }
 
-func TestIntsMin(t *testing.T) {
-	for _, test := range intsStatsTests {
-		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.min, pie.IntsMin(test.ss))
-		})
-	}
-}
-
 func TestInts_Min(t *testing.T) {
 	for _, test := range intsStatsTests {
 		t.Run("", func(t *testing.T) {
@@ -266,26 +194,10 @@ func TestInts_Min(t *testing.T) {
 	}
 }
 
-func TestIntsMax(t *testing.T) {
-	for _, test := range intsStatsTests {
-		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.max, pie.IntsMax(test.ss))
-		})
-	}
-}
-
 func TestInts_Max(t *testing.T) {
 	for _, test := range intsStatsTests {
 		t.Run("", func(t *testing.T) {
 			assert.Equal(t, test.max, pie.Ints(test.ss).Max())
-		})
-	}
-}
-
-func TestIntsSum(t *testing.T) {
-	for _, test := range intsStatsTests {
-		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.sum, pie.IntsSum(test.ss))
 		})
 	}
 }
@@ -302,14 +214,6 @@ func TestInts_Len(t *testing.T) {
 	for _, test := range intsStatsTests {
 		t.Run("", func(t *testing.T) {
 			assert.Equal(t, test.len, pie.Ints(test.ss).Len())
-		})
-	}
-}
-
-func TestIntsAverage(t *testing.T) {
-	for _, test := range intsStatsTests {
-		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.average, pie.IntsAverage(test.ss))
 		})
 	}
 }
