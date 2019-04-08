@@ -321,3 +321,34 @@ func TestInts_Average(t *testing.T) {
 		})
 	}
 }
+
+var intsJSONTests = []struct {
+	ss         pie.Ints
+	jsonString string
+}{
+	{
+		nil,
+		`[]`, // Instead of null.
+	},
+	{
+		pie.Ints{},
+		`[]`,
+	},
+	{
+		pie.Ints{12},
+		`[12]`,
+	},
+	{
+		pie.Ints{23, -2, 3424, 12},
+		`[23,-2,3424,12]`,
+	},
+}
+
+func TestInts_JSONString(t *testing.T) {
+	for _, test := range intsJSONTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.jsonString, test.ss.JSONString())
+		})
+	}
+}
