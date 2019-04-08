@@ -1,20 +1,41 @@
 # 🍕 `github.com/elliotchance/pie` [![GoDoc](https://godoc.org/github.com/elliotchance/pie?status.svg)](https://godoc.org/github.com/elliotchance/pie)
 
 **Enjoy a slice!** `pie` is a utility library for dealing with slices that
-focuses on type safety and performance.
+focuses on type safety, performance and immutability.
 
-It can be used with the Go-style package functions:
+- [Quick Start](#quick-start)
+- [Functions](#functions)
+  * [Slices](#slices)
+  * [Conditional](#conditional)
+  * [Transforms](#transforms)
+- [FAQ](#faq)
+  * [How do I use it?](#how-do-i-use-it-)
+  * [Why do we need another library for this?](#why-do-we-need-another-library-for-this-)
+  * [What are the goals of `pie`?](#what-are-the-goals-of--pie--)
+  * [Can I contribute?](#can-i-contribute-)
+  * [Why is the emoji a slice of pizza instead of a pie?](#why-is-the-emoji-a-slice-of-pizza-instead-of-a-pie-)
+  * [Why does it not have package level functions?](#why-does-it-not-have-package-level-functions-)
+
+# Quick Start
+
+Pie has three basic slice types:
+
+- `Strings` is an alias for `[]string`.
+- `Ints` is an alias for `[]int`.
+- `Float64s` is an alias for `[]float64`.
+
+Since these are aliases they can be used interchangeably:
 
 ```go
 names := []string{"Bob", "Sally", "John", "Jane"}
-shortNames := pie.StringsOnly(names, func(s string) bool {
+var shortNames []string = pie.Strings(names).Only(func(s string) bool {
 	return len(s) <= 3
 })
 
-// []string{"Bob"}
+// shortNames = []string{"Bob"}
 ```
 
-Or, they can be chained for more complex operations:
+Or, more complex operations can be chained:
 
 ```go
 pie.Strings{"Bob", "Sally", "John", "Jane"}.
@@ -31,20 +52,20 @@ pie.Strings{"Bob", "Sally", "John", "Jane"}.
 
 | Function     | Description | Strings | Ints  | Float64s |       |
 | ------------ | ----------- | :-----: | :---: | :------: | :---: |
-| `Average`    | The average (mean) value, or a zeroed value. | | [Yes](https://godoc.org/github.com/elliotchance/pie#IntsAverage) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64sAverage)| O(n) |
-| `Contains`   | Check if the value exists in the slice. | [Yes](https://godoc.org/github.com/elliotchance/pie#StringsContains) | [Yes](https://godoc.org/github.com/elliotchance/pie#IntsContains) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64sContains)| O(n) |
-| `First`      | The first element, or a zeroed value. | [Yes](https://godoc.org/github.com/elliotchance/pie#StringsFirst) | [Yes](https://godoc.org/github.com/elliotchance/pie#IntsFirst) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64sFirst)| O(1) |
-| `FirstOr`    | The first element, or a default value. | [Yes](https://godoc.org/github.com/elliotchance/pie#StringsFirstOr) | [Yes](https://godoc.org/github.com/elliotchance/pie#IntsFirstOr) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64sFirstOr)| O(1) |
-| `JSONString` | The JSON encoded string. | [Yes](https://godoc.org/github.com/elliotchance/pie#StringsJSONString) | [Yes](https://godoc.org/github.com/elliotchance/pie#IntsJSONString) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64sJSONString)| O(1) |
-| `Last`       | The last element, or a zeroed value. | [Yes](https://godoc.org/github.com/elliotchance/pie#StringsLast) | [Yes](https://godoc.org/github.com/elliotchance/pie#IntsLast) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64sLast)| O(1) |
-| `LastOr`     | The last element, or a default value. | [Yes](https://godoc.org/github.com/elliotchance/pie#StringsLastOr) | [Yes](https://godoc.org/github.com/elliotchance/pie#IntsLastOr) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64sLastOr)| O(1) |
+| `Average`    | The average (mean) value, or a zeroed value. | | [Yes](https://godoc.org/github.com/elliotchance/pie#Ints.Average) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64s.Average)| O(n) |
+| `Contains`   | Check if the value exists in the slice. | [Yes](https://godoc.org/github.com/elliotchance/pie#Strings.Contains) | [Yes](https://godoc.org/github.com/elliotchance/pie#Ints.Contains) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64s.Contains)| O(n) |
+| `First`      | The first element, or a zeroed value. | [Yes](https://godoc.org/github.com/elliotchance/pie#Strings.First) | [Yes](https://godoc.org/github.com/elliotchance/pie#Ints.First) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64s.First)| O(1) |
+| `FirstOr`    | The first element, or a default value. | [Yes](https://godoc.org/github.com/elliotchance/pie#Strings.FirstOr) | [Yes](https://godoc.org/github.com/elliotchance/pie#Ints.FirstOr) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64s.FirstOr)| O(1) |
+| `JSONString` | The JSON encoded string. | [Yes](https://godoc.org/github.com/elliotchance/pie#Strings.JSONString) | [Yes](https://godoc.org/github.com/elliotchance/pie#Ints.JSONString) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64s.JSONString)| O(n) |
+| `Last`       | The last element, or a zeroed value. | [Yes](https://godoc.org/github.com/elliotchance/pie#Strings.Last) | [Yes](https://godoc.org/github.com/elliotchance/pie#Ints.Last) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64s.Last)| O(1) |
+| `LastOr`     | The last element, or a default value. | [Yes](https://godoc.org/github.com/elliotchance/pie#Strings.LastOr) | [Yes](https://godoc.org/github.com/elliotchance/pie#Ints.LastOr) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64s.LastOr)| O(1) |
 | `Len`        | Number of elements. | [Yes](https://godoc.org/github.com/elliotchance/pie#Strings.Len) | [Yes](https://godoc.org/github.com/elliotchance/pie#Ints.Len) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64s.Len) | O(1) |
-| `Max`        | The maximum value, or a zeroes value. | [Yes](https://godoc.org/github.com/elliotchance/pie#StringsMax) | [Yes](https://godoc.org/github.com/elliotchance/pie#IntsMax) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64sMax)| O(n) |
-| `Min`        | The minimum value, or a zeroed value. | [Yes](https://godoc.org/github.com/elliotchance/pie#StringsMin) | [Yes](https://godoc.org/github.com/elliotchance/pie#IntsMin) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64sMin)| O(n) |
-| `Only`       | A new slice containing only the elements that returned true from the condition. | [Yes](https://godoc.org/github.com/elliotchance/pie#StringsOnly) | [Yes](https://godoc.org/github.com/elliotchance/pie#IntsOnly) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64sOnly)| O(n) |
-| `Sum`        | Sum (total) of all elements. | | [Yes](https://godoc.org/github.com/elliotchance/pie#IntsSum) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64sSum)| O(n) |
-| `Transform`  | A new slice where each element has been transformed. | [Yes](https://godoc.org/github.com/elliotchance/pie#StringsTransform) | [Yes](https://godoc.org/github.com/elliotchance/pie#IntsTransform) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64sTransform)| O(n) |
-| `Without`    | A new slice containing only the elements that returned false from the condition. | [Yes](https://godoc.org/github.com/elliotchance/pie#StringsWithout) | [Yes](https://godoc.org/github.com/elliotchance/pie#IntsWithout) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64sWithout)| O(n) |
+| `Max`        | The maximum value, or a zeroes value. | [Yes](https://godoc.org/github.com/elliotchance/pie#Strings.Max) | [Yes](https://godoc.org/github.com/elliotchance/pie#Ints.Max) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64s.Max)| O(n) |
+| `Min`        | The minimum value, or a zeroed value. | [Yes](https://godoc.org/github.com/elliotchance/pie#Strings.Min) | [Yes](https://godoc.org/github.com/elliotchance/pie#Ints.Min) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64s.Min)| O(n) |
+| `Only`       | A new slice containing only the elements that returned true from the condition. | [Yes](https://godoc.org/github.com/elliotchance/pie#Strings.Only) | [Yes](https://godoc.org/github.com/elliotchance/pie#Ints.Only) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64s.Only)| O(n) |
+| `Sum`        | Sum (total) of all elements. | | [Yes](https://godoc.org/github.com/elliotchance/pie#Ints.Sum) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64s.Sum)| O(n) |
+| `Transform`  | A new slice where each element has been transformed. | [Yes](https://godoc.org/github.com/elliotchance/pie#Strings.Transform) | [Yes](https://godoc.org/github.com/elliotchance/pie#Ints.Transform) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64s.Transform)| O(n) |
+| `Without`    | A new slice containing only the elements that returned false from the condition. | [Yes](https://godoc.org/github.com/elliotchance/pie#Strings.Without) | [Yes](https://godoc.org/github.com/elliotchance/pie#Ints.Without) | [Yes](https://godoc.org/github.com/elliotchance/pie#Float64s.Without)| O(n) |
 
 ## Conditional
 
@@ -131,3 +152,15 @@ Absolutely. Pull requests are always welcome. Your PR must include:
 ## Why is the emoji a slice of pizza instead of a pie?
 
 I wanted to pick a name for the project that was short and had an associated emoji. I liked pie, but then I found out that the pie emoji is not fully supported everywhere. I didn't want to change the name of the project to cake, but pizza pie still made sense. I'm not sure if I will change it back to a pie later.
+
+## Why does it not have package level functions?
+
+It's temping to add package level functions, like `pie.StringsOnly(ss, fn)` as a
+shortcut for `pie.Strings(ss).Only(fn)`. In fact older versions did actually
+have these. I removed them because:
+
+1. The `pie` types are aliases so there is no special operation to use
+`[]string` and `pie.Strings` interchangeably.
+
+2. It created a huge amount of duplicate code that also created lots of extra
+tests and more complicated documentation.
