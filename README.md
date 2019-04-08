@@ -1,4 +1,6 @@
-# 🍕 `github.com/elliotchance/pie` [![GoDoc](https://godoc.org/github.com/elliotchance/pie?status.svg)](https://godoc.org/github.com/elliotchance/pie)
+# 🍕 `github.com/elliotchance/pie`
+[![GoDoc](https://godoc.org/github.com/elliotchance/pie?status.svg)](https://godoc.org/github.com/elliotchance/pie)
+[![Build Status](https://travis-ci.org/elliotchance/pie.svg?branch=master)](https://travis-ci.org/elliotchance/pie)
 
 **Enjoy a slice!** `pie` is a utility library for dealing with slices that
 focuses on type safety, performance and immutability.
@@ -99,6 +101,8 @@ are useful to list.
 # FAQ
 
 ## How do I use it?
+
+`pie` supports many Go versions, all the way back to Go 1.7.
 
 You can include it like any other package through your favourite package
 manager:
