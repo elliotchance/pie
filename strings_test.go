@@ -316,3 +316,53 @@ func TestStrings_AreSorted(t *testing.T) {
 		})
 	}
 }
+
+var stringsUniqueTests = []struct {
+	ss        pie.Strings
+	unique    pie.Strings
+	areUnique bool
+}{
+	{
+		nil,
+		nil,
+		true,
+	},
+	{
+		pie.Strings{},
+		pie.Strings{},
+		true,
+	},
+	{
+		pie.Strings{"foo"},
+		pie.Strings{"foo"},
+		true,
+	},
+	{
+		pie.Strings{"bar", "Baz", "foo"},
+		pie.Strings{"Baz", "bar", "foo"},
+		true,
+	},
+	{
+		pie.Strings{"bar", "Baz", "qux", "bar"},
+		pie.Strings{"Baz", "bar", "qux"},
+		false,
+	},
+}
+
+func TestStrings_Unique(t *testing.T) {
+	for _, test := range stringsUniqueTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.unique, test.ss.Unique())
+		})
+	}
+}
+
+func TestStrings_AreUnique(t *testing.T) {
+	for _, test := range stringsUniqueTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.areUnique, test.ss.AreUnique())
+		})
+	}
+}

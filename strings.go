@@ -217,3 +217,32 @@ func (ss Strings) Reverse() Strings {
 func (ss Strings) AreSorted() bool {
 	return sort.StringsAreSorted(ss)
 }
+
+// Unique returns a slice that only contains unique elements.
+//
+// The unique algorithm requires that all items be sorted first so the returned
+// slice will not be in the same order as the input slice.
+func (ss Strings) Unique() Strings {
+	// Avoid the allocation. If there is one element or less it is already
+	// unique.
+	if len(ss) < 2 {
+		return ss
+	}
+
+	sorted := ss.Sort()
+	unique := Strings{sorted[0]}
+	i := 0
+	for _, value := range sorted {
+		if unique[i] != value {
+			unique = append(unique, value)
+			i++
+		}
+	}
+
+	return unique
+}
+
+// AreUnique returns true if all of the elements are unique.
+func (ss Strings) AreUnique() bool {
+	return ss.Unique().Len() == ss.Len()
+}
