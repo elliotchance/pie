@@ -27,6 +27,19 @@ func check(err error) {
 	}
 }
 
+func getIdentName(e ast.Expr) string {
+	switch v := e.(type) {
+	case *ast.Ident:
+		return v.Name
+
+	case *ast.StarExpr:
+		return "*" + getIdentName(v.X)
+
+	default:
+		panic(fmt.Sprintf("cannot decode %T", e))
+	}
+}
+
 func findType(pkgs map[string]*ast.Package, name string) (packageName, elementType string) {
 	for pkgName, pkg := range pkgs {
 		for _, file := range pkg.Files {
@@ -36,7 +49,7 @@ func findType(pkgs map[string]*ast.Package, name string) (packageName, elementTy
 						if typeSpec, ok := spec.(*ast.TypeSpec); ok {
 							if typeSpec.Name.String() == name {
 								if t, ok := typeSpec.Type.(*ast.ArrayType); ok {
-									return pkgName, t.Elt.(*ast.Ident).Name
+									return pkgName, getIdentName(t.Elt)
 								} else {
 									panic(fmt.Sprintf("type %s must be a slice", name))
 								}
@@ -119,7 +132,6 @@ func main() {
 		}
 
 		// Aggregate imports.
-
 		t := fmt.Sprintf("package %s\n\nimport (", packageName)
 		for _, imp := range getAllImports(templates) {
 			t += fmt.Sprintf("\n\t%s", imp)
@@ -142,7 +154,15 @@ func main() {
 			t = strings.Replace(t, "ElementZeroValue", `""`, -1)
 
 		case "struct":
-			t = strings.Replace(t, "ElementZeroValue", fmt.Sprintf("%s{}", elementType), -1)
+			zeroValue := fmt.Sprintf("%s{}", elementType)
+
+			// If its a pointer we need to replace '*' -> '&' when
+			// instantiating.
+			if elementType[0] == '*' {
+				zeroValue = "&" + zeroValue[1:]
+			}
+
+			t = strings.Replace(t, "ElementZeroValue", zeroValue, -1)
 		}
 
 		// The TrimRight is important to remove an extra new line that conflicts

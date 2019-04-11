@@ -10,6 +10,8 @@ import (
 // The functions in this file work for all slices types.
 
 // Contains returns true if the element exists in the slice.
+//
+// When using slices of pointers it will only compare by address, not value.
 func (ss SliceType) Contains(lookingFor ElementType) bool {
 	for _, s := range ss {
 		if s == lookingFor {
@@ -49,6 +51,10 @@ func (ss SliceType) Without(condition func(ElementType) bool) (ss2 SliceType) {
 
 // Transform will return a new slice where each element has been transformed.
 // The number of element returned will always be the same as the input.
+//
+// Be careful when using this with slices of pointers. If you modify the input
+// value it will affect the original slice. Be sure to return a new allocated
+// object or deep copy the existing one.
 func (ss SliceType) Transform(fn func(ElementType) ElementType) (ss2 SliceType) {
 	if ss == nil {
 		return nil
