@@ -17,7 +17,7 @@ focuses on type safety, performance and immutability.
 
 # Quick Start
 
-Install/update `pie`:
+Install/update:
 
 ```bash
 go get -u github.com/elliotchance/pie
@@ -27,9 +27,9 @@ go get -u github.com/elliotchance/pie
 
 `pie` ships with some slice types ready to go (pun intended). These include:
 
-- `type [Strings](https://godoc.org/github.com/elliotchance/pie/pie#Strings) []string`
-- `type [Float64s](https://godoc.org/github.com/elliotchance/pie/pie#Float64s) []float64`
-- `type [Ints](https://godoc.org/github.com/elliotchance/pie/pie#Ints) []int`
+- `type`[`Strings`](https://godoc.org/github.com/elliotchance/pie/pie#Strings)`[]string`
+- `type`[`Float64s`](https://godoc.org/github.com/elliotchance/pie/pie#Float64s)`[]float64`
+- `type`[`Ints`](https://godoc.org/github.com/elliotchance/pie/pie#Ints)`[]int`
 
 These can be used without needing `go generate`. For example:
 
@@ -37,12 +37,12 @@ These can be used without needing `go generate`. For example:
 package main
 
 import (
-	"github.com/elliotchance/pie/pie"
-	"fmt"
+    "github.com/elliotchance/pie/pie"
+    "fmt"
 )
 
 func main() {
-	name := pie.Strings{"Bob", "Sally", "John", "Jane"}.
+    name := pie.Strings{"Bob", "Sally", "John", "Jane"}.
         Without(func (name string) {
             return strings.HasPrefix(name, "J")
         }).
