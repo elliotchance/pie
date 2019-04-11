@@ -21,7 +21,7 @@ focuses on type safety, performance and immutability.
 Install/update:
 
 ```bash
-go get -u github.com/elliotchance/pie
+go get -u github.com/elliotchance/pie/v2
 ```
 
 ## Built-in Types
