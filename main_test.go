@@ -24,3 +24,13 @@ func assertImmutableInts(t *testing.T, ss *Ints) func() {
 		assert.True(t, before == after)
 	}
 }
+
+func assertImmutableCars(t *testing.T, ss *Cars) func() {
+	before := (*ss).JSONString()
+
+	return func() {
+		after := (*ss).JSONString()
+		assert.Equal(t, before, after)
+		assert.True(t, before == after)
+	}
+}

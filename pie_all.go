@@ -2,12 +2,9 @@ package main
 
 import (
 	"encoding/json"
-	"sort"
 )
 
-type ElementConditionFunc func(ElementType) bool
-
-type ElementTransformFunc func(ElementType) ElementType
+// The functions in this file work for all slices types.
 
 // Contains returns true if the element exists in the slice.
 func (ss SliceType) Contains(lookingFor ElementType) bool {
@@ -24,7 +21,7 @@ func (ss SliceType) Contains(lookingFor ElementType) bool {
 // true from the condition. The returned slice may contain zero elements (nil).
 //
 // SliceTypeWithout works in the opposite way as SliceTypeOnly.
-func (ss SliceType) Only(condition ElementConditionFunc) (ss2 SliceType) {
+func (ss SliceType) Only(condition func(ElementType) bool) (ss2 SliceType) {
 	for _, s := range ss {
 		if condition(s) {
 			ss2 = append(ss2, s)
@@ -37,7 +34,7 @@ func (ss SliceType) Only(condition ElementConditionFunc) (ss2 SliceType) {
 // Without works the same as Only, with a negated condition. That is, it will
 // return a new slice only containing the elements that returned false from the
 // condition. The returned slice may contain zero elements (nil).
-func (ss SliceType) Without(condition ElementConditionFunc) (ss2 SliceType) {
+func (ss SliceType) Without(condition func(ElementType) bool) (ss2 SliceType) {
 	for _, s := range ss {
 		if !condition(s) {
 			ss2 = append(ss2, s)
@@ -49,7 +46,7 @@ func (ss SliceType) Without(condition ElementConditionFunc) (ss2 SliceType) {
 
 // Transform will return a new slice where each element has been transformed.
 // The number of element returned will always be the same as the input.
-func (ss SliceType) Transform(fn ElementTransformFunc) (ss2 SliceType) {
+func (ss SliceType) Transform(fn func(ElementType) ElementType) (ss2 SliceType) {
 	if ss == nil {
 		return nil
 	}
@@ -91,50 +88,9 @@ func (ss SliceType) Last() ElementType {
 	return ss.LastOr(ElementZeroValue)
 }
 
-// Sum is the sum of all of the elements.
-func (ss SliceType) Sum() (sum ElementType) {
-	for _, s := range ss {
-		sum += s
-	}
-
-	return
-}
-
 // Len returns the number of elements.
 func (ss SliceType) Len() int {
 	return len(ss)
-}
-
-// Min is the minimum value, or zero.
-func (ss SliceType) Min() (min ElementType) {
-	if len(ss) == 0 {
-		return
-	}
-
-	min = ss[0]
-	for _, s := range ss {
-		if s < min {
-			min = s
-		}
-	}
-
-	return
-}
-
-// Max is the maximum value, or zero.
-func (ss SliceType) Max() (max ElementType) {
-	if len(ss) == 0 {
-		return
-	}
-
-	max = ss[0]
-	for _, s := range ss {
-		if s > max {
-			max = s
-		}
-	}
-
-	return
 }
 
 // JSONString returns the JSON encoded array as a string.
@@ -150,26 +106,6 @@ func (ss SliceType) JSONString() string {
 	data, _ := json.Marshal(ss)
 
 	return string(data)
-}
-
-// Sort works similar to sort.SliceType(). However, unlike sort.SliceType the
-// slice returned will be reallocated as to not modify the input slice.
-//
-// See Reverse() and AreSorted().
-func (ss SliceType) Sort() SliceType {
-	// Avoid the allocation. If there is one element or less it is already
-	// sorted.
-	if len(ss) < 2 {
-		return ss
-	}
-
-	sorted := make([]ElementType, len(ss))
-	copy(sorted, ss)
-	sort.Slice(sorted, func(i, j int) bool {
-		return sorted[i] < sorted[j]
-	})
-
-	return sorted
 }
 
 // Reverse returns a new copy of the slice with the elements ordered in reverse.
@@ -190,25 +126,4 @@ func (ss SliceType) Reverse() SliceType {
 	}
 
 	return sorted
-}
-
-// AreSorted will return true if the slice is already sorted. It is a wrapper
-// for sort.SliceTypeAreSorted.
-func (ss SliceType) AreSorted() bool {
-	return sort.SliceIsSorted(ss, func(i, j int) bool {
-		return ss[i] < ss[j]
-	})
-}
-
-// ---
-// The functions below can only be used on numeric slices.
-
-// Average is the average of all of the elements, or zero if there are no
-// elements.
-func (ss SliceType) Average() float64 {
-	if l := ElementType(len(ss)); l > 0 {
-		return float64(ss.Sum()) / float64(l)
-	}
-
-	return 0
 }
