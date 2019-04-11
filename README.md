@@ -6,6 +6,8 @@
 focuses on type safety, performance and immutability.
 
 - [Quick Start](#quick-start)
+  * [Built-in Types](#built-in-types)
+  * [Custom Types And Structs](#custom-types-and-structs)
 - [Functions](#functions)
 - [FAQ](#faq)
   * [What are the requirements?](#what-are-the-requirements-)
@@ -15,13 +17,45 @@ focuses on type safety, performance and immutability.
 
 # Quick Start
 
-1. Install/update `pie`:
+Install/update `pie`:
 
 ```bash
 go get -u github.com/elliotchance/pie
 ```
 
-2. Annotate the types in your source code:
+## Built-in Types
+
+`pie` ships with some slice types ready to go (pun intended). These include:
+
+- `type [Strings](https://godoc.org/github.com/elliotchance/pie/pie#Strings) []string`
+- `type [Float64s](https://godoc.org/github.com/elliotchance/pie/pie#Float64s) []float64`
+- `type [Ints](https://godoc.org/github.com/elliotchance/pie/pie#Ints) []int`
+
+These can be used without needing `go generate`. For example:
+
+```go
+package main
+
+import (
+	"github.com/elliotchance/pie/pie"
+	"fmt"
+)
+
+func main() {
+	name := pie.Strings{"Bob", "Sally", "John", "Jane"}.
+        Without(func (name string) {
+            return strings.HasPrefix(name, "J")
+        }).
+        Transform(strings.ToUpper).
+        Last()
+
+    fmt.Println(name) // "SALLY"
+}
+```
+
+## Custom Types And Structs
+
+Annotate the slice type in your source code:
 
 ```go
 type Car struct {
@@ -32,11 +66,9 @@ type Car struct {
 type Cars []Car
 ```
 
-3. Run `go generate`. This will create a file called `cars_pie.go`. You
-should commit this with the rest of your code. Run `go generate` any time you
-need to add more types.
-
-4. Usage:
+Run `go generate`. This will create a file called `cars_pie.go`. You should
+commit this with the rest of your code. Run `go generate` any time you need to
+add more types.
 
 Now you can use the slices:
 
@@ -73,7 +105,7 @@ cars.Without(func (car Car) {
 
 # Functions
 
-| Function     | Description                                                                      | String | Number | Struct | O          |
+| Function     | Description                                                                      | String | Number | Struct | Big-O      |
 | ------------ | -------------------------------------------------------------------------------- | :----: | :----: | :----: | :--------: |
 | `AreSorted`  | Check if the slice is already sorted.                                            | ✓      | ✓      |        | n          |
 | `Average`    | The average (mean) value, or a zeroed value.                                     |        | ✓      |        | n          |

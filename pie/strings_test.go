@@ -1,4 +1,4 @@
-package main
+package pie
 
 import (
 	"github.com/stretchr/testify/assert"
