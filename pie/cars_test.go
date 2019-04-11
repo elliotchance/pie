@@ -1,4 +1,4 @@
-package main
+package pie
 
 import (
 	"github.com/stretchr/testify/assert"
@@ -7,19 +7,19 @@ import (
 )
 
 var carsContainsTests = []struct {
-	ss       Cars
-	contains Car
+	ss       cars
+	contains car
 	expected bool
 }{
-	{nil, Car{"a", "green"}, false},
-	{nil, Car{}, false},
-	{Cars{Car{"a", "green"}, Car{"b", "blue"}, Car{"c", "gray"}}, Car{"a", "green"}, true},
-	{Cars{Car{"a", "green"}, Car{"b", "blue"}, Car{"c", "gray"}}, Car{"b", "blue"}, true},
-	{Cars{Car{"a", "green"}, Car{"b", "blue"}, Car{"c", "gray"}}, Car{"c", "gray"}, true},
-	{Cars{Car{"a", "green"}, Car{"b", "blue"}, Car{"c", "gray"}}, Car{"A", ""}, false},
-	{Cars{Car{"a", "green"}, Car{"b", "blue"}, Car{"c", "gray"}}, Car{}, false},
-	{Cars{Car{"a", "green"}, Car{"b", "blue"}, Car{"c", "gray"}}, Car{"d", ""}, false},
-	{Cars{Car{"a", "green"}, Car{}, Car{"c", "gray"}}, Car{}, true},
+	{nil, car{"a", "green"}, false},
+	{nil, car{}, false},
+	{cars{car{"a", "green"}, car{"b", "blue"}, car{"c", "gray"}}, car{"a", "green"}, true},
+	{cars{car{"a", "green"}, car{"b", "blue"}, car{"c", "gray"}}, car{"b", "blue"}, true},
+	{cars{car{"a", "green"}, car{"b", "blue"}, car{"c", "gray"}}, car{"c", "gray"}, true},
+	{cars{car{"a", "green"}, car{"b", "blue"}, car{"c", "gray"}}, car{"A", ""}, false},
+	{cars{car{"a", "green"}, car{"b", "blue"}, car{"c", "gray"}}, car{}, false},
+	{cars{car{"a", "green"}, car{"b", "blue"}, car{"c", "gray"}}, car{"d", ""}, false},
+	{cars{car{"a", "green"}, car{}, car{"c", "gray"}}, car{}, true},
 }
 
 func TestCars_Contains(t *testing.T) {
@@ -32,15 +32,15 @@ func TestCars_Contains(t *testing.T) {
 }
 
 var carsOnlyAndWithoutTests = []struct {
-	ss                Cars
-	condition         func(Car) bool
-	expectedOnly      Cars
-	expectedWithout   Cars
-	expectedTransform Cars
+	ss                cars
+	condition         func(car) bool
+	expectedOnly      cars
+	expectedWithout   cars
+	expectedTransform cars
 }{
 	{
 		nil,
-		func(s Car) bool {
+		func(s car) bool {
 			return s.Name == ""
 		},
 		nil,
@@ -48,13 +48,13 @@ var carsOnlyAndWithoutTests = []struct {
 		nil,
 	},
 	{
-		Cars{Car{"a", "green"}, Car{"b", "blue"}, Car{"c", "gray"}},
-		func(s Car) bool {
+		cars{car{"a", "green"}, car{"b", "blue"}, car{"c", "gray"}},
+		func(s car) bool {
 			return s.Name != "b"
 		},
-		Cars{Car{"a", "green"}, Car{"c", "gray"}},
-		Cars{Car{"b", "blue"}},
-		Cars{Car{"A", "green"}, Car{"B", "blue"}, Car{"C", "gray"}},
+		cars{car{"a", "green"}, car{"c", "gray"}},
+		cars{car{"b", "blue"}},
+		cars{car{"A", "green"}, car{"B", "blue"}, car{"C", "gray"}},
 	},
 }
 
@@ -80,7 +80,7 @@ func TestCars_Transform(t *testing.T) {
 	for _, test := range carsOnlyAndWithoutTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCars(t, &test.ss)()
-			assert.Equal(t, test.expectedTransform, test.ss.Transform(func(car Car) Car {
+			assert.Equal(t, test.expectedTransform, test.ss.Transform(func(car car) car {
 				car.Name = strings.ToUpper(car.Name)
 
 				return car
@@ -90,37 +90,37 @@ func TestCars_Transform(t *testing.T) {
 }
 
 var carsFirstAndLastTests = []struct {
-	ss             Cars
-	first, firstOr Car
-	last, lastOr   Car
+	ss             cars
+	first, firstOr car
+	last, lastOr   car
 }{
 	{
 		nil,
-		Car{},
-		Car{"default1", "unknown"},
-		Car{},
-		Car{"default2", "unknown"},
+		car{},
+		car{"default1", "unknown"},
+		car{},
+		car{"default2", "unknown"},
 	},
 	{
-		Cars{Car{"foo", "red"}},
-		Car{"foo", "red"},
-		Car{"foo", "red"},
-		Car{"foo", "red"},
-		Car{"foo", "red"},
+		cars{car{"foo", "red"}},
+		car{"foo", "red"},
+		car{"foo", "red"},
+		car{"foo", "red"},
+		car{"foo", "red"},
 	},
 	{
-		Cars{Car{"a", "green"}, Car{"b", "blue"}},
-		Car{"a", "green"},
-		Car{"a", "green"},
-		Car{"b", "blue"},
-		Car{"b", "blue"},
+		cars{car{"a", "green"}, car{"b", "blue"}},
+		car{"a", "green"},
+		car{"a", "green"},
+		car{"b", "blue"},
+		car{"b", "blue"},
 	},
 	{
-		Cars{Car{"a", "green"}, Car{"b", "blue"}, Car{"c", "gray"}},
-		Car{"a", "green"},
-		Car{"a", "green"},
-		Car{"c", "gray"},
-		Car{"c", "gray"},
+		cars{car{"a", "green"}, car{"b", "blue"}, car{"c", "gray"}},
+		car{"a", "green"},
+		car{"a", "green"},
+		car{"c", "gray"},
+		car{"c", "gray"},
 	},
 }
 
@@ -128,7 +128,7 @@ func TestCars_FirstOr(t *testing.T) {
 	for _, test := range carsFirstAndLastTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCars(t, &test.ss)()
-			assert.Equal(t, test.firstOr, test.ss.FirstOr(Car{"default1", "unknown"}))
+			assert.Equal(t, test.firstOr, test.ss.FirstOr(car{"default1", "unknown"}))
 		})
 	}
 }
@@ -137,7 +137,7 @@ func TestCars_LastOr(t *testing.T) {
 	for _, test := range carsFirstAndLastTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCars(t, &test.ss)()
-			assert.Equal(t, test.lastOr, test.ss.LastOr(Car{"default2", "unknown"}))
+			assert.Equal(t, test.lastOr, test.ss.LastOr(car{"default2", "unknown"}))
 		})
 	}
 }
@@ -161,32 +161,32 @@ func TestCars_Last(t *testing.T) {
 }
 
 var carsStatsTests = []struct {
-	ss       Cars
-	min, max Car
+	ss       cars
+	min, max car
 	len      int
 }{
 	{
 		nil,
-		Car{},
-		Car{},
+		car{},
+		car{},
 		0,
 	},
 	{
-		Cars{},
-		Car{},
-		Car{},
+		cars{},
+		car{},
+		car{},
 		0,
 	},
 	{
-		Cars{Car{"foo", "red"}},
-		Car{"foo", "red"},
-		Car{"foo", "red"},
+		cars{car{"foo", "red"}},
+		car{"foo", "red"},
+		car{"foo", "red"},
 		1,
 	},
 	{
-		Cars{Car{"bar", "yellow"}, Car{"Baz", "black"}, Car{"qux", "cyan"}, Car{"foo", "red"}},
-		Car{"Baz", "black"},
-		Car{"qux", "cyan"},
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"qux", "cyan"}, car{"foo", "red"}},
+		car{"Baz", "black"},
+		car{"qux", "cyan"},
 		4,
 	},
 }
@@ -195,13 +195,13 @@ func TestCars_Len(t *testing.T) {
 	for _, test := range carsStatsTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCars(t, &test.ss)()
-			assert.Equal(t, test.len, Cars(test.ss).Len())
+			assert.Equal(t, test.len, cars(test.ss).Len())
 		})
 	}
 }
 
 var carsJSONTests = []struct {
-	ss         Cars
+	ss         cars
 	jsonString string
 }{
 	{
@@ -209,15 +209,15 @@ var carsJSONTests = []struct {
 		`[]`, // Instead of null.
 	},
 	{
-		Cars{},
+		cars{},
 		`[]`,
 	},
 	{
-		Cars{Car{"foo", "red"}},
+		cars{car{"foo", "red"}},
 		`[{"Name":"foo","Color":"red"}]`,
 	},
 	{
-		Cars{Car{"bar", "yellow"}, Car{"Baz", "black"}, Car{"qux", "cyan"}, Car{"foo", "red"}},
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"qux", "cyan"}, car{"foo", "red"}},
 		`[{"Name":"bar","Color":"yellow"},{"Name":"Baz","Color":"black"},{"Name":"qux","Color":"cyan"},{"Name":"foo","Color":"red"}]`,
 	},
 }
@@ -232,9 +232,9 @@ func TestCars_JSONString(t *testing.T) {
 }
 
 var carsSortTests = []struct {
-	ss        Cars
-	sorted    Cars
-	reversed  Cars
+	ss        cars
+	sorted    cars
+	reversed  cars
 	areSorted bool
 }{
 	{
@@ -244,33 +244,33 @@ var carsSortTests = []struct {
 		true,
 	},
 	{
-		Cars{},
-		Cars{},
-		Cars{},
+		cars{},
+		cars{},
+		cars{},
 		true,
 	},
 	{
-		Cars{Car{"foo", "red"}},
-		Cars{Car{"foo", "red"}},
-		Cars{Car{"foo", "red"}},
+		cars{car{"foo", "red"}},
+		cars{car{"foo", "red"}},
+		cars{car{"foo", "red"}},
 		true,
 	},
 	{
-		Cars{Car{"bar", "yellow"}, Car{"Baz", "black"}, Car{"foo", "red"}},
-		Cars{Car{"Baz", "black"}, Car{"bar", "yellow"}, Car{"foo", "red"}},
-		Cars{Car{"foo", "red"}, Car{"Baz", "black"}, Car{"bar", "yellow"}},
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"foo", "red"}},
+		cars{car{"Baz", "black"}, car{"bar", "yellow"}, car{"foo", "red"}},
+		cars{car{"foo", "red"}, car{"Baz", "black"}, car{"bar", "yellow"}},
 		false,
 	},
 	{
-		Cars{Car{"bar", "yellow"}, Car{"Baz", "black"}, Car{"qux", "cyan"}, Car{"foo", "red"}},
-		Cars{Car{"Baz", "black"}, Car{"bar", "yellow"}, Car{"foo", "red"}, Car{"qux", "cyan"}},
-		Cars{Car{"foo", "red"}, Car{"qux", "cyan"}, Car{"Baz", "black"}, Car{"bar", "yellow"}},
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"qux", "cyan"}, car{"foo", "red"}},
+		cars{car{"Baz", "black"}, car{"bar", "yellow"}, car{"foo", "red"}, car{"qux", "cyan"}},
+		cars{car{"foo", "red"}, car{"qux", "cyan"}, car{"Baz", "black"}, car{"bar", "yellow"}},
 		false,
 	},
 	{
-		Cars{Car{"Baz", "black"}, Car{"bar", "yellow"}},
-		Cars{Car{"Baz", "black"}, Car{"bar", "yellow"}},
-		Cars{Car{"bar", "yellow"}, Car{"Baz", "black"}},
+		cars{car{"Baz", "black"}, car{"bar", "yellow"}},
+		cars{car{"Baz", "black"}, car{"bar", "yellow"}},
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
 		true,
 	},
 }

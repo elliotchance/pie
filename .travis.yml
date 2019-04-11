@@ -12,8 +12,8 @@ script:
   - $(exit $(go fmt ./... | grep -v /vendor/ | wc -l))
 
   # Make sure go generate is in sync.
-  - go generate
+  - go generate ./...
   - $(exit $(git status --porcelain | wc -l))
 
   # Run tests.
-  - go test -race
+  - go test -race ./...
