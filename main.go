@@ -47,15 +47,18 @@ func findType(pkgs map[string]*ast.Package, name string) (packageName, elementTy
 	panic(fmt.Sprintf("type %s does not exist", name))
 }
 
-func isNumeric(name string) bool {
+func getType(name string) string {
 	switch name {
 	case "int8", "uint8", "byte", "int16", "uint16", "int32", "rune", "uint32",
 		"int64", "uint64", "int", "uint", "uintptr", "float32", "float64",
 		"complex64", "complex128":
-		return true
+		return "number"
+
+	case "string":
+		return "string"
 	}
 
-	return false
+	return "struct"
 }
 
 func main() {
@@ -67,9 +70,18 @@ func main() {
 		packageName, elementType := findType(pkgs, sliceType)
 		t := pieTemplate
 
-		numeric := isNumeric(elementType)
-		if !numeric {
-			t = strings.Split(t, "// ---")[0]
+		kind := getType(elementType)
+		sections := strings.Split(t, "// ---")
+
+		switch kind {
+		case "number":
+			t = sections[0] + sections[1] + sections[2]
+
+		case "string":
+			t = sections[0] + sections[1]
+
+		case "struct":
+			t = sections[0]
 		}
 
 		t = strings.Replace(t, "package main", "package "+packageName, -1)
@@ -78,10 +90,16 @@ func main() {
 		t = strings.Replace(t, "ElementConditionFunc", sliceType+"ConditionFunc", -1)
 		t = strings.Replace(t, "ElementTransformFunc", sliceType+"TransformFunc", -1)
 
-		if numeric {
+		switch kind {
+		case "number":
 			t = strings.Replace(t, "ElementZeroValue", "0", -1)
-		} else {
+
+		case "string":
 			t = strings.Replace(t, "ElementZeroValue", `""`, -1)
+
+		case "struct":
+			t = strings.Replace(t, "ElementZeroValue", fmt.Sprintf("%s{}", elementType), -1)
+			t = strings.Replace(t, `"sort"`, "", -1)
 		}
 
 		// The TrimRight is important to remove an extra new line that conflicts
