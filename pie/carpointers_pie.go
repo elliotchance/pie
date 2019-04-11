@@ -1,4 +1,4 @@
-package main
+package pie
 
 import (
 	"encoding/json"
@@ -7,9 +7,7 @@ import (
 // The functions in this file work for all slices types.
 
 // Contains returns true if the element exists in the slice.
-//
-// When using slices of pointers it will only compare by address, not value.
-func (ss SliceType) Contains(lookingFor ElementType) bool {
+func (ss carPointers) Contains(lookingFor *car) bool {
 	for _, s := range ss {
 		if s == lookingFor {
 			return true
@@ -22,8 +20,8 @@ func (ss SliceType) Contains(lookingFor ElementType) bool {
 // Only will return a new slice containing only the elements that return
 // true from the condition. The returned slice may contain zero elements (nil).
 //
-// SliceTypeWithout works in the opposite way as SliceTypeOnly.
-func (ss SliceType) Only(condition func(ElementType) bool) (ss2 SliceType) {
+// carPointersWithout works in the opposite way as carPointersOnly.
+func (ss carPointers) Only(condition func(*car) bool) (ss2 carPointers) {
 	for _, s := range ss {
 		if condition(s) {
 			ss2 = append(ss2, s)
@@ -36,7 +34,7 @@ func (ss SliceType) Only(condition func(ElementType) bool) (ss2 SliceType) {
 // Without works the same as Only, with a negated condition. That is, it will
 // return a new slice only containing the elements that returned false from the
 // condition. The returned slice may contain zero elements (nil).
-func (ss SliceType) Without(condition func(ElementType) bool) (ss2 SliceType) {
+func (ss carPointers) Without(condition func(*car) bool) (ss2 carPointers) {
 	for _, s := range ss {
 		if !condition(s) {
 			ss2 = append(ss2, s)
@@ -48,16 +46,12 @@ func (ss SliceType) Without(condition func(ElementType) bool) (ss2 SliceType) {
 
 // Transform will return a new slice where each element has been transformed.
 // The number of element returned will always be the same as the input.
-//
-// Be careful when using this with slices of pointers. If you modify the input
-// value it will affect the original slice. Be sure to return a new allocated
-// object or deep copy the existing one.
-func (ss SliceType) Transform(fn func(ElementType) ElementType) (ss2 SliceType) {
+func (ss carPointers) Transform(fn func(*car) *car) (ss2 carPointers) {
 	if ss == nil {
 		return nil
 	}
 
-	ss2 = make([]ElementType, len(ss))
+	ss2 = make([]*car, len(ss))
 	for i, s := range ss {
 		ss2[i] = fn(s)
 	}
@@ -67,7 +61,7 @@ func (ss SliceType) Transform(fn func(ElementType) ElementType) (ss2 SliceType) 
 
 // FirstOr returns the first element or a default value if there are no
 // elements.
-func (ss SliceType) FirstOr(defaultValue ElementType) ElementType {
+func (ss carPointers) FirstOr(defaultValue *car) *car {
 	if len(ss) == 0 {
 		return defaultValue
 	}
@@ -76,7 +70,7 @@ func (ss SliceType) FirstOr(defaultValue ElementType) ElementType {
 }
 
 // LastOr returns the last element or a default value if there are no elements.
-func (ss SliceType) LastOr(defaultValue ElementType) ElementType {
+func (ss carPointers) LastOr(defaultValue *car) *car {
 	if len(ss) == 0 {
 		return defaultValue
 	}
@@ -85,17 +79,17 @@ func (ss SliceType) LastOr(defaultValue ElementType) ElementType {
 }
 
 // First returns the first element, or zero. Also see FirstOr().
-func (ss SliceType) First() ElementType {
-	return ss.FirstOr(ElementZeroValue)
+func (ss carPointers) First() *car {
+	return ss.FirstOr(&car{})
 }
 
 // Last returns the last element, or zero. Also see LastOr().
-func (ss SliceType) Last() ElementType {
-	return ss.LastOr(ElementZeroValue)
+func (ss carPointers) Last() *car {
+	return ss.LastOr(&car{})
 }
 
 // Len returns the number of elements.
-func (ss SliceType) Len() int {
+func (ss carPointers) Len() int {
 	return len(ss)
 }
 
@@ -103,7 +97,7 @@ func (ss SliceType) Len() int {
 //
 // One important thing to note is that it will treat a nil slice as an empty
 // slice to ensure that the JSON value return is always an array.
-func (ss SliceType) JSONString() string {
+func (ss carPointers) JSONString() string {
 	if ss == nil {
 		return "[]"
 	}
@@ -119,14 +113,14 @@ func (ss SliceType) JSONString() string {
 //
 //   ss.Sort().Reverse()
 //
-func (ss SliceType) Reverse() SliceType {
+func (ss carPointers) Reverse() carPointers {
 	// Avoid the allocation. If there is one element or less it is already
 	// reversed.
 	if len(ss) < 2 {
 		return ss
 	}
 
-	sorted := make([]ElementType, len(ss))
+	sorted := make([]*car, len(ss))
 	for i := 0; i < len(ss); i++ {
 		sorted[i] = ss[len(ss)-i-1]
 	}
