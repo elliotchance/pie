@@ -3,9 +3,12 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"github.com/elliotchance/pie/pie"
 	"go/ast"
 	"go/parser"
+	"go/printer"
 	"go/token"
 	"io/ioutil"
 	"os"
@@ -99,7 +102,9 @@ func main() {
 	pkgs, err := parser.ParseDir(fset, ".", nil, 0)
 	check(err)
 
-	for _, sliceType := range os.Args[1:] {
+	for _, arg := range os.Args[1:] {
+		sliceType, functions := getFunctionsFromArg(arg)
+
 		packageName, elementType := findType(pkgs, sliceType)
 		templates := []string{pieAllTemplate}
 
@@ -144,7 +149,45 @@ func main() {
 		// with go fmt.
 		t = strings.TrimRight(t, "\n") + "\n"
 
+		// Filter out any functions we dont want.
+		t = filterFunctions(t, functions)
+
 		err := ioutil.WriteFile(strings.ToLower(sliceType)+"_pie.go", []byte(t), 0755)
 		check(err)
 	}
+}
+
+func filterFunctions(s string, functions []string) string {
+	fset := token.NewFileSet()
+	f, err := parser.ParseFile(fset, "", s, 0)
+	if err != nil {
+		panic(err)
+	}
+
+	if len(functions) > 0 {
+		var newDecls []ast.Decl
+		for _, d := range f.Decls {
+			if fn, ok := d.(*ast.FuncDecl); ok {
+				if pie.Strings(functions).Contains(fn.Name.Name) {
+					newDecls = append(newDecls, fn)
+				}
+			}
+		}
+
+		f.Decls = newDecls
+	}
+
+	buf := bytes.NewBuffer(nil)
+	err = printer.Fprint(buf, fset, f)
+	if err != nil {
+		panic(err)
+	}
+
+	return buf.String()
+}
+
+func getFunctionsFromArg(arg string) (string, []string) {
+	parts := strings.Split(arg, ".")
+
+	return parts[0], parts[1:]
 }
