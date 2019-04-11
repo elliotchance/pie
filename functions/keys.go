@@ -1,8 +1,6 @@
 package functions
 
-// Keys returns the keys in the map. All of the items will be unique.
 //
-// Due to Go's randomization of iterating maps the order is not deterministic.
 func (m MapType) Keys() KeySliceType {
 	// Avoid allocation
 	l := len(m)

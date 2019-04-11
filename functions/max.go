@@ -1,6 +1,6 @@
 package functions
 
-// Max is the maximum value, or zero.
+//
 func (ss SliceType) Max() (max ElementType) {
 	if len(ss) == 0 {
 		return

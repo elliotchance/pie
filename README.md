@@ -12,6 +12,28 @@ focuses on type safety, performance and immutability.
   * [Custom Types](#custom-types)
   * [Limiting Functions Generated](#limiting-functions-generated)
 - [Functions](#functions)
+  * [func `All`(fn func(ElementType) bool) bool](#func--all--fn-func-elementtype--bool--bool)
+  * [func `Any`(fn func(ElementType) bool) bool](#func--any--fn-func-elementtype--bool--bool)
+  * [func Append(elements ...ElementType) SliceType](#func-append-elements-elementtype--slicetype)
+  * [func AreSorted() bool](#func-aresorted---bool)
+  * [func AreUnique() bool](#func-areunique---bool)
+  * [func Average() float64](#func-average---float64)
+  * [func Bottom(n int) SliceType](#func-bottom-n-int--slicetype)
+  * [func Contains(lookingFor ElementType) bool](#func-contains-lookingfor-elementtype--bool)
+  * [func Each(fn func(ElementType)) SliceType](#func-each-fn-func-elementtype---slicetype)
+  * [func Extend(slices ...SliceType) SliceType](#func-extend-slices-slicetype--slicetype)
+  * [func First() ElementType](#func-first---elementtype)
+  * [func FirstOr(defaultValue ElementType) ElementType](#func-firstor-defaultvalue-elementtype--elementtype)
+  * [func Join(glue string) string](#func-join-glue-string--string)
+  * [func JSONString() string](#func-jsonstring---string)
+  * [func Keys() KeySliceType](#func-keys---keyslicetype)
+  * [func Last() ElementType](#func-last---elementtype)
+  * [func LastOr(defaultValue ElementType) ElementType](#func-lastor-defaultvalue-elementtype--elementtype)
+  * [func Len() int](#func-len---int)
+  * [func Max() ElementType](#func-max---elementtype)
+  * [func Median() ElementType](#func-median---elementtype)
+  * [func Min() ElementType](#func-min---elementtype)
+  * [func Reverse() SliceType](#func-reverse---slicetype)
 - [FAQ](#faq)
   * [What are the requirements?](#what-are-the-requirements-)
   * [What are the goals of `pie`?](#what-are-the-goals-of--pie--)
@@ -122,40 +144,182 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Select`.
 
 # Functions
 
-| Function     | String | Number | Struct| Maps | Big-O    | Description |
-| ------------ | :----: | :----: | :----:| :--: | :------: | ----------- |
-| `All`        | ✓      | ✓      | ✓     |      | n        | All will return true if all callbacks return true. If the list is empty then true is always returned. |
-| `Any`        | ✓      | ✓      | ✓     |      | n        | Any will return true if any callbacks return true. If the list is empty then false is always returned. |
-| `Append`     | ✓      | ✓      | ✓     |      | n        | A new slice with the elements appended to the end. |
-| `AreSorted`  | ✓      | ✓      |       |      | n        | Check if the slice is already sorted. |
-| `AreUnique`  | ✓      | ✓      |       |      | n        | Check if the slice contains only unique elements. |
-| `Average`    |        | ✓      |       |      | n        | The average (mean) value, or a zeroed value. |
-| `Bottom`     | ✓      | ✓      | ✓     |      | n        | Gets n elements from bottom. |
-| `Contains`   | ✓      | ✓      | ✓     |      | n        | Check if the value exists in the slice. |
-| `Extend`     | ✓      | ✓      | ✓     |      | n        | A new slice with the elements from each slice appended to the end. |
-| `Each`       | ✓      | ✓      | ✓     |      | n        | Perform an action on each element. |
-| `First`      | ✓      | ✓      | ✓     |      | 1        | The first element, or a zeroed value. |
-| `FirstOr`    | ✓      | ✓      | ✓     |      | 1        | The first element, or a default value. |
-| `Join`       | ✓      |        |       |      | n        | A string from joining each of the elements. |
-| `JSONString` | ✓      | ✓      | ✓     |      | n        | The JSON encoded string. |
-| `Keys`       |        |        |       | ✓    | n        | Returns all keys in the map (in random order). |
-| `Last`       | ✓      | ✓      | ✓     |      | 1        | The last element, or a zeroed value. |
-| `LastOr`     | ✓      | ✓      | ✓     |      | 1        | The last element, or a default value. |
-| `Len`        | ✓      | ✓      | ✓     |      | 1        | Number of elements. |
-| `Max`        | ✓      | ✓      |       |      | n        | The maximum value, or a zeroes value. |
-| `Median`     |        | ✓      |       |      | n⋅log(n) | Median returns the value separating the higher half from the lower half of a data sample. |
-| `Min`        | ✓      | ✓      |       |      | n        | The minimum value, or a zeroed value. |
-| `Reverse`    | ✓      | ✓      | ✓     |      | n        | Reverse elements. |
-| `Select`     | ✓      | ✓      | ✓     |      | n        | A new slice containing only the elements that returned true from the condition. |
-| `Sort`       | ✓      | ✓      |       |      | n⋅log(n) | Return a new sorted slice. |
-| `Sum`        |        | ✓      |       |      | n        | Sum (total) of all elements. |
-| `Shuffle`    | ✓      | ✓      | ✓     |      | n        | Returns a new shuffled slice. |
-| `Top`        | ✓      | ✓      | ✓     |      | n        | Gets several elements from top(head of slice).|
-| `ToStrings`  | ✓      | ✓      | ✓     |      | n        | Transforms each element to a string. |
-| `Transform`  | ✓      | ✓      | ✓     |      | n        | A new slice where each element has been transformed. |
-| `Unique`     | ✓      | ✓      |       |      | n⋅log(n) | Return a new slice with only unique elements. |
-| `Unselect`   | ✓      | ✓      | ✓     |      | n        | A new slice containing only the elements that returned false from the condition. |
-| `Values`     |        |        |       | ✓    | n        | Returns all values in the map (in random order). |
+Here is a summary of all of the function. Specific documentation is below.
+
+| Function     | String | Number | Struct| Maps | Big-O    |
+| ------------ | :----: | :----: | :----:| :--: | :------: |
+| `All`        | ✓      | ✓      | ✓     |      | n        |
+| `Any`        | ✓      | ✓      | ✓     |      | n        |
+| `Append`     | ✓      | ✓      | ✓     |      | n        |
+| `AreSorted`  | ✓      | ✓      |       |      | n        |
+| `AreUnique`  | ✓      | ✓      |       |      | n        |
+| `Average`    |        | ✓      |       |      | n        |
+| `Bottom`     | ✓      | ✓      | ✓     |      | n        |
+| `Contains`   | ✓      | ✓      | ✓     |      | n        |
+| `Extend`     | ✓      | ✓      | ✓     |      | n        |
+| `Each`       | ✓      | ✓      | ✓     |      | n        |
+| `First`      | ✓      | ✓      | ✓     |      | 1        |
+| `FirstOr`    | ✓      | ✓      | ✓     |      | 1        |
+| `Join`       | ✓      |        |       |      | n        |
+| `JSONString` | ✓      | ✓      | ✓     |      | n        |
+| `Keys`       |        |        |       | ✓    | n        |
+| `Last`       | ✓      | ✓      | ✓     |      | 1        |
+| `LastOr`     | ✓      | ✓      | ✓     |      | 1        |
+| `Len`        | ✓      | ✓      | ✓     |      | 1        |
+| `Max`        | ✓      | ✓      |       |      | n        |
+| `Median`     |        | ✓      |       |      | n⋅log(n) |
+| `Min`        | ✓      | ✓      |       |      | n        |
+| `Reverse`    | ✓      | ✓      | ✓     |      | n        |
+| `Select`     | ✓      | ✓      | ✓     |      | n        |
+| `Sort`       | ✓      | ✓      |       |      | n⋅log(n) |
+| `Sum`        |        | ✓      |       |      | n        |
+| `Shuffle`    | ✓      | ✓      | ✓     |      | n        |
+| `Top`        | ✓      | ✓      | ✓     |      | n        |
+| `ToStrings`  | ✓      | ✓      | ✓     |      | n        |
+| `Transform`  | ✓      | ✓      | ✓     |      | n        |
+| `Unique`     | ✓      | ✓      |       |      | n⋅log(n) |
+| `Unselect`   | ✓      | ✓      | ✓     |      | n        |
+| `Values`     |        |        |       | ✓    | n        |
+
+## func `All`(fn func(ElementType) bool) bool
+
+All will return true if all callbacks return true. It follows the same logic as
+the all() function in Python.
+
+If the list is empty then true is always returned.
+
+## func `Any`(fn func(ElementType) bool) bool
+
+Any will return true if any callbacks return true. It follows the same logic as
+the any() function in Python.
+
+If the list is empty then false is always returned.
+
+## func Append(elements ...ElementType) SliceType
+
+Append will return a new slice with the elements appended to the end. It is a
+wrapper for the internal append(). It is offered as a function so that it can
+more easily chained.
+
+It is acceptable to provide zero arguments.
+
+## func AreSorted() bool
+
+AreSorted will return true if the slice is already sorted. It is a wrapper for
+`sort.SliceTypeAreSorted`.
+
+## func AreUnique() bool
+
+AreUnique will return true if the slice contains elements that are all different
+(unique) from each other.
+
+## func Average() float64
+
+Average is the average of all of the elements, or zero if there are no elements.
+
+## func Bottom(n int) SliceType
+
+Bottom will return n elements from bottom.
+
+That means that elements is taken from the end of the slice for this `[1,2,3]`
+slice with n == 2 will be returned `[3,2]`
+
+If the slice has less elements then n that'll return all elements. If n < 0
+it'll return empty slice.
+
+## func Contains(lookingFor ElementType) bool
+
+Contains returns true if the element exists in the slice.
+
+When using slices of pointers it will only compare by address, not value.
+
+## func Each(fn func(ElementType)) SliceType
+
+Each is more condensed version of `Transform` that allows an action to happen on
+each elements and pass the original slice on.
+
+```go
+cars.Each(func (car *Car) {
+	fmt.Printf("Car color is: %s\n", car.Color)
+})
+```
+
+Pie will not ensure immutability on items passed in so they can be manipulated,
+if you choose to do it this way, for example:
+
+```go
+// Set all car colors to Red.
+cars.Each(func (car *Car) {
+	car.Color = "Red"
+})
+```
+
+## func Extend(slices ...SliceType) SliceType
+
+Extend will return a new slice with the slices of elements appended to the end.
+
+It is acceptable to provide zero arguments.
+
+## func First() ElementType
+
+First returns the first element, or zero. Also see FirstOr().
+
+## func FirstOr(defaultValue ElementType) ElementType
+
+FirstOr returns the first element or a default value if there are no elements.
+
+## func Join(glue string) string
+
+Join returns a string from joining each of the elements.
+
+## func JSONString() string
+
+JSONString returns the JSON encoded array as a string.
+
+One important thing to note is that it will treat a nil slice as an empty slice
+to ensure that the JSON value return is always an array.
+
+## func Keys() KeySliceType
+
+Keys returns the keys in the map. All of the items will be unique.
+
+Due to Go's randomization of iterating maps the order is not deterministic.
+
+## func Last() ElementType
+
+Last returns the last element, or zero. Also see LastOr().
+
+## func LastOr(defaultValue ElementType) ElementType
+
+LastOr returns the last element or a default value if there are no elements.
+
+## func Len() int
+
+Len returns the number of elements.
+
+## func Max() ElementType
+
+Max is the maximum value, or zero.
+
+## func Median() ElementType
+
+Median returns the value separating the higher half from the lower half of a
+data sample.
+
+Zero is returned if there are no elements in the slice.
+
+## func Min() ElementType
+
+Min is the minimum value, or zero.
+
+## func Reverse() SliceType
+
+Reverse returns a new copy of the slice with the elements ordered in reverse.
+This is useful when combined with Sort to get a descending sort order:
+
+```go
+ss.Sort().Reverse()
+```
 
 # FAQ
 

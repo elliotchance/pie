@@ -1,9 +1,6 @@
 package functions
 
-// Median returns the value separating the higher half from the lower half of a
-// data sample.
 //
-// Zero is returned if there are no elements in the slice.
 func (ss SliceType) Median() ElementType {
 	l := len(ss)
 
