@@ -24,61 +24,74 @@ go get -u github.com/elliotchance/pie
 2. Annotate the types in your source code:
 
 ```go
-//go:generate pie Strings
-type Strings []string
+type Car struct {
+    Name, Color string
+}
+
+//go:generate pie Cars
+type Cars []Car
 ```
 
-3. Run `go generate`. This will create a file called `strings_pie.go`. You
+3. Run `go generate`. This will create a file called `cars_pie.go`. You
 should commit this with the rest of your code. Run `go generate` any time you
 need to add more types.
 
 4. Usage:
 
-Since these are aliases they can be used interchangeably:
+Now you can use the slices:
 
 ```go
-names := Strings{"Bob", "Sally", "John", "Jane"}
-shortNames = names.Only(func(s string) bool {
-	return len(s) <= 3
+cars := Cars{
+    {"Bob", "blue"},
+    {"Sally", "green"},
+    {"John", "red"},
+    {"Jane", "red"},
+}
+
+redCars := cars.Only(func(car Car) bool {
+    return car.Color == "red"
 })
 
-// shortNames = Strings{"Bob"}
+// redCars = Cars{{"John", "red"}, {"Jane", "red"}}
 ```
 
 Or, more complex operations can be chained:
 
 ```go
-Strings{"Bob", "Sally", "John", "Jane"}.
-	Without(func (s string) {
-		return strings.HasPrefix(s, "J")
-	}).
-	Transform(strings.ToUpper).
-	Last()
+cars.Without(func (car Car) {
+        return strings.HasPrefix(car.Name, "J")
+    }).
+    Transform(func (car Car) Car {
+        car.Name = strings.ToUpper(car.Name)
+        
+        return car
+    }).
+    Last()
 
-// "SALLY"
+// Car{"SALLY", "green"}
 ```
 
 # Functions
 
-| Function     | Description | O     |
-| ------------ | ----------- | :---: |
-| `AreSorted`  | Check if the slice is already sorted. | n |
-| `Average`    | The average (mean) value, or a zeroed value. | n |
-| `Contains`   | Check if the value exists in the slice. | n |
-| `First`      | The first element, or a zeroed value. | 1 |
-| `FirstOr`    | The first element, or a default value. | 1 |
-| `JSONString` | The JSON encoded string. | n |
-| `Last`       | The last element, or a zeroed value. | 1 |
-| `LastOr`     | The last element, or a default value. | 1 |
-| `Len`        | Number of elements. | 1 |
-| `Max`        | The maximum value, or a zeroes value. | n |
-| `Min`        | The minimum value, or a zeroed value. | n |
-| `Only`       | A new slice containing only the elements that returned true from the condition. | n |
-| `Reverse`    | Reverse elements. | n |
-| `Sort`       | Return a new sorted slice. | *n⋅log(n)* |
-| `Sum`        | Sum (total) of all elements. | n |
-| `Transform`  | A new slice where each element has been transformed. | n |
-| `Without`    | A new slice containing only the elements that returned false from the condition. | n |
+| Function     | Description                                                                      | String | Number | Struct | O          |
+| ------------ | -------------------------------------------------------------------------------- | :----: | :----: | :----: | :--------: |
+| `AreSorted`  | Check if the slice is already sorted.                                            | ✓      | ✓      |        | n          |
+| `Average`    | The average (mean) value, or a zeroed value.                                     |        | ✓      |        | n          |
+| `Contains`   | Check if the value exists in the slice.                                          | ✓      | ✓      | ✓      | n          |
+| `First`      | The first element, or a zeroed value.                                            | ✓      | ✓      | ✓      | 1          |
+| `FirstOr`    | The first element, or a default value.                                           | ✓      | ✓      | ✓      | 1          |
+| `JSONString` | The JSON encoded string.                                                         | ✓      | ✓      | ✓      | n          |
+| `Last`       | The last element, or a zeroed value.                                             | ✓      | ✓      | ✓      | 1          |
+| `LastOr`     | The last element, or a default value.                                            | ✓      | ✓      | ✓      | 1          |
+| `Len`        | Number of elements.                                                              | ✓      | ✓      | ✓      | 1          |
+| `Max`        | The maximum value, or a zeroes value.                                            | ✓      | ✓      |        | n          |
+| `Min`        | The minimum value, or a zeroed value.                                            | ✓      | ✓      |        | n          |
+| `Only`       | A new slice containing only the elements that returned true from the condition.  | ✓      | ✓      | ✓      | n          |
+| `Reverse`    | Reverse elements.                                                                | ✓      | ✓      | ✓      | n          |
+| `Sort`       | Return a new sorted slice.                                                       | ✓      | ✓      |        | *n⋅log(n)* |
+| `Sum`        | Sum (total) of all elements.                                                     |        | ✓      |        | n          |
+| `Transform`  | A new slice where each element has been transformed.                             | ✓      | ✓      | ✓      | n          |
+| `Without`    | A new slice containing only the elements that returned false from the condition. | ✓      | ✓      | ✓      | n          |
 
 # FAQ
 
@@ -98,7 +111,7 @@ implementations otherwise there's no point in this library existing.
 empty slices. Apart from less possible panics, it makes it easier to chain.
 
 4. **Immutable.** Functions never modify inputs, unlike some built-ins such as
-sort.Strings.
+`sort.Strings`.
 
 ## Can I contribute?
 
