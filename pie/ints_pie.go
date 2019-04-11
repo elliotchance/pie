@@ -151,6 +151,30 @@ func (ss Ints) Max() (max int) {
 	return
 }
 
+func (ss Ints) AreUnique() bool {
+	return ss.Unique().Len() == ss.Len()
+}
+
+func (ss Ints) Unique() Ints {
+
+	if len(ss) < 2 {
+		return ss
+	}
+
+	values := map[int]struct{}{}
+
+	for _, value := range ss {
+		values[value] = struct{}{}
+	}
+
+	var uniqueValues Ints
+	for value := range values {
+		uniqueValues = append(uniqueValues, value)
+	}
+
+	return uniqueValues
+}
+
 func (ss Ints) Average() float64 {
 	if l := int(len(ss)); l > 0 {
 		return float64(ss.Sum()) / float64(l)

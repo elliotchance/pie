@@ -342,3 +342,56 @@ func TestFloat64s_AreSorted(t *testing.T) {
 		})
 	}
 }
+
+var float64sUniqueTests = []struct {
+	ss        Float64s
+	unique    Float64s
+	areUnique bool
+}{
+	{
+		nil,
+		nil,
+		true,
+	},
+	{
+		Float64s{},
+		Float64s{},
+		true,
+	},
+	{
+		Float64s{789},
+		Float64s{789},
+		true,
+	},
+	{
+		Float64s{12.789, -13.2, 12.789},
+		Float64s{-13.2, 12.789},
+		false,
+	},
+	{
+		Float64s{12.789, -13.2, 1.234e6, 789},
+		Float64s{-13.2, 12.789, 789, 1.234e6},
+		true,
+	},
+}
+
+func TestFloat64s_Unique(t *testing.T) {
+	for _, test := range float64sUniqueTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+
+			// We have to sort the unique slice because it is always returned in
+			// random order.
+			assert.Equal(t, test.unique, test.ss.Unique().Sort())
+		})
+	}
+}
+
+func TestFloat64s_AreUnique(t *testing.T) {
+	for _, test := range float64sUniqueTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, test.areUnique, test.ss.AreUnique())
+		})
+	}
+}

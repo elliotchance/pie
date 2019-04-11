@@ -150,3 +150,27 @@ func (ss Strings) Max() (max string) {
 
 	return
 }
+
+func (ss Strings) AreUnique() bool {
+	return ss.Unique().Len() == ss.Len()
+}
+
+func (ss Strings) Unique() Strings {
+
+	if len(ss) < 2 {
+		return ss
+	}
+
+	values := map[string]struct{}{}
+
+	for _, value := range ss {
+		values[value] = struct{}{}
+	}
+
+	var uniqueValues Strings
+	for value := range values {
+		uniqueValues = append(uniqueValues, value)
+	}
+
+	return uniqueValues
+}
