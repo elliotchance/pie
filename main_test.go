@@ -1,12 +1,11 @@
-package pie_test
+package main
 
 import (
-	"github.com/elliotchance/pie"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func assertImmutableStrings(t *testing.T, ss *pie.Strings) func() {
+func assertImmutableStrings(t *testing.T, ss *Strings) func() {
 	before := (*ss).JSONString()
 
 	return func() {
@@ -16,17 +15,7 @@ func assertImmutableStrings(t *testing.T, ss *pie.Strings) func() {
 	}
 }
 
-func assertImmutableFloat64s(t *testing.T, ss *pie.Float64s) func() {
-	before := (*ss).JSONString()
-
-	return func() {
-		after := (*ss).JSONString()
-		assert.Equal(t, before, after)
-		assert.True(t, before == after)
-	}
-}
-
-func assertImmutableInts(t *testing.T, ss *pie.Ints) func() {
+func assertImmutableInts(t *testing.T, ss *Ints) func() {
 	before := (*ss).JSONString()
 
 	return func() {

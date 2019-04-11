@@ -1,9 +1,19 @@
 language: go
 
 go:
-  - "1.7"
   - "1.8"
   - "1.9"
   - "1.10"
   - "1.11"
   - "1.12"
+
+script:
+  # Make sure everything is formatted correctly.
+  - $(exit $(go fmt ./... | grep -v /vendor/ | wc -l))
+
+  # Make sure go generate is in sync.
+  - go generate
+  - $(exit $(git status --porcelain | wc -l))
+
+  # Run tests.
+  - go test -race
