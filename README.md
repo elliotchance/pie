@@ -118,25 +118,25 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Only`.
 
 # Functions
 
-| Function     | Description                                                                      | String | Number | Struct | Big-O      |
-| ------------ | -------------------------------------------------------------------------------- | :----: | :----: | :----: | :--------: |
-| `AreSorted`  | Check if the slice is already sorted.                                            | ✓      | ✓      |        | n          |
-| `Average`    | The average (mean) value, or a zeroed value.                                     |        | ✓      |        | n          |
-| `Contains`   | Check if the value exists in the slice.                                          | ✓      | ✓      | ✓      | n          |
-| `First`      | The first element, or a zeroed value.                                            | ✓      | ✓      | ✓      | 1          |
-| `FirstOr`    | The first element, or a default value.                                           | ✓      | ✓      | ✓      | 1          |
-| `JSONString` | The JSON encoded string.                                                         | ✓      | ✓      | ✓      | n          |
-| `Last`       | The last element, or a zeroed value.                                             | ✓      | ✓      | ✓      | 1          |
-| `LastOr`     | The last element, or a default value.                                            | ✓      | ✓      | ✓      | 1          |
-| `Len`        | Number of elements.                                                              | ✓      | ✓      | ✓      | 1          |
-| `Max`        | The maximum value, or a zeroes value.                                            | ✓      | ✓      |        | n          |
-| `Min`        | The minimum value, or a zeroed value.                                            | ✓      | ✓      |        | n          |
-| `Only`       | A new slice containing only the elements that returned true from the condition.  | ✓      | ✓      | ✓      | n          |
-| `Reverse`    | Reverse elements.                                                                | ✓      | ✓      | ✓      | n          |
-| `Sort`       | Return a new sorted slice.                                                       | ✓      | ✓      |        | *n⋅log(n)* |
-| `Sum`        | Sum (total) of all elements.                                                     |        | ✓      |        | n          |
-| `Transform`  | A new slice where each element has been transformed.                             | ✓      | ✓      | ✓      | n          |
-| `Without`    | A new slice containing only the elements that returned false from the condition. | ✓      | ✓      | ✓      | n          |
+| Function     | String | Number | Struct | Big-O      | Description                                                                      |
+| ------------ | :----: | :----: | :----: | :--------: | -------------------------------------------------------------------------------- |
+| `AreSorted`  | ✓      | ✓      |        | n          | Check if the slice is already sorted.                                            |
+| `Average`    |        | ✓      |        | n          | The average (mean) value, or a zeroed value.                                     |
+| `Contains`   | ✓      | ✓      | ✓      | n          | Check if the value exists in the slice.                                          |
+| `First`      | ✓      | ✓      | ✓      | 1          | The first element, or a zeroed value.                                            |
+| `FirstOr`    | ✓      | ✓      | ✓      | 1          | The first element, or a default value.                                           |
+| `JSONString` | ✓      | ✓      | ✓      | n          | The JSON encoded string.                                                         |
+| `Last`       | ✓      | ✓      | ✓      | 1          | The last element, or a zeroed value.                                             |
+| `LastOr`     | ✓      | ✓      | ✓      | 1          | The last element, or a default value.                                            |
+| `Len`        | ✓      | ✓      | ✓      | 1          | Number of elements.                                                              |
+| `Max`        | ✓      | ✓      |        | n          | The maximum value, or a zeroes value.                                            |
+| `Min`        | ✓      | ✓      |        | n          | The minimum value, or a zeroed value.                                            |
+| `Only`       | ✓      | ✓      | ✓      | n          | A new slice containing only the elements that returned true from the condition.  |
+| `Reverse`    | ✓      | ✓      | ✓      | n          | Reverse elements.                                                                |
+| `Sort`       | ✓      | ✓      |        | *n⋅log(n)* | Return a new sorted slice.                                                       |
+| `Sum`        |        | ✓      |        | n          | Sum (total) of all elements.                                                     |
+| `Transform`  | ✓      | ✓      | ✓      | n          | A new slice where each element has been transformed.                             |
+| `Without`    | ✓      | ✓      | ✓      | n          | A new slice containing only the elements that returned false from the condition. |
 
 # FAQ
 

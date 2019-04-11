@@ -44,3 +44,13 @@ func assertImmutableCars(t *testing.T, ss *cars) func() {
 		assert.True(t, before == after)
 	}
 }
+
+func assertImmutableCarPointers(t *testing.T, ss *carPointers) func() {
+	before := (*ss).JSONString()
+
+	return func() {
+		after := (*ss).JSONString()
+		assert.Equal(t, before, after)
+		assert.True(t, before == after)
+	}
+}
