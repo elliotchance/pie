@@ -328,3 +328,56 @@ func TestInts_AreSorted(t *testing.T) {
 		})
 	}
 }
+
+var intsUniqueTests = []struct {
+	ss        Ints
+	unique    Ints
+	areUnique bool
+}{
+	{
+		nil,
+		nil,
+		true,
+	},
+	{
+		Ints{},
+		Ints{},
+		true,
+	},
+	{
+		Ints{789},
+		Ints{789},
+		true,
+	},
+	{
+		Ints{12, -13, 12},
+		Ints{-13, 12},
+		false,
+	},
+	{
+		Ints{12, -13, 1.234e6, 789},
+		Ints{-13, 12, 789, 1.234e6},
+		true,
+	},
+}
+
+func TestInts_Unique(t *testing.T) {
+	for _, test := range intsUniqueTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+
+			// We have to sort the unique slice because it is always returned in
+			// random order.
+			assert.Equal(t, test.unique, test.ss.Unique().Sort())
+		})
+	}
+}
+
+func TestInts_AreUnique(t *testing.T) {
+	for _, test := range intsUniqueTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.areUnique, test.ss.AreUnique())
+		})
+	}
+}

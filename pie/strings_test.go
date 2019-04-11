@@ -315,3 +315,56 @@ func TestStrings_AreSorted(t *testing.T) {
 		})
 	}
 }
+
+var stringsUniqueTests = []struct {
+	ss        Strings
+	unique    Strings
+	areUnique bool
+}{
+	{
+		nil,
+		nil,
+		true,
+	},
+	{
+		Strings{},
+		Strings{},
+		true,
+	},
+	{
+		Strings{"baz"},
+		Strings{"baz"},
+		true,
+	},
+	{
+		Strings{"foo", "bar", "foo"},
+		Strings{"bar", "foo"},
+		false,
+	},
+	{
+		Strings{"foo", "bar", "qux", "baz"},
+		Strings{"bar", "baz", "foo", "qux"},
+		true,
+	},
+}
+
+func TestStrings_Unique(t *testing.T) {
+	for _, test := range stringsUniqueTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+
+			// We have to sort the unique slice because it is always returned in
+			// random order.
+			assert.Equal(t, test.unique, test.ss.Unique().Sort())
+		})
+	}
+}
+
+func TestStrings_AreUnique(t *testing.T) {
+	for _, test := range stringsUniqueTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.areUnique, test.ss.AreUnique())
+		})
+	}
+}
