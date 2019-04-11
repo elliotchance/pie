@@ -5,7 +5,7 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"github.com/elliotchance/pie/pie"
+	"github.com/elliotchance/pie/v2/pie"
 	"go/ast"
 	"go/parser"
 	"go/printer"

@@ -38,7 +38,7 @@ These can be used without needing `go generate`. For example:
 package main
 
 import (
-    "github.com/elliotchance/pie/pie"
+    "github.com/elliotchance/pie/v2/pie"
     "fmt"
 )
 
