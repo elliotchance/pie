@@ -98,3 +98,18 @@ func (ss cars) Reverse() cars {
 
 	return sorted
 }
+
+func (ss cars) ToStrings(transform func(car) string) Strings {
+	l := len(ss)
+
+	if l == 0 {
+		return nil
+	}
+
+	result := make(Strings, l)
+	for i := 0; i < l; i++ {
+		result[i] = transform(ss[i])
+	}
+
+	return result
+}

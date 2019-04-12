@@ -1,6 +1,7 @@
 package pie
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -392,6 +393,43 @@ func TestFloat64s_AreUnique(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableFloat64s(t, &test.ss)()
 			assert.Equal(t, test.areUnique, test.ss.AreUnique())
+		})
+	}
+}
+
+var float64sToStringsTests = []struct {
+	ss        Float64s
+	transform func(float64) string
+	expected  Strings
+}{
+	{
+		nil,
+		func(s float64) string {
+			return "foo"
+		},
+		nil,
+	},
+	{
+		Float64s{},
+		func(s float64) string {
+			return fmt.Sprintf("%f!", s)
+		},
+		nil,
+	},
+	{
+		Float64s{6.2, 7.2, 8.2},
+		func(s float64) string {
+			return fmt.Sprintf("%.2f!", s)
+		},
+		Strings{"6.20!", "7.20!", "8.20!"},
+	},
+}
+
+func TestFloat64s_ToStrings(t *testing.T) {
+	for _, test := range float64sToStringsTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.ToStrings(test.transform))
 		})
 	}
 }

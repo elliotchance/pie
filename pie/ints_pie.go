@@ -100,6 +100,21 @@ func (ss Ints) Reverse() Ints {
 	return sorted
 }
 
+func (ss Ints) ToStrings(transform func(int) string) Strings {
+	l := len(ss)
+
+	if l == 0 {
+		return nil
+	}
+
+	result := make(Strings, l)
+	for i := 0; i < l; i++ {
+		result[i] = transform(ss[i])
+	}
+
+	return result
+}
+
 func (ss Ints) AreSorted() bool {
 	return sort.SliceIsSorted(ss, func(i, j int) bool {
 		return ss[i] < ss[j]

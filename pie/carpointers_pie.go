@@ -98,3 +98,18 @@ func (ss carPointers) Reverse() carPointers {
 
 	return sorted
 }
+
+func (ss carPointers) ToStrings(transform func(*car) string) Strings {
+	l := len(ss)
+
+	if l == 0 {
+		return nil
+	}
+
+	result := make(Strings, l)
+	for i := 0; i < l; i++ {
+		result[i] = transform(ss[i])
+	}
+
+	return result
+}

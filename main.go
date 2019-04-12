@@ -78,7 +78,7 @@ func getType(name string) string {
 	return "struct"
 }
 
-func getImports(s string) (imports []string) {
+func getImports(packageName, s string) (imports []string) {
 	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, "", s, parser.ImportsOnly)
 	if err != nil {
@@ -86,17 +86,24 @@ func getImports(s string) (imports []string) {
 	}
 
 	for _, s := range f.Imports {
-		imports = append(imports, s.Path.Value)
+		importName := s.Path.Value
+
+		if importName == `"github.com/elliotchance/pie/pie"` &&
+			isSelfPackage(packageName) {
+			continue
+		}
+
+		imports = append(imports, importName)
 	}
 
 	return
 }
 
-func getAllImports(files []string) (imports []string) {
+func getAllImports(packageName string, files []string) (imports []string) {
 	mapImports := map[string]struct{}{}
 
 	for _, file := range files {
-		for _, imp := range getImports(file) {
+		for _, imp := range getImports(packageName, file) {
 			mapImports[imp] = struct{}{}
 		}
 	}
@@ -108,6 +115,12 @@ func getAllImports(files []string) (imports []string) {
 	sort.Strings(imports)
 
 	return
+}
+
+// We have to generate imports slightly differently when we are building code
+// that will go into its own packages vs an external package.
+func isSelfPackage(packageName string) bool {
+	return packageName == "pie"
 }
 
 func main() {
@@ -133,7 +146,7 @@ func main() {
 
 		// Aggregate imports.
 		t := fmt.Sprintf("package %s\n\nimport (", packageName)
-		for _, imp := range getAllImports(templates) {
+		for _, imp := range getAllImports(packageName, templates) {
 			t += fmt.Sprintf("\n\t%s", imp)
 		}
 		t += "\n)\n\n"
@@ -163,6 +176,10 @@ func main() {
 			}
 
 			t = strings.Replace(t, "ElementZeroValue", zeroValue, -1)
+		}
+
+		if isSelfPackage(packageName) {
+			t = strings.Replace(t, "pie.Strings", "Strings", -1)
 		}
 
 		// The TrimRight is important to remove an extra new line that conflicts
