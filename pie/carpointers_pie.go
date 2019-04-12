@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 )
 
+// Contains returns true if the element exists in the slice.
+//
+// When using slices of pointers it will only compare by address, not value.
 func (ss carPointers) Contains(lookingFor *car) bool {
 	for _, s := range ss {
 		if s == lookingFor {
@@ -14,6 +17,79 @@ func (ss carPointers) Contains(lookingFor *car) bool {
 	return false
 }
 
+// First returns the first element, or zero. Also see FirstOr().
+func (ss carPointers) First() *car {
+	return ss.FirstOr(&car{})
+}
+
+// FirstOr returns the first element or a default value if there are no
+// elements.
+func (ss carPointers) FirstOr(defaultValue *car) *car {
+	if len(ss) == 0 {
+		return defaultValue
+	}
+
+	return ss[0]
+}
+
+// JSONString returns the JSON encoded array as a string.
+//
+// One important thing to note is that it will treat a nil slice as an empty
+// slice to ensure that the JSON value return is always an array.
+func (ss carPointers) JSONString() string {
+	if ss == nil {
+		return "[]"
+	}
+
+	// An error should not be possible.
+	data, _ := json.Marshal(ss)
+
+	return string(data)
+}
+
+// Last returns the last element, or zero. Also see LastOr().
+func (ss carPointers) Last() *car {
+	return ss.LastOr(&car{})
+}
+
+// LastOr returns the last element or a default value if there are no elements.
+func (ss carPointers) LastOr(defaultValue *car) *car {
+	if len(ss) == 0 {
+		return defaultValue
+	}
+
+	return ss[len(ss)-1]
+}
+
+// Len returns the number of elements.
+func (ss carPointers) Len() int {
+	return len(ss)
+}
+
+// Reverse returns a new copy of the slice with the elements ordered in reverse.
+// This is useful when combined with Sort to get a descending sort order:
+//
+//   ss.Sort().Reverse()
+//
+func (ss carPointers) Reverse() carPointers {
+	// Avoid the allocation. If there is one element or less it is already
+	// reversed.
+	if len(ss) < 2 {
+		return ss
+	}
+
+	sorted := make([]*car, len(ss))
+	for i := 0; i < len(ss); i++ {
+		sorted[i] = ss[len(ss)-i-1]
+	}
+
+	return sorted
+}
+
+// Select will return a new slice containing only the elements that return
+// true from the condition. The returned slice may contain zero elements (nil).
+//
+// Unselect works in the opposite way as Select.
 func (ss carPointers) Select(condition func(*car) bool) (ss2 carPointers) {
 	for _, s := range ss {
 		if condition(s) {
@@ -24,16 +100,29 @@ func (ss carPointers) Select(condition func(*car) bool) (ss2 carPointers) {
 	return
 }
 
-func (ss carPointers) Unselect(condition func(*car) bool) (ss2 carPointers) {
-	for _, s := range ss {
-		if !condition(s) {
-			ss2 = append(ss2, s)
-		}
+// ToStrings transforms each element to a string.
+func (ss carPointers) ToStrings(transform func(*car) string) Strings {
+	l := len(ss)
+
+	// Avoid the allocation.
+	if l == 0 {
+		return nil
 	}
 
-	return
+	result := make(Strings, l)
+	for i := 0; i < l; i++ {
+		result[i] = transform(ss[i])
+	}
+
+	return result
 }
 
+// Transform will return a new slice where each element has been transformed.
+// The number of element returned will always be the same as the input.
+//
+// Be careful when using this with slices of pointers. If you modify the input
+// value it will affect the original slice. Be sure to return a new allocated
+// object or deep copy the existing one.
 func (ss carPointers) Transform(fn func(*car) *car) (ss2 carPointers) {
 	if ss == nil {
 		return nil
@@ -47,69 +136,15 @@ func (ss carPointers) Transform(fn func(*car) *car) (ss2 carPointers) {
 	return
 }
 
-func (ss carPointers) FirstOr(defaultValue *car) *car {
-	if len(ss) == 0 {
-		return defaultValue
+// Unselect works the same as Select, with a negated condition. That is, it will
+// return a new slice only containing the elements that returned false from the
+// condition. The returned slice may contain zero elements (nil).
+func (ss carPointers) Unselect(condition func(*car) bool) (ss2 carPointers) {
+	for _, s := range ss {
+		if !condition(s) {
+			ss2 = append(ss2, s)
+		}
 	}
 
-	return ss[0]
-}
-
-func (ss carPointers) LastOr(defaultValue *car) *car {
-	if len(ss) == 0 {
-		return defaultValue
-	}
-
-	return ss[len(ss)-1]
-}
-
-func (ss carPointers) First() *car {
-	return ss.FirstOr(&car{})
-}
-
-func (ss carPointers) Last() *car {
-	return ss.LastOr(&car{})
-}
-
-func (ss carPointers) Len() int {
-	return len(ss)
-}
-
-func (ss carPointers) JSONString() string {
-	if ss == nil {
-		return "[]"
-	}
-
-	data, _ := json.Marshal(ss)
-
-	return string(data)
-}
-
-func (ss carPointers) Reverse() carPointers {
-
-	if len(ss) < 2 {
-		return ss
-	}
-
-	sorted := make([]*car, len(ss))
-	for i := 0; i < len(ss); i++ {
-		sorted[i] = ss[len(ss)-i-1]
-	}
-
-	return sorted
-}
-
-func (ss carPointers) ToStrings(transform func(*car) string) Strings {
-	l := len(ss)
-
-	if l == 0 {
-		return nil
-	}
-
-	result := make(Strings, l)
-	for i := 0; i < l; i++ {
-		result[i] = transform(ss[i])
-	}
-
-	return result
+	return
 }

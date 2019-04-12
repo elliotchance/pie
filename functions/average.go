@@ -1,6 +1,4 @@
-package main
-
-// The functions in this file only work on numeric slices.
+package functions
 
 // Average is the average of all of the elements, or zero if there are no
 // elements.
@@ -10,13 +8,4 @@ func (ss SliceType) Average() float64 {
 	}
 
 	return 0
-}
-
-// Sum is the sum of all of the elements.
-func (ss SliceType) Sum() (sum ElementType) {
-	for _, s := range ss {
-		sum += s
-	}
-
-	return
 }
