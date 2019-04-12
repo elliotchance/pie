@@ -18,6 +18,8 @@ import (
 
 type ElementType float64
 type SliceType []ElementType
+type StringElementType string
+type StringSliceType []StringElementType
 
 var ElementZeroValue ElementType
 
@@ -144,6 +146,10 @@ func main() {
 			templates = append(templates, pieNumbersTemplate)
 		}
 
+		if kind == "string" {
+			templates = append(templates, pieStringsTemplate)
+		}
+
 		// Aggregate imports.
 		t := fmt.Sprintf("package %s\n\nimport (", packageName)
 		for _, imp := range getAllImports(packageName, templates) {
@@ -156,6 +162,8 @@ func main() {
 			t += tmpl[i:] + "\n"
 		}
 
+		t = strings.Replace(t, "StringSliceType", sliceType, -1)
+		t = strings.Replace(t, "StringElementType", elementType, -1)
 		t = strings.Replace(t, "SliceType", sliceType, -1)
 		t = strings.Replace(t, "ElementType", elementType, -1)
 
