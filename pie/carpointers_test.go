@@ -40,11 +40,11 @@ func TestCarPointers_Contains(t *testing.T) {
 	}
 }
 
-var carPointersOnlyAndWithoutTests = []struct {
+var carPointersSelectTests = []struct {
 	ss                carPointers
 	condition         func(*car) bool
-	expectedOnly      carPointers
-	expectedWithout   carPointers
+	expectedSelect    carPointers
+	expectedUnselect  carPointers
 	expectedTransform carPointers
 }{
 	{
@@ -67,26 +67,26 @@ var carPointersOnlyAndWithoutTests = []struct {
 	},
 }
 
-func TestCarPointers_Only(t *testing.T) {
-	for _, test := range carPointersOnlyAndWithoutTests {
+func TestCarPointers_Select(t *testing.T) {
+	for _, test := range carPointersSelectTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCarPointers(t, &test.ss)()
-			assert.Equal(t, test.expectedOnly, test.ss.Only(test.condition))
+			assert.Equal(t, test.expectedSelect, test.ss.Select(test.condition))
 		})
 	}
 }
 
-func TestCarPointers_Without(t *testing.T) {
-	for _, test := range carPointersOnlyAndWithoutTests {
+func TestCarPointers_Unselect(t *testing.T) {
+	for _, test := range carPointersSelectTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCarPointers(t, &test.ss)()
-			assert.Equal(t, test.expectedWithout, test.ss.Without(test.condition))
+			assert.Equal(t, test.expectedUnselect, test.ss.Unselect(test.condition))
 		})
 	}
 }
 
 func TestCarPointers_Transform(t *testing.T) {
-	for _, test := range carPointersOnlyAndWithoutTests {
+	for _, test := range carPointersSelectTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCarPointers(t, &test.ss)()
 			assert.Equal(t, test.expectedTransform, test.ss.Transform(func(c *car) *car {

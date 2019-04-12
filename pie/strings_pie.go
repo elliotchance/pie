@@ -15,7 +15,7 @@ func (ss Strings) Contains(lookingFor string) bool {
 	return false
 }
 
-func (ss Strings) Only(condition func(string) bool) (ss2 Strings) {
+func (ss Strings) Select(condition func(string) bool) (ss2 Strings) {
 	for _, s := range ss {
 		if condition(s) {
 			ss2 = append(ss2, s)
@@ -25,7 +25,7 @@ func (ss Strings) Only(condition func(string) bool) (ss2 Strings) {
 	return
 }
 
-func (ss Strings) Without(condition func(string) bool) (ss2 Strings) {
+func (ss Strings) Unselect(condition func(string) bool) (ss2 Strings) {
 	for _, s := range ss {
 		if !condition(s) {
 			ss2 = append(ss2, s)

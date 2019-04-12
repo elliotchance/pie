@@ -14,7 +14,7 @@ func (ss carPointers) Contains(lookingFor *car) bool {
 	return false
 }
 
-func (ss carPointers) Only(condition func(*car) bool) (ss2 carPointers) {
+func (ss carPointers) Select(condition func(*car) bool) (ss2 carPointers) {
 	for _, s := range ss {
 		if condition(s) {
 			ss2 = append(ss2, s)
@@ -24,7 +24,7 @@ func (ss carPointers) Only(condition func(*car) bool) (ss2 carPointers) {
 	return
 }
 
-func (ss carPointers) Without(condition func(*car) bool) (ss2 carPointers) {
+func (ss carPointers) Unselect(condition func(*car) bool) (ss2 carPointers) {
 	for _, s := range ss {
 		if !condition(s) {
 			ss2 = append(ss2, s)

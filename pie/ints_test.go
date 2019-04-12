@@ -28,11 +28,11 @@ func TestInts_Contains(t *testing.T) {
 	}
 }
 
-var intsOnlyAndWithoutTests = []struct {
+var intsSelectTests = []struct {
 	ss                Ints
 	condition         func(int) bool
-	expectedOnly      Ints
-	expectedWithout   Ints
+	expectedSelect    Ints
+	expectedUnselect  Ints
 	expectedTransform Ints
 }{
 	{
@@ -55,24 +55,24 @@ var intsOnlyAndWithoutTests = []struct {
 	},
 }
 
-func TestInts_Only(t *testing.T) {
-	for _, test := range intsOnlyAndWithoutTests {
+func TestInts_Select(t *testing.T) {
+	for _, test := range intsSelectTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expectedOnly, test.ss.Only(test.condition))
+			assert.Equal(t, test.expectedSelect, test.ss.Select(test.condition))
 		})
 	}
 }
 
-func TestInts_Without(t *testing.T) {
-	for _, test := range intsOnlyAndWithoutTests {
+func TestInts_Unselect(t *testing.T) {
+	for _, test := range intsSelectTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expectedWithout, test.ss.Without(test.condition))
+			assert.Equal(t, test.expectedUnselect, test.ss.Unselect(test.condition))
 		})
 	}
 }
 
 func TestInts_Transform(t *testing.T) {
-	for _, test := range intsOnlyAndWithoutTests {
+	for _, test := range intsSelectTests {
 		t.Run("", func(t *testing.T) {
 			assert.Equal(t, test.expectedTransform, test.ss.Transform(func(i int) int {
 				return i + 5

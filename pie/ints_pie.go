@@ -15,7 +15,7 @@ func (ss Ints) Contains(lookingFor int) bool {
 	return false
 }
 
-func (ss Ints) Only(condition func(int) bool) (ss2 Ints) {
+func (ss Ints) Select(condition func(int) bool) (ss2 Ints) {
 	for _, s := range ss {
 		if condition(s) {
 			ss2 = append(ss2, s)
@@ -25,7 +25,7 @@ func (ss Ints) Only(condition func(int) bool) (ss2 Ints) {
 	return
 }
 
-func (ss Ints) Without(condition func(int) bool) (ss2 Ints) {
+func (ss Ints) Unselect(condition func(int) bool) (ss2 Ints) {
 	for _, s := range ss {
 		if !condition(s) {
 			ss2 = append(ss2, s)
