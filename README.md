@@ -136,6 +136,7 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Select`.
 | `Select`     | ✓      | ✓      | ✓      | n        | A new slice containing only the elements that returned true from the condition. |
 | `Sort`       | ✓      | ✓      |        | n⋅log(n) | Return a new sorted slice. |
 | `Sum`        |        | ✓      |        | n        | Sum (total) of all elements. |
+| `ToStrings`  | ✓      | ✓      | ✓      | n        | Transforms each element to a string. |
 | `Transform`  | ✓      | ✓      | ✓      | n        | A new slice where each element has been transformed. |
 | `Unique`     | ✓      | ✓      |        | n⋅log(n) | Return a new slice with only unique elements. |
 | `Unselect`   | ✓      | ✓      | ✓      | n        | A new slice containing only the elements that returned false from the condition. |

@@ -100,6 +100,21 @@ func (ss Float64s) Reverse() Float64s {
 	return sorted
 }
 
+func (ss Float64s) ToStrings(transform func(float64) string) Strings {
+	l := len(ss)
+
+	if l == 0 {
+		return nil
+	}
+
+	result := make(Strings, l)
+	for i := 0; i < l; i++ {
+		result[i] = transform(ss[i])
+	}
+
+	return result
+}
+
 func (ss Float64s) AreSorted() bool {
 	return sort.SliceIsSorted(ss, func(i, j int) bool {
 		return ss[i] < ss[j]

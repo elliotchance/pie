@@ -1,6 +1,7 @@
 package pie
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
@@ -290,6 +291,43 @@ func TestCarPointers_Reverse(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCarPointers(t, &test.ss)()
 			assert.Equal(t, test.reversed, test.ss.Reverse())
+		})
+	}
+}
+
+var stringsToStringsTests = []struct {
+	ss        carPointers
+	transform func(*car) string
+	expected  Strings
+}{
+	{
+		nil,
+		func(s *car) string {
+			return "foo"
+		},
+		nil,
+	},
+	{
+		carPointers{},
+		func(s *car) string {
+			return fmt.Sprintf("%s!", s.Name)
+		},
+		nil,
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}, &car{"foo", "red"}},
+		func(s *car) string {
+			return fmt.Sprintf("%s!", s.Color)
+		},
+		Strings{"yellow!", "black!", "red!"},
+	},
+}
+
+func TestCarPointers_ToStrings(t *testing.T) {
+	for _, test := range stringsToStringsTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.ToStrings(test.transform))
 		})
 	}
 }

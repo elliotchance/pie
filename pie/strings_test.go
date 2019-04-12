@@ -1,6 +1,7 @@
 package pie
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
@@ -365,6 +366,43 @@ func TestStrings_AreUnique(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
 			assert.Equal(t, test.areUnique, test.ss.AreUnique())
+		})
+	}
+}
+
+var carPointersToStringsTests = []struct {
+	ss        Strings
+	transform func(string) string
+	expected  Strings
+}{
+	{
+		nil,
+		func(s string) string {
+			return "foo"
+		},
+		nil,
+	},
+	{
+		Strings{},
+		func(s string) string {
+			return fmt.Sprintf("%s!", s)
+		},
+		nil,
+	},
+	{
+		Strings{"6.2", "7.2", "8.2"},
+		func(s string) string {
+			return fmt.Sprintf("%s!", s)
+		},
+		Strings{"6.2!", "7.2!", "8.2!"},
+	},
+}
+
+func TestStrings_ToStrings(t *testing.T) {
+	for _, test := range carPointersToStringsTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.ToStrings(test.transform))
 		})
 	}
 }
