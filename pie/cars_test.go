@@ -31,11 +31,11 @@ func TestCars_Contains(t *testing.T) {
 	}
 }
 
-var carsOnlyAndWithoutTests = []struct {
+var carsSelectTests = []struct {
 	ss                cars
 	condition         func(car) bool
-	expectedOnly      cars
-	expectedWithout   cars
+	expectedSelect    cars
+	expectedUnselect  cars
 	expectedTransform cars
 }{
 	{
@@ -58,26 +58,26 @@ var carsOnlyAndWithoutTests = []struct {
 	},
 }
 
-func TestCars_Only(t *testing.T) {
-	for _, test := range carsOnlyAndWithoutTests {
+func TestCars_Select(t *testing.T) {
+	for _, test := range carsSelectTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCars(t, &test.ss)()
-			assert.Equal(t, test.expectedOnly, test.ss.Only(test.condition))
+			assert.Equal(t, test.expectedSelect, test.ss.Select(test.condition))
 		})
 	}
 }
 
-func TestCars_Without(t *testing.T) {
-	for _, test := range carsOnlyAndWithoutTests {
+func TestCars_Unselect(t *testing.T) {
+	for _, test := range carsSelectTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCars(t, &test.ss)()
-			assert.Equal(t, test.expectedWithout, test.ss.Without(test.condition))
+			assert.Equal(t, test.expectedUnselect, test.ss.Unselect(test.condition))
 		})
 	}
 }
 
 func TestCars_Transform(t *testing.T) {
-	for _, test := range carsOnlyAndWithoutTests {
+	for _, test := range carsSelectTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCars(t, &test.ss)()
 			assert.Equal(t, test.expectedTransform, test.ss.Transform(func(car car) car {

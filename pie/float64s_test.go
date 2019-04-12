@@ -29,11 +29,11 @@ func TestFloat64s_Contains(t *testing.T) {
 	}
 }
 
-var float64sOnlyAndWithoutTests = []struct {
+var float64sSelectTests = []struct {
 	ss                Float64s
 	condition         func(float64) bool
-	expectedOnly      Float64s
-	expectedWithout   Float64s
+	expectedSelect    Float64s
+	expectedUnselect  Float64s
 	expectedTransform Float64s
 }{
 	{
@@ -56,26 +56,26 @@ var float64sOnlyAndWithoutTests = []struct {
 	},
 }
 
-func TestFloat64s_Only(t *testing.T) {
-	for _, test := range float64sOnlyAndWithoutTests {
+func TestFloat64s_Select(t *testing.T) {
+	for _, test := range float64sSelectTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableFloat64s(t, &test.ss)()
-			assert.Equal(t, test.expectedOnly, test.ss.Only(test.condition))
+			assert.Equal(t, test.expectedSelect, test.ss.Select(test.condition))
 		})
 	}
 }
 
-func TestFloat64s_Without(t *testing.T) {
-	for _, test := range float64sOnlyAndWithoutTests {
+func TestFloat64s_Unselect(t *testing.T) {
+	for _, test := range float64sSelectTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableFloat64s(t, &test.ss)()
-			assert.Equal(t, test.expectedWithout, test.ss.Without(test.condition))
+			assert.Equal(t, test.expectedUnselect, test.ss.Unselect(test.condition))
 		})
 	}
 }
 
 func TestFloat64s_Transform(t *testing.T) {
-	for _, test := range float64sOnlyAndWithoutTests {
+	for _, test := range float64sSelectTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableFloat64s(t, &test.ss)()
 			assert.Equal(t, test.expectedTransform, test.ss.Transform(func(a float64) float64 {

@@ -31,11 +31,11 @@ func TestStrings_Contains(t *testing.T) {
 	}
 }
 
-var stringsOnlyAndWithoutTests = []struct {
+var stringsSelectTests = []struct {
 	ss                Strings
 	condition         func(string) bool
-	expectedOnly      Strings
-	expectedWithout   Strings
+	expectedSelect    Strings
+	expectedUnselect  Strings
 	expectedTransform Strings
 }{
 	{
@@ -58,26 +58,26 @@ var stringsOnlyAndWithoutTests = []struct {
 	},
 }
 
-func TestStrings_Only(t *testing.T) {
-	for _, test := range stringsOnlyAndWithoutTests {
+func TestStrings_Select(t *testing.T) {
+	for _, test := range stringsSelectTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
-			assert.Equal(t, test.expectedOnly, test.ss.Only(test.condition))
+			assert.Equal(t, test.expectedSelect, test.ss.Select(test.condition))
 		})
 	}
 }
 
-func TestStrings_Without(t *testing.T) {
-	for _, test := range stringsOnlyAndWithoutTests {
+func TestStrings_Unselect(t *testing.T) {
+	for _, test := range stringsSelectTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
-			assert.Equal(t, test.expectedWithout, test.ss.Without(test.condition))
+			assert.Equal(t, test.expectedUnselect, test.ss.Unselect(test.condition))
 		})
 	}
 }
 
 func TestStrings_Transform(t *testing.T) {
-	for _, test := range stringsOnlyAndWithoutTests {
+	for _, test := range stringsSelectTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
 			assert.Equal(t, test.expectedTransform, test.ss.Transform(strings.ToUpper))

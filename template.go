@@ -22,11 +22,11 @@ func (ss SliceType) Contains(lookingFor ElementType) bool {
 	return false
 }
 
-// Only will return a new slice containing only the elements that return
+// Select will return a new slice containing only the elements that return
 // true from the condition. The returned slice may contain zero elements (nil).
 //
-// SliceTypeWithout works in the opposite way as SliceTypeOnly.
-func (ss SliceType) Only(condition func(ElementType) bool) (ss2 SliceType) {
+// Unselect works in the opposite way as Select.
+func (ss SliceType) Select(condition func(ElementType) bool) (ss2 SliceType) {
 	for _, s := range ss {
 		if condition(s) {
 			ss2 = append(ss2, s)
@@ -36,10 +36,10 @@ func (ss SliceType) Only(condition func(ElementType) bool) (ss2 SliceType) {
 	return
 }
 
-// Without works the same as Only, with a negated condition. That is, it will
+// Unselect works the same as Select, with a negated condition. That is, it will
 // return a new slice only containing the elements that returned false from the
 // condition. The returned slice may contain zero elements (nil).
-func (ss SliceType) Without(condition func(ElementType) bool) (ss2 SliceType) {
+func (ss SliceType) Unselect(condition func(ElementType) bool) (ss2 SliceType) {
 	for _, s := range ss {
 		if !condition(s) {
 			ss2 = append(ss2, s)

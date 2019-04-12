@@ -15,7 +15,7 @@ func (ss Float64s) Contains(lookingFor float64) bool {
 	return false
 }
 
-func (ss Float64s) Only(condition func(float64) bool) (ss2 Float64s) {
+func (ss Float64s) Select(condition func(float64) bool) (ss2 Float64s) {
 	for _, s := range ss {
 		if condition(s) {
 			ss2 = append(ss2, s)
@@ -25,7 +25,7 @@ func (ss Float64s) Only(condition func(float64) bool) (ss2 Float64s) {
 	return
 }
 
-func (ss Float64s) Without(condition func(float64) bool) (ss2 Float64s) {
+func (ss Float64s) Unselect(condition func(float64) bool) (ss2 Float64s) {
 	for _, s := range ss {
 		if !condition(s) {
 			ss2 = append(ss2, s)

@@ -14,7 +14,7 @@ func (ss cars) Contains(lookingFor car) bool {
 	return false
 }
 
-func (ss cars) Only(condition func(car) bool) (ss2 cars) {
+func (ss cars) Select(condition func(car) bool) (ss2 cars) {
 	for _, s := range ss {
 		if condition(s) {
 			ss2 = append(ss2, s)
@@ -24,7 +24,7 @@ func (ss cars) Only(condition func(car) bool) (ss2 cars) {
 	return
 }
 
-func (ss cars) Without(condition func(car) bool) (ss2 cars) {
+func (ss cars) Unselect(condition func(car) bool) (ss2 cars) {
 	for _, s := range ss {
 		if !condition(s) {
 			ss2 = append(ss2, s)
