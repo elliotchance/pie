@@ -406,3 +406,9 @@ func TestStrings_ToStrings(t *testing.T) {
 		})
 	}
 }
+
+func TestStrings_Join(t *testing.T) {
+	assert.Equal(t, "", Strings(nil).Join("a"))
+	assert.Equal(t, "", Strings{}.Join("a"))
+	assert.Equal(t, "foo--bar", Strings{"foo", "", "bar"}.Join("-"))
+}

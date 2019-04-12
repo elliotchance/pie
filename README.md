@@ -126,6 +126,7 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Select`.
 | `Contains`   | ✓      | ✓      | ✓      | n        | Check if the value exists in the slice. |
 | `First`      | ✓      | ✓      | ✓      | 1        | The first element, or a zeroed value. |
 | `FirstOr`    | ✓      | ✓      | ✓      | 1        | The first element, or a default value. |
+| `Join`       | ✓      |        |        | n        | A string from joining each of the elements. |
 | `JSONString` | ✓      | ✓      | ✓      | n        | The JSON encoded string. |
 | `Last`       | ✓      | ✓      | ✓      | 1        | The last element, or a zeroed value. |
 | `LastOr`     | ✓      | ✓      | ✓      | 1        | The last element, or a default value. |
