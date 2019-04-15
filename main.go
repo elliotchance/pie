@@ -3,25 +3,17 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
+	"github.com/elliotchance/pie/functions"
 	"github.com/elliotchance/pie/pie"
 	"go/ast"
 	"go/parser"
-	"go/printer"
 	"go/token"
 	"io/ioutil"
 	"os"
 	"sort"
 	"strings"
 )
-
-type ElementType float64
-type SliceType []ElementType
-type StringElementType string
-type StringSliceType []StringElementType
-
-var ElementZeroValue ElementType
 
 func check(err error) {
 	if err != nil {
@@ -66,18 +58,18 @@ func findType(pkgs map[string]*ast.Package, name string) (packageName, elementTy
 	panic(fmt.Sprintf("type %s does not exist", name))
 }
 
-func getType(name string) string {
+func getType(name string) int {
 	switch name {
 	case "int8", "uint8", "byte", "int16", "uint16", "int32", "rune", "uint32",
 		"int64", "uint64", "int", "uint", "uintptr", "float32", "float64",
 		"complex64", "complex128":
-		return "number"
+		return functions.ForNumbers
 
 	case "string":
-		return "string"
+		return functions.ForStrings
 	}
 
-	return "struct"
+	return functions.ForStructs
 }
 
 func getImports(packageName, s string) (imports []string) {
@@ -131,31 +123,32 @@ func main() {
 	check(err)
 
 	for _, arg := range os.Args[1:] {
-		sliceType, functions := getFunctionsFromArg(arg)
-
+		sliceType, fns := getFunctionsFromArg(arg)
 		packageName, elementType := findType(pkgs, sliceType)
-		templates := []string{pieAllTemplate}
-
 		kind := getType(elementType)
 
-		if kind == "number" || kind == "string" {
-			templates = append(templates, pieStringsNumbersTemplate)
-		}
+		templates := []string{}
+		for _, function := range functions.Functions {
+			if len(fns) > 0 && !pie.Strings(fns).Contains(function.Name) {
+				continue
+			}
 
-		if kind == "number" {
-			templates = append(templates, pieNumbersTemplate)
-		}
-
-		if kind == "string" {
-			templates = append(templates, pieStringsTemplate)
+			if function.For&kind != 0 {
+				templates = append(templates, pieTemplates[function.Name])
+			}
 		}
 
 		// Aggregate imports.
-		t := fmt.Sprintf("package %s\n\nimport (", packageName)
-		for _, imp := range getAllImports(packageName, templates) {
-			t += fmt.Sprintf("\n\t%s", imp)
+		t := fmt.Sprintf("package %s\n\n", packageName)
+
+		imports := getAllImports(packageName, templates)
+		if len(imports) > 0 {
+			t += fmt.Sprintf("import (")
+			for _, imp := range imports {
+				t += fmt.Sprintf("\n\t%s", imp)
+			}
+			t += "\n)\n\n"
 		}
-		t += "\n)\n\n"
 
 		for _, tmpl := range templates {
 			i := strings.Index(tmpl, "//")
@@ -168,13 +161,13 @@ func main() {
 		t = strings.Replace(t, "ElementType", elementType, -1)
 
 		switch kind {
-		case "number":
+		case functions.ForNumbers:
 			t = strings.Replace(t, "ElementZeroValue", "0", -1)
 
-		case "string":
+		case functions.ForStrings:
 			t = strings.Replace(t, "ElementZeroValue", `""`, -1)
 
-		case "struct":
+		case functions.ForStructs:
 			zeroValue := fmt.Sprintf("%s{}", elementType)
 
 			// If its a pointer we need to replace '*' -> '&' when
@@ -195,40 +188,11 @@ func main() {
 		t = strings.TrimRight(t, "\n") + "\n"
 
 		// Filter out any functions we dont want.
-		t = filterFunctions(t, functions)
+		//t = filterFunctions(t, functions)
 
 		err := ioutil.WriteFile(strings.ToLower(sliceType)+"_pie.go", []byte(t), 0755)
 		check(err)
 	}
-}
-
-func filterFunctions(s string, functions []string) string {
-	fset := token.NewFileSet()
-	f, err := parser.ParseFile(fset, "", s, 0)
-	if err != nil {
-		panic(err)
-	}
-
-	if len(functions) > 0 {
-		var newDecls []ast.Decl
-		for _, d := range f.Decls {
-			if fn, ok := d.(*ast.FuncDecl); ok {
-				if pie.Strings(functions).Contains(fn.Name.Name) {
-					newDecls = append(newDecls, fn)
-				}
-			}
-		}
-
-		f.Decls = newDecls
-	}
-
-	buf := bytes.NewBuffer(nil)
-	err = printer.Fprint(buf, fset, f)
-	if err != nil {
-		panic(err)
-	}
-
-	return buf.String()
 }
 
 func getFunctionsFromArg(arg string) (string, []string) {
