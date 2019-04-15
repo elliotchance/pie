@@ -4,6 +4,15 @@ import (
 	"encoding/json"
 )
 
+// Append will return a new slice with the elements appended to the end. It is a
+// wrapper for the internal append(). It is offered as a function so that it can
+// more easily chained.
+//
+// It is acceptable to provide zero arguments.
+func (ss carPointers) Append(elements ...*car) carPointers {
+	return append(ss, elements...)
+}
+
 // Contains returns true if the element exists in the slice.
 //
 // When using slices of pointers it will only compare by address, not value.
@@ -15,6 +24,20 @@ func (ss carPointers) Contains(lookingFor *car) bool {
 	}
 
 	return false
+}
+
+// Extend will return a new slice with the slices of elements appended to the
+// end.
+//
+// It is acceptable to provide zero arguments.
+func (ss carPointers) Extend(slices ...carPointers) (ss2 carPointers) {
+	ss2 = ss
+
+	for _, slice := range slices {
+		ss2 = ss2.Append(slice...)
+	}
+
+	return ss2
 }
 
 // First returns the first element, or zero. Also see FirstOr().

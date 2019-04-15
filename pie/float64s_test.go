@@ -433,3 +433,57 @@ func TestFloat64s_ToStrings(t *testing.T) {
 		})
 	}
 }
+
+func TestFloat64s_Append(t *testing.T) {
+	assert.Equal(t,
+		Float64s{}.Append(),
+		Float64s{},
+	)
+
+	assert.Equal(t,
+		Float64s{}.Append(1.23),
+		Float64s{1.23},
+	)
+
+	assert.Equal(t,
+		Float64s{}.Append(1.23, 2.34),
+		Float64s{1.23, 2.34},
+	)
+
+	assert.Equal(t,
+		Float64s{1.23}.Append(2.34),
+		Float64s{1.23, 2.34},
+	)
+
+	assert.Equal(t,
+		Float64s{1.23}.Append(2.34, 5.67),
+		Float64s{1.23, 2.34, 5.67},
+	)
+}
+
+func TestFloat64s_Extend(t *testing.T) {
+	assert.Equal(t,
+		Float64s{}.Extend(),
+		Float64s{},
+	)
+
+	assert.Equal(t,
+		Float64s{}.Extend([]float64{1.23}),
+		Float64s{1.23},
+	)
+
+	assert.Equal(t,
+		Float64s{}.Extend([]float64{1.23, 2.34}),
+		Float64s{1.23, 2.34},
+	)
+
+	assert.Equal(t,
+		Float64s{1.23}.Extend([]float64{2.34}),
+		Float64s{1.23, 2.34},
+	)
+
+	assert.Equal(t,
+		Float64s{1.23}.Extend([]float64{2.34, 5.67}),
+		Float64s{1.23, 2.34, 5.67},
+	)
+}

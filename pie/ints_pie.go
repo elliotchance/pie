@@ -5,6 +5,15 @@ import (
 	"sort"
 )
 
+// Append will return a new slice with the elements appended to the end. It is a
+// wrapper for the internal append(). It is offered as a function so that it can
+// more easily chained.
+//
+// It is acceptable to provide zero arguments.
+func (ss Ints) Append(elements ...int) Ints {
+	return append(ss, elements...)
+}
+
 // AreSorted will return true if the slice is already sorted. It is a wrapper
 // for sort.IntsAreSorted.
 func (ss Ints) AreSorted() bool {
@@ -40,6 +49,20 @@ func (ss Ints) Contains(lookingFor int) bool {
 	}
 
 	return false
+}
+
+// Extend will return a new slice with the slices of elements appended to the
+// end.
+//
+// It is acceptable to provide zero arguments.
+func (ss Ints) Extend(slices ...Ints) (ss2 Ints) {
+	ss2 = ss
+
+	for _, slice := range slices {
+		ss2 = ss2.Append(slice...)
+	}
+
+	return ss2
 }
 
 // First returns the first element, or zero. Also see FirstOr().

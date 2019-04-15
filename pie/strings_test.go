@@ -412,3 +412,57 @@ func TestStrings_Join(t *testing.T) {
 	assert.Equal(t, "", Strings{}.Join("a"))
 	assert.Equal(t, "foo--bar", Strings{"foo", "", "bar"}.Join("-"))
 }
+
+func TestStrings_Append(t *testing.T) {
+	assert.Equal(t,
+		Strings{}.Append(),
+		Strings{},
+	)
+
+	assert.Equal(t,
+		Strings{}.Append("bar"),
+		Strings{"bar"},
+	)
+
+	assert.Equal(t,
+		Strings{}.Append("bar", "Baz"),
+		Strings{"bar", "Baz"},
+	)
+
+	assert.Equal(t,
+		Strings{"bar"}.Append("Baz"),
+		Strings{"bar", "Baz"},
+	)
+
+	assert.Equal(t,
+		Strings{"bar"}.Append("Baz", "foo"),
+		Strings{"bar", "Baz", "foo"},
+	)
+}
+
+func TestStrings_Extend(t *testing.T) {
+	assert.Equal(t,
+		Strings{}.Extend(),
+		Strings{},
+	)
+
+	assert.Equal(t,
+		Strings{}.Extend([]string{"bar"}),
+		Strings{"bar"},
+	)
+
+	assert.Equal(t,
+		Strings{}.Extend([]string{"bar"}, []string{"Baz"}),
+		Strings{"bar", "Baz"},
+	)
+
+	assert.Equal(t,
+		Strings{"bar"}.Extend([]string{"Baz"}),
+		Strings{"bar", "Baz"},
+	)
+
+	assert.Equal(t,
+		Strings{"bar"}.Extend([]string{"Baz", "foo"}),
+		Strings{"bar", "Baz", "foo"},
+	)
+}

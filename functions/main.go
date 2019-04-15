@@ -17,10 +17,12 @@ var Functions = []struct {
 	File string
 	For  int
 }{
+	{"Append", "append.go", ForAll},
 	{"AreSorted", "are_sorted.go", ForNumbersAndStrings},
 	{"AreUnique", "are_unique.go", ForNumbersAndStrings},
 	{"Average", "average.go", ForNumbers},
 	{"Contains", "contains.go", ForAll},
+	{"Extend", "extend.go", ForAll},
 	{"First", "first.go", ForAll},
 	{"FirstOr", "first_or.go", ForAll},
 	{"Join", "join.go", ForStrings},
