@@ -120,10 +120,12 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Select`.
 
 | Function     | String | Number | Struct | Big-O    | Description |
 | ------------ | :----: | :----: | :----: | :------: | ----------- |
+| `Append`     | ✓      | ✓      | ✓      | n        | A new slice with the elements appended to the end. |
 | `AreSorted`  | ✓      | ✓      |        | n        | Check if the slice is already sorted. |
 | `AreUnique`  | ✓      | ✓      |        | n        | Check if the slice contains only unique elements. |
 | `Average`    |        | ✓      |        | n        | The average (mean) value, or a zeroed value. |
 | `Contains`   | ✓      | ✓      | ✓      | n        | Check if the value exists in the slice. |
+| `Extend`     | ✓      | ✓      | ✓      | n        | A new slice with the elements from each slice appended to the end. |
 | `First`      | ✓      | ✓      | ✓      | 1        | The first element, or a zeroed value. |
 | `FirstOr`    | ✓      | ✓      | ✓      | 1        | The first element, or a default value. |
 | `Join`       | ✓      |        |        | n        | A string from joining each of the elements. |

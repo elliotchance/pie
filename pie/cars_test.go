@@ -321,3 +321,57 @@ func TestCars_ToStrings(t *testing.T) {
 		})
 	}
 }
+
+func TestCars_Append(t *testing.T) {
+	assert.Equal(t,
+		cars{}.Append(),
+		cars{},
+	)
+
+	assert.Equal(t,
+		cars{}.Append(car{"bar", "yellow"}),
+		cars{car{"bar", "yellow"}},
+	)
+
+	assert.Equal(t,
+		cars{}.Append(car{"bar", "yellow"}, car{"Baz", "black"}),
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+	)
+
+	assert.Equal(t,
+		cars{car{"bar", "yellow"}}.Append(car{"Baz", "black"}),
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+	)
+
+	assert.Equal(t,
+		cars{car{"bar", "yellow"}}.Append(car{"Baz", "black"}, car{"foo", "red"}),
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"foo", "red"}},
+	)
+}
+
+func TestCars_Extend(t *testing.T) {
+	assert.Equal(t,
+		cars{}.Extend(),
+		cars{},
+	)
+
+	assert.Equal(t,
+		cars{}.Extend(cars{car{"bar", "yellow"}}),
+		cars{car{"bar", "yellow"}},
+	)
+
+	assert.Equal(t,
+		cars{}.Extend(cars{car{"bar", "yellow"}}, cars{car{"Baz", "black"}}),
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+	)
+
+	assert.Equal(t,
+		cars{car{"bar", "yellow"}}.Extend(cars{car{"Baz", "black"}}),
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+	)
+
+	assert.Equal(t,
+		cars{car{"bar", "yellow"}}.Extend(cars{car{"Baz", "black"}, car{"foo", "red"}}),
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"foo", "red"}},
+	)
+}

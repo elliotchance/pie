@@ -290,9 +290,9 @@ var intsSortTests = []struct {
 		false,
 	},
 	{
-		Ints{12, -13, 1.234e6, 789},
-		Ints{-13, 12, 789, 1.234e6},
-		Ints{789, 1.234e6, -13, 12},
+		Ints{12, -13, 14e6, 789},
+		Ints{-13, 12, 789, 14e6},
+		Ints{789, 14e6, -13, 12},
 		false,
 	},
 	{
@@ -356,8 +356,8 @@ var intsUniqueTests = []struct {
 		false,
 	},
 	{
-		Ints{12, -13, 1.234e6, 789},
-		Ints{-13, 12, 789, 1.234e6},
+		Ints{12, -13, 14e6, 789},
+		Ints{-13, 12, 789, 14e6},
 		true,
 	},
 }
@@ -418,4 +418,58 @@ func TestInts_ToStrings(t *testing.T) {
 			assert.Equal(t, test.expected, test.ss.ToStrings(test.transform))
 		})
 	}
+}
+
+func TestInts_Append(t *testing.T) {
+	assert.Equal(t,
+		Ints{}.Append(),
+		Ints{},
+	)
+
+	assert.Equal(t,
+		Ints{}.Append(1),
+		Ints{1},
+	)
+
+	assert.Equal(t,
+		Ints{}.Append(1, 2),
+		Ints{1, 2},
+	)
+
+	assert.Equal(t,
+		Ints{1}.Append(2),
+		Ints{1, 2},
+	)
+
+	assert.Equal(t,
+		Ints{1}.Append(2, 5),
+		Ints{1, 2, 5},
+	)
+}
+
+func TestInts_Extend(t *testing.T) {
+	assert.Equal(t,
+		Ints{}.Extend(),
+		Ints{},
+	)
+
+	assert.Equal(t,
+		Ints{}.Extend([]int{1}),
+		Ints{1},
+	)
+
+	assert.Equal(t,
+		Ints{}.Extend([]int{1}, []int{2}),
+		Ints{1, 2},
+	)
+
+	assert.Equal(t,
+		Ints{1}.Extend([]int{2}),
+		Ints{1, 2},
+	)
+
+	assert.Equal(t,
+		Ints{1}.Extend([]int{2, 5}),
+		Ints{1, 2, 5},
+	)
 }

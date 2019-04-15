@@ -2,6 +2,17 @@
 package main
 
 var pieTemplates = map[string]string{
+	"Append": `package functions
+
+// Append will return a new slice with the elements appended to the end. It is a
+// wrapper for the internal append(). It is offered as a function so that it can
+// more easily chained.
+//
+// It is acceptable to provide zero arguments.
+func (ss SliceType) Append(elements ...ElementType) SliceType {
+	return append(ss, elements...)
+}
+`,
 	"AreSorted": `package functions
 
 import (
@@ -49,6 +60,22 @@ func (ss SliceType) Contains(lookingFor ElementType) bool {
 	}
 
 	return false
+}
+`,
+	"Extend": `package functions
+
+// Extend will return a new slice with the slices of elements appended to the
+// end.
+//
+// It is acceptable to provide zero arguments.
+func (ss SliceType) Extend(slices ...SliceType) (ss2 SliceType) {
+	ss2 = ss
+
+	for _, slice := range slices {
+		ss2 = ss2.Append(slice...)
+	}
+
+	return ss2
 }
 `,
 	"First": `package functions

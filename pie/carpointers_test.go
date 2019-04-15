@@ -331,3 +331,57 @@ func TestCarPointers_ToStrings(t *testing.T) {
 		})
 	}
 }
+
+func TestCarPointers_Append(t *testing.T) {
+	assert.Equal(t,
+		(carPointers)(nil).Append(),
+		(carPointers)(nil),
+	)
+
+	assert.Equal(t,
+		(carPointers)(nil).Append(&car{"bar", "yellow"}),
+		carPointers{&car{"bar", "yellow"}},
+	)
+
+	assert.Equal(t,
+		(carPointers)(nil).Append(&car{"bar", "yellow"}, &car{"Baz", "black"}),
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+	)
+
+	assert.Equal(t,
+		carPointers{&car{"bar", "yellow"}}.Append(&car{"Baz", "black"}),
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+	)
+
+	assert.Equal(t,
+		carPointers{&car{"bar", "yellow"}}.Append(&car{"Baz", "black"}, &car{"foo", "red"}),
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}, &car{"foo", "red"}},
+	)
+}
+
+func TestCarPointers_Extend(t *testing.T) {
+	assert.Equal(t,
+		(carPointers)(nil).Extend(),
+		(carPointers)(nil),
+	)
+
+	assert.Equal(t,
+		(carPointers)(nil).Extend(carPointers{&car{"bar", "yellow"}}),
+		carPointers{&car{"bar", "yellow"}},
+	)
+
+	assert.Equal(t,
+		(carPointers)(nil).Extend(carPointers{&car{"bar", "yellow"}}, carPointers{&car{"Baz", "black"}}),
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+	)
+
+	assert.Equal(t,
+		carPointers{&car{"bar", "yellow"}}.Extend(carPointers{&car{"Baz", "black"}}),
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+	)
+
+	assert.Equal(t,
+		carPointers{&car{"bar", "yellow"}}.Extend(carPointers{&car{"Baz", "black"}, &car{"foo", "red"}}),
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}, &car{"foo", "red"}},
+	)
+}
