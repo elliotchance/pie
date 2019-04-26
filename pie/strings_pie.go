@@ -5,6 +5,34 @@ import (
 	"sort"
 )
 
+// All will return true if all callbacks return true. It follows the same logic
+// as the all() function in Python.
+//
+// If the list is empty then true is always returned.
+func (ss Strings) All(fn func(value string) bool) bool {
+	for _, value := range ss {
+		if !fn(value) {
+			return false
+		}
+	}
+
+	return true
+}
+
+// Any will return true if any callbacks return true. It follows the same logic
+// as the any() function in Python.
+//
+// If the list is empty then false is always returned.
+func (ss Strings) Any(fn func(value string) bool) bool {
+	for _, value := range ss {
+		if fn(value) {
+			return true
+		}
+	}
+
+	return false
+}
+
 // Append will return a new slice with the elements appended to the end. It is a
 // wrapper for the internal append(). It is offered as a function so that it can
 // more easily chained.

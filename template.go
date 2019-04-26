@@ -2,6 +2,38 @@
 package main
 
 var pieTemplates = map[string]string{
+	"All": `package functions
+
+// All will return true if all callbacks return true. It follows the same logic
+// as the all() function in Python.
+//
+// If the list is empty then true is always returned.
+func (ss SliceType) All(fn func(value ElementType) bool) bool {
+	for _, value := range ss {
+		if !fn(value) {
+			return false
+		}
+	}
+
+	return true
+}
+`,
+	"Any": `package functions
+
+// Any will return true if any callbacks return true. It follows the same logic
+// as the any() function in Python.
+//
+// If the list is empty then false is always returned.
+func (ss SliceType) Any(fn func(value ElementType) bool) bool {
+	for _, value := range ss {
+		if fn(value) {
+			return true
+		}
+	}
+
+	return false
+}
+`,
 	"Append": `package functions
 
 // Append will return a new slice with the elements appended to the end. It is a

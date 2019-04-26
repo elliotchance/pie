@@ -473,3 +473,73 @@ func TestInts_Extend(t *testing.T) {
 		Ints{1, 2, 5},
 	)
 }
+
+func TestInts_All(t *testing.T) {
+	assert.True(t,
+		Ints{}.All(func(value int) bool {
+			return false
+		}),
+	)
+
+	assert.True(t,
+		Ints{}.All(func(value int) bool {
+			return false
+		}),
+	)
+
+	// None
+	assert.False(t,
+		Ints{12, 4}.All(func(value int) bool {
+			return value == 1
+		}),
+	)
+
+	// Some
+	assert.False(t,
+		Ints{12, 4}.All(func(value int) bool {
+			return value == 12
+		}),
+	)
+
+	// All
+	assert.True(t,
+		Ints{12, 4}.All(func(value int) bool {
+			return value > 0
+		}),
+	)
+}
+
+func TestInts_Any(t *testing.T) {
+	assert.False(t,
+		Ints{}.Any(func(value int) bool {
+			return true
+		}),
+	)
+
+	assert.False(t,
+		Ints{}.Any(func(value int) bool {
+			return true
+		}),
+	)
+
+	// None
+	assert.False(t,
+		Ints{12, 4}.Any(func(value int) bool {
+			return value == 1
+		}),
+	)
+
+	// Some
+	assert.True(t,
+		Ints{12, 4}.Any(func(value int) bool {
+			return value == 12
+		}),
+	)
+
+	// All
+	assert.True(t,
+		Ints{12, 4}.Any(func(value int) bool {
+			return value > 0
+		}),
+	)
+}
