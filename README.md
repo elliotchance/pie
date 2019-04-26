@@ -11,10 +11,10 @@ focuses on type safety, performance and immutability.
   * [Limiting Functions Generated](#limiting-functions-generated)
 - [Functions](#functions)
 - [FAQ](#faq)
-  * [What are the requirements?](#what-are-the-requirements-)
-  * [What are the goals of `pie`?](#what-are-the-goals-of--pie--)
-  * [Can I contribute?](#can-i-contribute-)
-  * [Why is the emoji a slice of pizza instead of a pie?](#why-is-the-emoji-a-slice-of-pizza-instead-of-a-pie-)
+  * [What are the requirements?](#what-are-the-requirements)
+  * [What are the goals of `pie`?](#what-are-the-goals-of-pie)
+  * [Can I contribute?](#how-do-i-contribute-a-function)
+  * [Why is the emoji a slice of pizza instead of a pie?](#why-is-the-emoji-a-slice-of-pizza-instead-of-a-pie)
 
 # Quick Start
 
