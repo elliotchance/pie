@@ -17,6 +17,8 @@ var Functions = []struct {
 	File string
 	For  int
 }{
+	{"All", "all.go", ForAll},
+	{"Any", "any.go", ForAll},
 	{"Append", "append.go", ForAll},
 	{"AreSorted", "are_sorted.go", ForNumbersAndStrings},
 	{"AreUnique", "are_unique.go", ForNumbersAndStrings},

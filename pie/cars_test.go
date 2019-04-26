@@ -375,3 +375,73 @@ func TestCars_Extend(t *testing.T) {
 		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"foo", "red"}},
 	)
 }
+
+func TestCars_All(t *testing.T) {
+	assert.True(t,
+		(cars)(nil).All(func(value car) bool {
+			return false
+		}),
+	)
+
+	assert.True(t,
+		(cars)(nil).All(func(value car) bool {
+			return false
+		}),
+	)
+
+	// None
+	assert.False(t,
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}}.All(func(value car) bool {
+			return value.Color == "green"
+		}),
+	)
+
+	// Some
+	assert.False(t,
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}}.All(func(value car) bool {
+			return value.Color == "yellow"
+		}),
+	)
+
+	// All
+	assert.True(t,
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}}.All(func(value car) bool {
+			return len(value.Name) > 0
+		}),
+	)
+}
+
+func TestCars_Any(t *testing.T) {
+	assert.False(t,
+		(cars)(nil).Any(func(value car) bool {
+			return true
+		}),
+	)
+
+	assert.False(t,
+		(cars)(nil).Any(func(value car) bool {
+			return true
+		}),
+	)
+
+	// None
+	assert.False(t,
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}}.Any(func(value car) bool {
+			return value.Color == "green"
+		}),
+	)
+
+	// Some
+	assert.True(t,
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}}.Any(func(value car) bool {
+			return value.Color == "yellow"
+		}),
+	)
+
+	// All
+	assert.True(t,
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}}.Any(func(value car) bool {
+			return len(value.Name) > 0
+		}),
+	)
+}

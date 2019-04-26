@@ -487,3 +487,73 @@ func TestFloat64s_Extend(t *testing.T) {
 		Float64s{1.23, 2.34, 5.67},
 	)
 }
+
+func TestFloat64s_All(t *testing.T) {
+	assert.True(t,
+		Float64s{}.All(func(value float64) bool {
+			return false
+		}),
+	)
+
+	assert.True(t,
+		Float64s{}.All(func(value float64) bool {
+			return false
+		}),
+	)
+
+	// None
+	assert.False(t,
+		Float64s{12.3, 4.56}.All(func(value float64) bool {
+			return value == 1
+		}),
+	)
+
+	// Some
+	assert.False(t,
+		Float64s{12.3, 4.56}.All(func(value float64) bool {
+			return value == 12.3
+		}),
+	)
+
+	// All
+	assert.True(t,
+		Float64s{12.3, 4.56}.All(func(value float64) bool {
+			return value > 0
+		}),
+	)
+}
+
+func TestFloat64s_Any(t *testing.T) {
+	assert.False(t,
+		Float64s{}.Any(func(value float64) bool {
+			return true
+		}),
+	)
+
+	assert.False(t,
+		Float64s{}.Any(func(value float64) bool {
+			return true
+		}),
+	)
+
+	// None
+	assert.False(t,
+		Float64s{12.3, 4.56}.Any(func(value float64) bool {
+			return value == 1
+		}),
+	)
+
+	// Some
+	assert.True(t,
+		Float64s{12.3, 4.56}.Any(func(value float64) bool {
+			return value == 12.3
+		}),
+	)
+
+	// All
+	assert.True(t,
+		Float64s{12.3, 4.56}.Any(func(value float64) bool {
+			return value > 0
+		}),
+	)
+}

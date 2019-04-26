@@ -385,3 +385,73 @@ func TestCarPointers_Extend(t *testing.T) {
 		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}, &car{"foo", "red"}},
 	)
 }
+
+func TestCarPointers_All(t *testing.T) {
+	assert.True(t,
+		(carPointers)(nil).All(func(value *car) bool {
+			return false
+		}),
+	)
+
+	assert.True(t,
+		(carPointers)(nil).All(func(value *car) bool {
+			return false
+		}),
+	)
+
+	// None
+	assert.False(t,
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}}.All(func(value *car) bool {
+			return value.Color == "green"
+		}),
+	)
+
+	// Some
+	assert.False(t,
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}}.All(func(value *car) bool {
+			return value.Color == "yellow"
+		}),
+	)
+
+	// All
+	assert.True(t,
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}}.All(func(value *car) bool {
+			return len(value.Name) > 0
+		}),
+	)
+}
+
+func TestCarPointers_Any(t *testing.T) {
+	assert.False(t,
+		(carPointers)(nil).Any(func(value *car) bool {
+			return true
+		}),
+	)
+
+	assert.False(t,
+		(carPointers)(nil).Any(func(value *car) bool {
+			return true
+		}),
+	)
+
+	// None
+	assert.False(t,
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}}.Any(func(value *car) bool {
+			return value.Color == "green"
+		}),
+	)
+
+	// Some
+	assert.True(t,
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}}.Any(func(value *car) bool {
+			return value.Color == "yellow"
+		}),
+	)
+
+	// All
+	assert.True(t,
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}}.Any(func(value *car) bool {
+			return len(value.Name) > 0
+		}),
+	)
+}

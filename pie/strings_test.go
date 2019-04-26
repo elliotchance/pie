@@ -466,3 +466,73 @@ func TestStrings_Extend(t *testing.T) {
 		Strings{"bar", "Baz", "foo"},
 	)
 }
+
+func TestStrings_All(t *testing.T) {
+	assert.True(t,
+		Strings{}.All(func(value string) bool {
+			return false
+		}),
+	)
+
+	assert.True(t,
+		Strings{}.All(func(value string) bool {
+			return false
+		}),
+	)
+
+	// None
+	assert.False(t,
+		Strings{"foo", "bar"}.All(func(value string) bool {
+			return value == "baz"
+		}),
+	)
+
+	// Some
+	assert.False(t,
+		Strings{"foo", "bar"}.All(func(value string) bool {
+			return value == "foo"
+		}),
+	)
+
+	// All
+	assert.True(t,
+		Strings{"foo", "bar"}.All(func(value string) bool {
+			return len(value) > 0
+		}),
+	)
+}
+
+func TestStrings_Any(t *testing.T) {
+	assert.False(t,
+		Strings{}.Any(func(value string) bool {
+			return true
+		}),
+	)
+
+	assert.False(t,
+		Strings{}.Any(func(value string) bool {
+			return true
+		}),
+	)
+
+	// None
+	assert.False(t,
+		Strings{"foo", "bar"}.Any(func(value string) bool {
+			return value == "baz"
+		}),
+	)
+
+	// Some
+	assert.True(t,
+		Strings{"foo", "bar"}.Any(func(value string) bool {
+			return value == "foo"
+		}),
+	)
+
+	// All
+	assert.True(t,
+		Strings{"foo", "bar"}.Any(func(value string) bool {
+			return len(value) > 0
+		}),
+	)
+}
