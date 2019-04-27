@@ -4,6 +4,7 @@ const (
 	ForNumbers = 1 << iota
 	ForStrings
 	ForStructs
+	ForMaps
 
 	ForAll               = ForNumbers | ForStrings | ForStructs
 	ForNumbersAndStrings = ForNumbers | ForStrings
@@ -29,6 +30,7 @@ var Functions = []struct {
 	{"FirstOr", "first_or.go", ForAll},
 	{"Join", "join.go", ForStrings},
 	{"JSONString", "json_string.go", ForAll},
+	{"Keys", "keys.go", ForMaps},
 	{"Last", "last.go", ForAll},
 	{"LastOr", "last_or.go", ForAll},
 	{"Len", "len.go", ForAll},
@@ -42,11 +44,15 @@ var Functions = []struct {
 	{"Transform", "transform.go", ForAll},
 	{"Unique", "unique.go", ForNumbersAndStrings},
 	{"Unselect", "unselect.go", ForAll},
+	{"Values", "values.go", ForMaps},
 }
 
 type ElementType float64
 type SliceType []ElementType
 type StringElementType string
 type StringSliceType []StringElementType
+type KeyType string
+type KeySliceType []KeyType
+type MapType map[KeyType]ElementType
 
 var ElementZeroValue ElementType

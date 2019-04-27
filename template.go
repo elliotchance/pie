@@ -165,6 +165,28 @@ func (ss StringSliceType) Join(glue string) (s string) {
 	return s
 }
 `,
+	"Keys": `package functions
+
+// Keys returns the keys in the map. All of the items will be unique.
+//
+// Due to Go's randomization of iterating maps the order is not deterministic.
+func (m MapType) Keys() KeySliceType {
+	// Avoid allocation
+	l := len(m)
+	if l == 0 {
+		return nil
+	}
+
+	i := 0
+	keys := make(KeySliceType, len(m))
+	for key := range m {
+		keys[i] = key
+		i++
+	}
+
+	return keys
+}
+`,
 	"Last": `package functions
 
 // Last returns the last element, or zero. Also see LastOr().
@@ -391,6 +413,28 @@ func (ss SliceType) Unselect(condition func(ElementType) bool) (ss2 SliceType) {
 	}
 
 	return
+}
+`,
+	"Values": `package functions
+
+// Values returns the values in the map.
+//
+// Due to Go's randomization of iterating maps the order is not deterministic.
+func (m MapType) Values() []ElementType {
+	// Avoid allocation
+	l := len(m)
+	if l == 0 {
+		return nil
+	}
+
+	i := 0
+	keys := make([]ElementType, len(m))
+	for _, value := range m {
+		keys[i] = value
+		i++
+	}
+
+	return keys
 }
 `,
 }

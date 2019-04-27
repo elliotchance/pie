@@ -34,7 +34,19 @@ func getIdentName(e ast.Expr) string {
 	}
 }
 
-func findType(pkgs map[string]*ast.Package, name string) (packageName, elementType string) {
+func getKeyAndElementType(pkgName, name string, typeSpec *ast.TypeSpec) (string, string, string) {
+	if t, ok := typeSpec.Type.(*ast.ArrayType); ok {
+		return pkgName, "", getIdentName(t.Elt)
+	}
+
+	if t, ok := typeSpec.Type.(*ast.MapType); ok {
+		return pkgName, getIdentName(t.Key), getIdentName(t.Value)
+	}
+
+	panic(fmt.Sprintf("type %s must be a slice or map", name))
+}
+
+func findType(pkgs map[string]*ast.Package, name string) (packageName, keyType, elementType string) {
 	for pkgName, pkg := range pkgs {
 		for _, file := range pkg.Files {
 			for _, decl := range file.Decls {
@@ -42,11 +54,7 @@ func findType(pkgs map[string]*ast.Package, name string) (packageName, elementTy
 					for _, spec := range genDecl.Specs {
 						if typeSpec, ok := spec.(*ast.TypeSpec); ok {
 							if typeSpec.Name.String() == name {
-								if t, ok := typeSpec.Type.(*ast.ArrayType); ok {
-									return pkgName, getIdentName(t.Elt)
-								} else {
-									panic(fmt.Sprintf("type %s must be a slice", name))
-								}
+								return getKeyAndElementType(pkgName, name, typeSpec)
 							}
 						}
 					}
@@ -58,8 +66,12 @@ func findType(pkgs map[string]*ast.Package, name string) (packageName, elementTy
 	panic(fmt.Sprintf("type %s does not exist", name))
 }
 
-func getType(name string) int {
-	switch name {
+func getType(keyType, elementType string) int {
+	if keyType != "" {
+		return functions.ForMaps
+	}
+
+	switch elementType {
 	case "int8", "uint8", "byte", "int16", "uint16", "int32", "rune", "uint32",
 		"int64", "uint64", "int", "uint", "uintptr", "float32", "float64",
 		"complex64", "complex128":
@@ -123,11 +135,11 @@ func main() {
 	check(err)
 
 	for _, arg := range os.Args[1:] {
-		sliceType, fns := getFunctionsFromArg(arg)
-		packageName, elementType := findType(pkgs, sliceType)
-		kind := getType(elementType)
+		mapOrSliceType, fns := getFunctionsFromArg(arg)
+		packageName, keyType, elementType := findType(pkgs, mapOrSliceType)
+		kind := getType(keyType, elementType)
 
-		templates := []string{}
+		var templates []string
 		for _, function := range functions.Functions {
 			if len(fns) > 0 && !pie.Strings(fns).Contains(function.Name) {
 				continue
@@ -155,10 +167,13 @@ func main() {
 			t += tmpl[i:] + "\n"
 		}
 
-		t = strings.Replace(t, "StringSliceType", sliceType, -1)
+		t = strings.Replace(t, "StringSliceType", mapOrSliceType, -1)
 		t = strings.Replace(t, "StringElementType", elementType, -1)
-		t = strings.Replace(t, "SliceType", sliceType, -1)
 		t = strings.Replace(t, "ElementType", elementType, -1)
+		t = strings.Replace(t, "MapType", mapOrSliceType, -1)
+		t = strings.Replace(t, "KeyType", elementType, -1)
+		t = strings.Replace(t, "KeySliceType", "[]"+keyType, -1)
+		t = strings.Replace(t, "SliceType", mapOrSliceType, -1)
 
 		switch kind {
 		case functions.ForNumbers:
@@ -187,15 +202,12 @@ func main() {
 		// with go fmt.
 		t = strings.TrimRight(t, "\n") + "\n"
 
-		// Filter out any functions we dont want.
-		//t = filterFunctions(t, functions)
-
-		err := ioutil.WriteFile(strings.ToLower(sliceType)+"_pie.go", []byte(t), 0755)
+		err := ioutil.WriteFile(strings.ToLower(mapOrSliceType)+"_pie.go", []byte(t), 0755)
 		check(err)
 	}
 }
 
-func getFunctionsFromArg(arg string) (string, []string) {
+func getFunctionsFromArg(arg string) (mapOrSliceType string, fns []string) {
 	parts := strings.Split(arg, ".")
 
 	return parts[0], parts[1:]

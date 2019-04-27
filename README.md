@@ -118,33 +118,35 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Select`.
 
 # Functions
 
-| Function     | String | Number | Struct | Big-O    | Description |
-| ------------ | :----: | :----: | :----: | :------: | ----------- |
-| `All`        | ✓      | ✓      | ✓      | n        | All will return true if all callbacks return true. If the list is empty then true is always returned. |
-| `Any`        | ✓      | ✓      | ✓      | n        | Any will return true if any callbacks return true. If the list is empty then false is always returned. |
-| `Append`     | ✓      | ✓      | ✓      | n        | A new slice with the elements appended to the end. |
-| `AreSorted`  | ✓      | ✓      |        | n        | Check if the slice is already sorted. |
-| `AreUnique`  | ✓      | ✓      |        | n        | Check if the slice contains only unique elements. |
-| `Average`    |        | ✓      |        | n        | The average (mean) value, or a zeroed value. |
-| `Contains`   | ✓      | ✓      | ✓      | n        | Check if the value exists in the slice. |
-| `Extend`     | ✓      | ✓      | ✓      | n        | A new slice with the elements from each slice appended to the end. |
-| `First`      | ✓      | ✓      | ✓      | 1        | The first element, or a zeroed value. |
-| `FirstOr`    | ✓      | ✓      | ✓      | 1        | The first element, or a default value. |
-| `Join`       | ✓      |        |        | n        | A string from joining each of the elements. |
-| `JSONString` | ✓      | ✓      | ✓      | n        | The JSON encoded string. |
-| `Last`       | ✓      | ✓      | ✓      | 1        | The last element, or a zeroed value. |
-| `LastOr`     | ✓      | ✓      | ✓      | 1        | The last element, or a default value. |
-| `Len`        | ✓      | ✓      | ✓      | 1        | Number of elements. |
-| `Max`        | ✓      | ✓      |        | n        | The maximum value, or a zeroes value. |
-| `Min`        | ✓      | ✓      |        | n        | The minimum value, or a zeroed value. |
-| `Reverse`    | ✓      | ✓      | ✓      | n        | Reverse elements. |
-| `Select`     | ✓      | ✓      | ✓      | n        | A new slice containing only the elements that returned true from the condition. |
-| `Sort`       | ✓      | ✓      |        | n⋅log(n) | Return a new sorted slice. |
-| `Sum`        |        | ✓      |        | n        | Sum (total) of all elements. |
-| `ToStrings`  | ✓      | ✓      | ✓      | n        | Transforms each element to a string. |
-| `Transform`  | ✓      | ✓      | ✓      | n        | A new slice where each element has been transformed. |
-| `Unique`     | ✓      | ✓      |        | n⋅log(n) | Return a new slice with only unique elements. |
-| `Unselect`   | ✓      | ✓      | ✓      | n        | A new slice containing only the elements that returned false from the condition. |
+| Function     | String | Number | Struct| Maps | Big-O    | Description |
+| ------------ | :----: | :----: | :----:| :--: | :------: | ----------- |
+| `All`        | ✓      | ✓      | ✓     |      | n        | All will return true if all callbacks return true. If the list is empty then true is always returned. |
+| `Any`        | ✓      | ✓      | ✓     |      | n        | Any will return true if any callbacks return true. If the list is empty then false is always returned. |
+| `Append`     | ✓      | ✓      | ✓     |      | n        | A new slice with the elements appended to the end. |
+| `AreSorted`  | ✓      | ✓      |       |      | n        | Check if the slice is already sorted. |
+| `AreUnique`  | ✓      | ✓      |       |      | n        | Check if the slice contains only unique elements. |
+| `Average`    |        | ✓      |       |      | n        | The average (mean) value, or a zeroed value. |
+| `Contains`   | ✓      | ✓      | ✓     |      | n        | Check if the value exists in the slice. |
+| `Extend`     | ✓      | ✓      | ✓     |      | n        | A new slice with the elements from each slice appended to the end. |
+| `First`      | ✓      | ✓      | ✓     |      | 1        | The first element, or a zeroed value. |
+| `FirstOr`    | ✓      | ✓      | ✓     |      | 1        | The first element, or a default value. |
+| `Join`       | ✓      |        |       |      | n        | A string from joining each of the elements. |
+| `JSONString` | ✓      | ✓      | ✓     |      | n        | The JSON encoded string. |
+| `Keys`       |        |        |       | ✓    | n        | Returns all keys in the map (in random order). |
+| `Last`       | ✓      | ✓      | ✓     |      | 1        | The last element, or a zeroed value. |
+| `LastOr`     | ✓      | ✓      | ✓     |      | 1        | The last element, or a default value. |
+| `Len`        | ✓      | ✓      | ✓     |      | 1        | Number of elements. |
+| `Max`        | ✓      | ✓      |       |      | n        | The maximum value, or a zeroes value. |
+| `Min`        | ✓      | ✓      |       |      | n        | The minimum value, or a zeroed value. |
+| `Reverse`    | ✓      | ✓      | ✓     |      | n        | Reverse elements. |
+| `Select`     | ✓      | ✓      | ✓     |      | n        | A new slice containing only the elements that returned true from the condition. |
+| `Sort`       | ✓      | ✓      |       |      | n⋅log(n) | Return a new sorted slice. |
+| `Sum`        |        | ✓      |       |      | n        | Sum (total) of all elements. |
+| `ToStrings`  | ✓      | ✓      | ✓     |      | n        | Transforms each element to a string. |
+| `Transform`  | ✓      | ✓      | ✓     |      | n        | A new slice where each element has been transformed. |
+| `Unique`     | ✓      | ✓      |       |      | n⋅log(n) | Return a new slice with only unique elements. |
+| `Unselect`   | ✓      | ✓      | ✓     |      | n        | A new slice containing only the elements that returned false from the condition. |
+| `Values`     |        |        |       | ✓    | n        | Returns all values in the map (in random order). |
 
 # FAQ
 
@@ -194,7 +196,9 @@ add unit tests to `pie/float64s_test.go` and `pie/ints_test.go`.
 6. If you chose `ForAll` or `ForStrings`, then you must add unit tests to
 `pie/strings_test.go`.
 
-7. Update the README to list the new functions.
+7. If you chose `ForMaps`, then you must add unit tests to `pie/currencies.go`.
+
+8. Update the README to list the new functions.
 
 ## Why is the emoji a slice of pizza instead of a pie?
 
