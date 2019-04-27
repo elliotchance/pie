@@ -66,6 +66,19 @@ func (ss Float64s) Average() float64 {
 	return 0
 }
 
+// Bottom will return n elements from bottom
+// if the slice has less elements then n that'll return all elements
+// if n < 0 it'll return empty slice.
+func (ss Float64s) Bottom(n int) (top Float64s) {
+	var lastIndex = len(ss) - 1
+	for i := lastIndex; i > -1 && n > 0; i-- {
+		top = append(top, ss[i])
+		n--
+	}
+
+	return
+}
+
 // Contains returns true if the element exists in the slice.
 //
 // When using slices of pointers it will only compare by address, not value.
@@ -232,6 +245,18 @@ func (ss Float64s) Sort() Float64s {
 func (ss Float64s) Sum() (sum float64) {
 	for _, s := range ss {
 		sum += s
+	}
+
+	return
+}
+
+// Top will return n elements from head of the slice
+// if the slice has less elements then n that'll return all elements
+// if n < 0 it'll return empty slice.
+func (ss Float64s) Top(n int) (top Float64s) {
+	for i := 0; i < len(ss) && n > 0; i++ {
+		top = append(top, ss[i])
+		n--
 	}
 
 	return

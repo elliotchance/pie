@@ -41,6 +41,19 @@ func (ss cars) Append(elements ...car) cars {
 	return append(ss, elements...)
 }
 
+// Bottom will return n elements from bottom
+// if the slice has less elements then n that'll return all elements
+// if n < 0 it'll return empty slice.
+func (ss cars) Bottom(n int) (top cars) {
+	var lastIndex = len(ss) - 1
+	for i := lastIndex; i > -1 && n > 0; i-- {
+		top = append(top, ss[i])
+		n--
+	}
+
+	return
+}
+
 // Contains returns true if the element exists in the slice.
 //
 // When using slices of pointers it will only compare by address, not value.
@@ -146,6 +159,18 @@ func (ss cars) Select(condition func(car) bool) (ss2 cars) {
 		if condition(s) {
 			ss2 = append(ss2, s)
 		}
+	}
+
+	return
+}
+
+// Top will return n elements from head of the slice
+// if the slice has less elements then n that'll return all elements
+// if n < 0 it'll return empty slice.
+func (ss cars) Top(n int) (top cars) {
+	for i := 0; i < len(ss) && n > 0; i++ {
+		top = append(top, ss[i])
+		n--
 	}
 
 	return

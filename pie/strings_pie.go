@@ -56,6 +56,19 @@ func (ss Strings) AreUnique() bool {
 	return ss.Unique().Len() == ss.Len()
 }
 
+// Bottom will return n elements from bottom
+// if the slice has less elements then n that'll return all elements
+// if n < 0 it'll return empty slice.
+func (ss Strings) Bottom(n int) (top Strings) {
+	var lastIndex = len(ss) - 1
+	for i := lastIndex; i > -1 && n > 0; i-- {
+		top = append(top, ss[i])
+		n--
+	}
+
+	return
+}
+
 // Contains returns true if the element exists in the slice.
 //
 // When using slices of pointers it will only compare by address, not value.
@@ -229,6 +242,18 @@ func (ss Strings) Sort() Strings {
 	})
 
 	return sorted
+}
+
+// Top will return n elements from head of the slice
+// if the slice has less elements then n that'll return all elements
+// if n < 0 it'll return empty slice.
+func (ss Strings) Top(n int) (top Strings) {
+	for i := 0; i < len(ss) && n > 0; i++ {
+		top = append(top, ss[i])
+		n--
+	}
+
+	return
 }
 
 // ToStrings transforms each element to a string.
