@@ -126,6 +126,7 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Select`.
 | `AreSorted`  | ✓      | ✓      |       |      | n        | Check if the slice is already sorted. |
 | `AreUnique`  | ✓      | ✓      |       |      | n        | Check if the slice contains only unique elements. |
 | `Average`    |        | ✓      |       |      | n        | The average (mean) value, or a zeroed value. |
+| `Bottom`    |    ✓     | ✓      |    ✓    |      | n        | Gets n elements from bottom. |
 | `Contains`   | ✓      | ✓      | ✓     |      | n        | Check if the value exists in the slice. |
 | `Extend`     | ✓      | ✓      | ✓     |      | n        | A new slice with the elements from each slice appended to the end. |
 | `First`      | ✓      | ✓      | ✓     |      | 1        | The first element, or a zeroed value. |
@@ -142,6 +143,7 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Select`.
 | `Select`     | ✓      | ✓      | ✓     |      | n        | A new slice containing only the elements that returned true from the condition. |
 | `Sort`       | ✓      | ✓      |       |      | n⋅log(n) | Return a new sorted slice. |
 | `Sum`        |        | ✓      |       |      | n        | Sum (total) of all elements. |
+| `Top`  | ✓      | ✓      | ✓     |      | n        | Gets several elements from top(head of slice).|
 | `ToStrings`  | ✓      | ✓      | ✓     |      | n        | Transforms each element to a string. |
 | `Transform`  | ✓      | ✓      | ✓     |      | n        | A new slice where each element has been transformed. |
 | `Unique`     | ✓      | ✓      |       |      | n⋅log(n) | Return a new slice with only unique elements. |
