@@ -38,13 +38,15 @@ These can be used without needing `go generate`. For example:
 package main
 
 import (
-    "github.com/elliotchance/pie/pie"
     "fmt"
+    "strings"
+    
+    "github.com/elliotchance/pie/pie"
 )
 
 func main() {
     name := pie.Strings{"Bob", "Sally", "John", "Jane"}.
-        Unselect(func (name string) {
+        Unselect(func (name string) bool {
             return strings.HasPrefix(name, "J")
         }).
         Transform(strings.ToUpper).
