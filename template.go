@@ -286,6 +286,30 @@ func (ss SliceType) Select(condition func(ElementType) bool) (ss2 SliceType) {
 	return
 }
 `,
+	"Shuffle": `package functions
+
+import (
+	"math/rand"
+	"time"
+)
+
+// Max is the maximum value, or zero.
+func (ss SliceType) Shuffle() SliceType {
+	if len(ss) < 2 {
+		return ss
+	}
+
+	shuffled := make([]ElementType, len(ss))
+	copy(shuffled, ss)
+
+	rand.Seed(time.Now().UnixNano())
+	rand.Shuffle(len(shuffled), func(i, j int) {
+		shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
+	})
+
+	return shuffled
+}
+`,
 	"Sort": `package functions
 
 import (

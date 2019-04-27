@@ -2,7 +2,9 @@ package pie
 
 import (
 	"encoding/json"
+	"math/rand"
 	"sort"
+	"time"
 )
 
 // All will return true if all callbacks return true. It follows the same logic
@@ -235,6 +237,23 @@ func (ss Ints) Sum() (sum int) {
 	}
 
 	return
+}
+
+// Max is the maximum value, or zero.
+func (ss Ints) Shuffle() Ints {
+	if len(ss) < 2 {
+		return ss
+	}
+
+	shuffled := make([]int, len(ss))
+	copy(shuffled, ss)
+
+	rand.Seed(time.Now().UnixNano())
+	rand.Shuffle(len(shuffled), func(i, j int) {
+		shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
+	})
+
+	return shuffled
 }
 
 // ToStrings transforms each element to a string.

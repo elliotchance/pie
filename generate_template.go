@@ -3,10 +3,11 @@
 package main
 
 import (
-	"github.com/elliotchance/pie/functions"
 	"io/ioutil"
 	"os"
 	"text/template"
+
+	"github.com/elliotchance/pie/functions"
 )
 
 var packageTemplate = template.Must(template.New("").
