@@ -1,6 +1,7 @@
 # 🍕 `github.com/elliotchance/pie`
 [![GoDoc](https://godoc.org/github.com/elliotchance/pie?status.svg)](https://godoc.org/github.com/elliotchance/pie)
 [![Build Status](https://travis-ci.org/elliotchance/pie.svg?branch=master)](https://travis-ci.org/elliotchance/pie)
+[![codecov](https://codecov.io/gh/elliotchance/pie/branch/master/graph/badge.svg)](https://codecov.io/gh/elliotchance/pie)
 
 **Enjoy a slice!** `pie` is a code generator for dealing with slices that
 focuses on type safety, performance and immutability.

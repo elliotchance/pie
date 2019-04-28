@@ -12,8 +12,11 @@ script:
   - $(exit $(go fmt ./... | grep -v /vendor/ | wc -l))
 
   # Make sure go generate is in sync.
-  - go generate ./...
+  - go generate ./... && go install && go generate ./...
   - $(exit $(git status --porcelain | wc -l))
 
   # Run tests.
-  - go test -race ./...
+  - go test -race ./pie -coverprofile=coverage.txt -covermode=atomic
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
