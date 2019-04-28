@@ -3,7 +3,6 @@ package pie
 import (
 	"encoding/json"
 	"math/rand"
-	"time"
 )
 
 // All will return true if all callbacks return true. It follows the same logic
@@ -153,8 +152,8 @@ func (ss carPointers) Select(condition func(*car) bool) (ss2 carPointers) {
 	return
 }
 
-// Max is the maximum value, or zero.
-func (ss carPointers) Shuffle() carPointers {
+// Shuffle returns shuffled slice by your rand.Source
+func (ss carPointers) Shuffle(source rand.Source) carPointers {
 	if len(ss) < 2 {
 		return ss
 	}
@@ -162,8 +161,8 @@ func (ss carPointers) Shuffle() carPointers {
 	shuffled := make([]*car, len(ss))
 	copy(shuffled, ss)
 
-	rand.Seed(time.Now().UnixNano())
-	rand.Shuffle(len(shuffled), func(i, j int) {
+	rnd := rand.New(source)
+	rnd.Shuffle(len(shuffled), func(i, j int) {
 		shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
 	})
 

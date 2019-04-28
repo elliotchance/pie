@@ -2,11 +2,10 @@ package functions
 
 import (
 	"math/rand"
-	"time"
 )
 
-// Max is the maximum value, or zero.
-func (ss SliceType) Shuffle() SliceType {
+// Shuffle returns shuffled slice by your rand.Source
+func (ss SliceType) Shuffle(source rand.Source) SliceType {
 	if len(ss) < 2 {
 		return ss
 	}
@@ -14,8 +13,8 @@ func (ss SliceType) Shuffle() SliceType {
 	shuffled := make([]ElementType, len(ss))
 	copy(shuffled, ss)
 
-	rand.Seed(time.Now().UnixNano())
-	rand.Shuffle(len(shuffled), func(i, j int) {
+	rnd := rand.New(source)
+	rnd.Shuffle(len(shuffled), func(i, j int) {
 		shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
 	})
 

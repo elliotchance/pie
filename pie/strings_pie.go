@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"math/rand"
 	"sort"
-	"time"
 )
 
 // All will return true if all callbacks return true. It follows the same logic
@@ -233,8 +232,8 @@ func (ss Strings) Sort() Strings {
 	return sorted
 }
 
-// Max is the maximum value, or zero.
-func (ss Strings) Shuffle() Strings {
+// Shuffle returns shuffled slice by your rand.Source
+func (ss Strings) Shuffle(source rand.Source) Strings {
 	if len(ss) < 2 {
 		return ss
 	}
@@ -242,8 +241,8 @@ func (ss Strings) Shuffle() Strings {
 	shuffled := make([]string, len(ss))
 	copy(shuffled, ss)
 
-	rand.Seed(time.Now().UnixNano())
-	rand.Shuffle(len(shuffled), func(i, j int) {
+	rnd := rand.New(source)
+	rnd.Shuffle(len(shuffled), func(i, j int) {
 		shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
 	})
 

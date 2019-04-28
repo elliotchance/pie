@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"math/rand"
 	"sort"
-	"time"
 )
 
 // All will return true if all callbacks return true. It follows the same logic
@@ -239,8 +238,8 @@ func (ss Float64s) Sum() (sum float64) {
 	return
 }
 
-// Max is the maximum value, or zero.
-func (ss Float64s) Shuffle() Float64s {
+// Shuffle returns shuffled slice by your rand.Source
+func (ss Float64s) Shuffle(source rand.Source) Float64s {
 	if len(ss) < 2 {
 		return ss
 	}
@@ -248,8 +247,8 @@ func (ss Float64s) Shuffle() Float64s {
 	shuffled := make([]float64, len(ss))
 	copy(shuffled, ss)
 
-	rand.Seed(time.Now().UnixNano())
-	rand.Shuffle(len(shuffled), func(i, j int) {
+	rnd := rand.New(source)
+	rnd.Shuffle(len(shuffled), func(i, j int) {
 		shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
 	})
 
