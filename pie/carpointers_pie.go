@@ -2,6 +2,7 @@ package pie
 
 import (
 	"encoding/json"
+	"math/rand"
 )
 
 // All will return true if all callbacks return true. It follows the same logic
@@ -149,6 +150,23 @@ func (ss carPointers) Select(condition func(*car) bool) (ss2 carPointers) {
 	}
 
 	return
+}
+
+// Shuffle returns shuffled slice by your rand.Source
+func (ss carPointers) Shuffle(source rand.Source) carPointers {
+	if len(ss) < 2 {
+		return ss
+	}
+
+	shuffled := make([]*car, len(ss))
+	copy(shuffled, ss)
+
+	rnd := rand.New(source)
+	rnd.Shuffle(len(shuffled), func(i, j int) {
+		shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
+	})
+
+	return shuffled
 }
 
 // ToStrings transforms each element to a string.

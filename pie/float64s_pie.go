@@ -2,6 +2,7 @@ package pie
 
 import (
 	"encoding/json"
+	"math/rand"
 	"sort"
 )
 
@@ -235,6 +236,23 @@ func (ss Float64s) Sum() (sum float64) {
 	}
 
 	return
+}
+
+// Shuffle returns shuffled slice by your rand.Source
+func (ss Float64s) Shuffle(source rand.Source) Float64s {
+	if len(ss) < 2 {
+		return ss
+	}
+
+	shuffled := make([]float64, len(ss))
+	copy(shuffled, ss)
+
+	rnd := rand.New(source)
+	rnd.Shuffle(len(shuffled), func(i, j int) {
+		shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
+	})
+
+	return shuffled
 }
 
 // ToStrings transforms each element to a string.
