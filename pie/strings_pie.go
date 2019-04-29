@@ -2,6 +2,7 @@ package pie
 
 import (
 	"encoding/json"
+	"github.com/elliotchance/pie/pie/util"
 	"math/rand"
 	"sort"
 )
@@ -234,15 +235,22 @@ func (ss Strings) Sort() Strings {
 
 // Shuffle returns shuffled slice by your rand.Source
 func (ss Strings) Shuffle(source rand.Source) Strings {
-	if len(ss) < 2 {
+	n := len(ss)
+
+	// Avoid the extra allocation.
+	if n < 2 {
 		return ss
 	}
 
-	shuffled := make([]string, len(ss))
+	// go 1.10+ provides rnd.Shuffle. However, to support older versions we copy
+	// the algorithm directly from the go source: src/math/rand/rand.go below,
+	// with some adjustments:
+	shuffled := make([]string, n)
 	copy(shuffled, ss)
 
 	rnd := rand.New(source)
-	rnd.Shuffle(len(shuffled), func(i, j int) {
+
+	util.Shuffle(rnd, n, func(i, j int) {
 		shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
 	})
 
