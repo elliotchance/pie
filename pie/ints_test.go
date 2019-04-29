@@ -2,8 +2,9 @@ package pie
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var intsContainsTests = []struct {
@@ -542,4 +543,96 @@ func TestInts_Any(t *testing.T) {
 			return value > 0
 		}),
 	)
+}
+
+var intsTopTests = []struct {
+	ss  Ints
+	top Ints
+	n   int
+}{
+	{
+		nil,
+		nil,
+		1,
+	},
+	{
+		Ints{},
+		nil,
+		1,
+	},
+	{
+		Ints{1, 2},
+		Ints{1},
+		1,
+	},
+	{
+		Ints{1, 2},
+		Ints{1, 2},
+		3,
+	},
+	{
+		Ints{1, 2},
+		nil,
+		0,
+	},
+	{
+		Ints{1, 2},
+		nil,
+		-1,
+	},
+}
+
+func TestInts_Top(t *testing.T) {
+	for _, test := range intsTopTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.top, test.ss.Top(test.n))
+		})
+	}
+}
+
+var intsBottomTests = []struct {
+	ss     Ints
+	bottom Ints
+	n      int
+}{
+	{
+		nil,
+		nil,
+		1,
+	},
+	{
+		Ints{},
+		nil,
+		1,
+	},
+	{
+		Ints{1, 2},
+		Ints{2},
+		1,
+	},
+	{
+		Ints{1, 2},
+		Ints{2, 1},
+		3,
+	},
+	{
+		Ints{1, 2},
+		nil,
+		0,
+	},
+	{
+		Ints{1, 2},
+		nil,
+		-1,
+	},
+}
+
+func TestInts_Bottom(t *testing.T) {
+	for _, test := range intsBottomTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.bottom, test.ss.Bottom(test.n))
+		})
+	}
 }
