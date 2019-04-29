@@ -2,8 +2,10 @@ package pie
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
+	"math/rand"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var float64sContainsTests = []struct {
@@ -556,4 +558,45 @@ func TestFloat64s_Any(t *testing.T) {
 			return value > 0
 		}),
 	)
+}
+
+var float64sShuffleTests = []struct {
+	ss       Float64s
+	expected Float64s
+	source   rand.Source
+}{
+	{
+		nil,
+		nil,
+		nil,
+	},
+	{
+		nil,
+		nil,
+		rand.NewSource(0),
+	},
+	{
+		Float64s{},
+		Float64s{},
+		rand.NewSource(0),
+	},
+	{
+		Float64s{12.3, 2.34, 4.56},
+		Float64s{2.34, 12.3, 4.56},
+		rand.NewSource(0),
+	},
+	{
+		Float64s{12.3},
+		Float64s{12.3},
+		rand.NewSource(0),
+	},
+}
+
+func TestFloat64s_Shuffle(t *testing.T) {
+	for _, test := range float64sShuffleTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Shuffle(test.source))
+		})
+	}
 }
