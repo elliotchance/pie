@@ -2,9 +2,10 @@ package pie
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var stringsContainsTests = []struct {
@@ -535,4 +536,96 @@ func TestStrings_Any(t *testing.T) {
 			return len(value) > 0
 		}),
 	)
+}
+
+var stringsTopTests = []struct {
+	ss  Strings
+	top Strings
+	n   int
+}{
+	{
+		nil,
+		nil,
+		1,
+	},
+	{
+		Strings{},
+		nil,
+		1,
+	},
+	{
+		Strings{"foo", "bar"},
+		Strings{"foo"},
+		1,
+	},
+	{
+		Strings{"foo", "bar"},
+		Strings{"foo", "bar"},
+		3,
+	},
+	{
+		Strings{"foo", "bar"},
+		nil,
+		0,
+	},
+	{
+		Strings{"foo", "bar"},
+		nil,
+		-1,
+	},
+}
+
+func TestStrings_Top(t *testing.T) {
+	for _, test := range stringsTopTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.top, test.ss.Top(test.n))
+		})
+	}
+}
+
+var stringsBottomTests = []struct {
+	ss     Strings
+	bottom Strings
+	n      int
+}{
+	{
+		nil,
+		nil,
+		1,
+	},
+	{
+		Strings{},
+		nil,
+		1,
+	},
+	{
+		Strings{"foo", "bar"},
+		Strings{"bar"},
+		1,
+	},
+	{
+		Strings{"foo", "bar"},
+		Strings{"bar", "foo"},
+		3,
+	},
+	{
+		Strings{"foo", "bar"},
+		nil,
+		0,
+	},
+	{
+		Strings{"foo", "bar"},
+		nil,
+		-1,
+	},
+}
+
+func TestStrings_Bottom(t *testing.T) {
+	for _, test := range stringsBottomTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.bottom, test.ss.Bottom(test.n))
+		})
+	}
 }
