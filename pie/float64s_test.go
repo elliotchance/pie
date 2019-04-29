@@ -2,8 +2,9 @@ package pie
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var float64sContainsTests = []struct {
@@ -556,4 +557,96 @@ func TestFloat64s_Any(t *testing.T) {
 			return value > 0
 		}),
 	)
+}
+
+var float64sTopTests = []struct {
+	ss  Float64s
+	top Float64s
+	n   int
+}{
+	{
+		nil,
+		nil,
+		1,
+	},
+	{
+		Float64s{},
+		nil,
+		1,
+	},
+	{
+		Float64s{1.23, 2.34},
+		Float64s{1.23},
+		1,
+	},
+	{
+		Float64s{1.23, 2.34},
+		Float64s{1.23, 2.34},
+		3,
+	},
+	{
+		Float64s{1.23, 2.34},
+		nil,
+		0,
+	},
+	{
+		Float64s{1.23, 2.34},
+		nil,
+		-1,
+	},
+}
+
+func TestFloat64s_Top(t *testing.T) {
+	for _, test := range float64sTopTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, test.top, test.ss.Top(test.n))
+		})
+	}
+}
+
+var float64sBottomTests = []struct {
+	ss     Float64s
+	bottom Float64s
+	n      int
+}{
+	{
+		nil,
+		nil,
+		1,
+	},
+	{
+		Float64s{},
+		nil,
+		1,
+	},
+	{
+		Float64s{1.23, 2.34},
+		Float64s{2.34},
+		1,
+	},
+	{
+		Float64s{1.23, 2.34},
+		Float64s{2.34, 1.23},
+		3,
+	},
+	{
+		Float64s{1.23, 2.34},
+		nil,
+		0,
+	},
+	{
+		Float64s{1.23, 2.34},
+		nil,
+		-1,
+	},
+}
+
+func TestFloat64s_Bottom(t *testing.T) {
+	for _, test := range float64sBottomTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, test.bottom, test.ss.Bottom(test.n))
+		})
+	}
 }
