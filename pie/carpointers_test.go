@@ -2,9 +2,10 @@ package pie
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var carPointerA = &car{"a", "green"}
@@ -454,4 +455,96 @@ func TestCarPointers_Any(t *testing.T) {
 			return len(value.Name) > 0
 		}),
 	)
+}
+
+var carPointersTopTests = []struct {
+	ss  carPointers
+	top carPointers
+	n   int
+}{
+	{
+		nil,
+		nil,
+		1,
+	},
+	{
+		carPointers{},
+		nil,
+		1,
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+		carPointers{&car{"bar", "yellow"}},
+		1,
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+		3,
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+		nil,
+		0,
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+		nil,
+		-1,
+	},
+}
+
+func TestCarPointers_Top(t *testing.T) {
+	for _, test := range carPointersTopTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			assert.Equal(t, test.top, test.ss.Top(test.n))
+		})
+	}
+}
+
+var carPointersBottomTests = []struct {
+	ss     carPointers
+	bottom carPointers
+	n      int
+}{
+	{
+		nil,
+		nil,
+		1,
+	},
+	{
+		carPointers{},
+		nil,
+		1,
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+		carPointers{&car{"Baz", "black"}},
+		1,
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+		carPointers{&car{"Baz", "black"}, &car{"bar", "yellow"}},
+		3,
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+		nil,
+		0,
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+		nil,
+		-1,
+	},
+}
+
+func TestCarPointers_Bottom(t *testing.T) {
+	for _, test := range carPointersBottomTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			assert.Equal(t, test.bottom, test.ss.Bottom(test.n))
+		})
+	}
 }
