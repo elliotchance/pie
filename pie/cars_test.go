@@ -2,9 +2,10 @@ package pie
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var carsContainsTests = []struct {
@@ -444,4 +445,96 @@ func TestCars_Any(t *testing.T) {
 			return len(value.Name) > 0
 		}),
 	)
+}
+
+var carsTopTests = []struct {
+	ss  cars
+	top cars
+	n   int
+}{
+	{
+		nil,
+		nil,
+		1,
+	},
+	{
+		cars{},
+		nil,
+		1,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		cars{car{"bar", "yellow"}},
+		1,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		3,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		nil,
+		0,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		nil,
+		-1,
+	},
+}
+
+func TestCars_Top(t *testing.T) {
+	for _, test := range carsTopTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss)()
+			assert.Equal(t, test.top, test.ss.Top(test.n))
+		})
+	}
+}
+
+var carsBottomTests = []struct {
+	ss     cars
+	bottom cars
+	n      int
+}{
+	{
+		nil,
+		nil,
+		1,
+	},
+	{
+		cars{},
+		nil,
+		1,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		cars{car{"Baz", "black"}},
+		1,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		cars{car{"Baz", "black"}, car{"bar", "yellow"}},
+		3,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		nil,
+		0,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		nil,
+		-1,
+	},
+}
+
+func TestCars_Bottom(t *testing.T) {
+	for _, test := range carsBottomTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss)()
+			assert.Equal(t, test.bottom, test.ss.Bottom(test.n))
+		})
+	}
 }
