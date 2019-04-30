@@ -36,6 +36,7 @@ var Functions = []struct {
 	{"LastOr", "last_or.go", ForAll},
 	{"Len", "len.go", ForAll},
 	{"Max", "max.go", ForNumbersAndStrings},
+	{"Median", "median.go", ForNumbers},
 	{"Min", "min.go", ForNumbersAndStrings},
 	{"Reverse", "reverse.go", ForAll},
 	{"Select", "select.go", ForAll},

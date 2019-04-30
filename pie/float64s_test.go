@@ -662,3 +662,10 @@ func TestFloat64s_Bottom(t *testing.T) {
 		})
 	}
 }
+
+func TestFloat64s_Median(t *testing.T) {
+	assert.Equal(t, 0.0, Float64s{}.Median())
+	assert.Equal(t, 12.3, Float64s{12.3}.Median())
+	assert.Equal(t, 8.4, Float64s{12.3, 4.5}.Median())
+	assert.Equal(t, 4.5, Float64s{2.1, 12.3, 4.5}.Median())
+}

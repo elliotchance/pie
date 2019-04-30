@@ -176,6 +176,30 @@ func (ss Ints) Max() (max int) {
 	return
 }
 
+// Median returns the value separating the higher half from the lower half of a
+// data sample.
+//
+// Zero is returned if there are no elements in the slice.
+func (ss Ints) Median() int {
+	l := len(ss)
+
+	switch {
+	case l == 0:
+		return 0
+
+	case l == 1:
+		return ss[0]
+	}
+
+	sorted := ss.Sort()
+
+	if l%2 != 0 {
+		return sorted[l/2]
+	}
+
+	return (sorted[l/2-1] + sorted[l/2]) / 2
+}
+
 // Min is the minimum value, or zero.
 func (ss Ints) Min() (min int) {
 	if len(ss) == 0 {

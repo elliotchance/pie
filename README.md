@@ -141,6 +141,7 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Select`.
 | `LastOr`     | ✓      | ✓      | ✓     |      | 1        | The last element, or a default value. |
 | `Len`        | ✓      | ✓      | ✓     |      | 1        | Number of elements. |
 | `Max`        | ✓      | ✓      |       |      | n        | The maximum value, or a zeroes value. |
+| `Median`     |        | ✓      |       |      | n⋅log(n) | Median returns the value separating the higher half from the lower half of a data sample. |
 | `Min`        | ✓      | ✓      |       |      | n        | The minimum value, or a zeroed value. |
 | `Reverse`    | ✓      | ✓      | ✓     |      | n        | Reverse elements. |
 | `Select`     | ✓      | ✓      | ✓     |      | n        | A new slice containing only the elements that returned true from the condition. |
