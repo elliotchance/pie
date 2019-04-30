@@ -1,6 +1,7 @@
 # 🍕 `github.com/elliotchance/pie`
 [![GoDoc](https://godoc.org/github.com/elliotchance/pie?status.svg)](https://godoc.org/github.com/elliotchance/pie)
 [![Build Status](https://travis-ci.org/elliotchance/pie.svg?branch=master)](https://travis-ci.org/elliotchance/pie)
+[![codecov](https://codecov.io/gh/elliotchance/pie/branch/master/graph/badge.svg)](https://codecov.io/gh/elliotchance/pie)
 
 **Enjoy a slice!** `pie` is a code generator for dealing with slices that
 focuses on type safety, performance and immutability.
@@ -38,13 +39,15 @@ These can be used without needing `go generate`. For example:
 package main
 
 import (
-    "github.com/elliotchance/pie/pie"
     "fmt"
+    "strings"
+    
+    "github.com/elliotchance/pie/pie"
 )
 
 func main() {
     name := pie.Strings{"Bob", "Sally", "John", "Jane"}.
-        Unselect(func (name string) {
+        Unselect(func (name string) bool {
             return strings.HasPrefix(name, "J")
         }).
         Transform(strings.ToUpper).
@@ -143,6 +146,7 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Select`.
 | `Select`     | ✓      | ✓      | ✓     |      | n        | A new slice containing only the elements that returned true from the condition. |
 | `Sort`       | ✓      | ✓      |       |      | n⋅log(n) | Return a new sorted slice. |
 | `Sum`        |        | ✓      |       |      | n        | Sum (total) of all elements. |
+| `Shuffle`       | ✓       | ✓      |✓       |      | n        | Returns a new shuffled slice. |
 | `Top`  | ✓      | ✓      | ✓     |      | n        | Gets several elements from top(head of slice).|
 | `ToStrings`  | ✓      | ✓      | ✓     |      | n        | Transforms each element to a string. |
 | `Transform`  | ✓      | ✓      | ✓     |      | n        | A new slice where each element has been transformed. |

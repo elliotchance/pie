@@ -2,6 +2,7 @@ package pie
 
 import (
 	"fmt"
+	"math/rand"
 	"strings"
 	"testing"
 
@@ -536,6 +537,47 @@ func TestStrings_Any(t *testing.T) {
 			return len(value) > 0
 		}),
 	)
+}
+
+var stringsShuffleTests = []struct {
+	ss       Strings
+	expected Strings
+	source   rand.Source
+}{
+	{
+		nil,
+		nil,
+		nil,
+	},
+	{
+		nil,
+		nil,
+		rand.NewSource(0),
+	},
+	{
+		Strings{},
+		Strings{},
+		rand.NewSource(0),
+	},
+	{
+		Strings{"foo", "bar", "baz"},
+		Strings{"bar", "foo", "baz"},
+		rand.NewSource(0),
+	},
+	{
+		Strings{"foo"},
+		Strings{"foo"},
+		rand.NewSource(0),
+	},
+}
+
+func TestStrings_Shuffle(t *testing.T) {
+	for _, test := range stringsShuffleTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Shuffle(test.source))
+		})
+	}
 }
 
 var stringsTopTests = []struct {

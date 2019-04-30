@@ -2,6 +2,7 @@ package pie
 
 import (
 	"fmt"
+	"math/rand"
 	"strings"
 	"testing"
 
@@ -445,6 +446,47 @@ func TestCars_Any(t *testing.T) {
 			return len(value.Name) > 0
 		}),
 	)
+}
+
+var carsShuffleTests = []struct {
+	ss       cars
+	expected cars
+	source   rand.Source
+}{
+	{
+		nil,
+		nil,
+		nil,
+	},
+	{
+		nil,
+		nil,
+		rand.NewSource(0),
+	},
+	{
+		cars{},
+		cars{},
+		rand.NewSource(0),
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"foo", "red"}},
+		cars{car{"Baz", "black"}, car{"bar", "yellow"}, car{"foo", "red"}},
+		rand.NewSource(0),
+	},
+	{
+		cars{car{"bar", "yellow"}},
+		cars{car{"bar", "yellow"}},
+		rand.NewSource(0),
+	},
+}
+
+func TestCars_Shuffle(t *testing.T) {
+	for _, test := range carsShuffleTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Shuffle(test.source))
+		})
+	}
 }
 
 var carsTopTests = []struct {

@@ -2,6 +2,7 @@ package pie
 
 import (
 	"fmt"
+	"math/rand"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -543,6 +544,47 @@ func TestInts_Any(t *testing.T) {
 			return value > 0
 		}),
 	)
+}
+
+var intsShuffleTests = []struct {
+	ss       Ints
+	expected Ints
+	source   rand.Source
+}{
+	{
+		nil,
+		nil,
+		nil,
+	},
+	{
+		nil,
+		nil,
+		rand.NewSource(0),
+	},
+	{
+		Ints{},
+		Ints{},
+		rand.NewSource(0),
+	},
+	{
+		Ints{1, 2, 4},
+		Ints{2, 1, 4},
+		rand.NewSource(0),
+	},
+	{
+		Ints{12},
+		Ints{12},
+		rand.NewSource(0),
+	},
+}
+
+func TestInts_Shuffle(t *testing.T) {
+	for _, test := range intsShuffleTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Shuffle(test.source))
+		})
+	}
 }
 
 var intsTopTests = []struct {

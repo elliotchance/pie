@@ -2,6 +2,7 @@ package pie
 
 import (
 	"fmt"
+	"math/rand"
 	"strings"
 	"testing"
 
@@ -455,6 +456,47 @@ func TestCarPointers_Any(t *testing.T) {
 			return len(value.Name) > 0
 		}),
 	)
+}
+
+var carPointersShuffleTests = []struct {
+	ss       carPointers
+	expected carPointers
+	source   rand.Source
+}{
+	{
+		nil,
+		nil,
+		nil,
+	},
+	{
+		nil,
+		nil,
+		rand.NewSource(0),
+	},
+	{
+		carPointers{},
+		carPointers{},
+		rand.NewSource(0),
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}, &car{"foo", "red"}},
+		carPointers{&car{"Baz", "black"}, &car{"bar", "yellow"}, &car{"foo", "red"}},
+		rand.NewSource(0),
+	},
+	{
+		carPointers{&car{"bar", "yellow"}},
+		carPointers{&car{"bar", "yellow"}},
+		rand.NewSource(0),
+	},
+}
+
+func TestCarPointers_Shuffle(t *testing.T) {
+	for _, test := range carPointersShuffleTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Shuffle(test.source))
+		})
+	}
 }
 
 var carPointersTopTests = []struct {
