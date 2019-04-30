@@ -489,45 +489,52 @@ func TestCars_Shuffle(t *testing.T) {
 	}
 }
 
-var carsTopTests = []struct {
-	ss  cars
-	top cars
-	n   int
+var carsTopAndBottomTests = []struct {
+	ss     cars
+	n      int
+	top    cars
+	bottom cars
 }{
 	{
 		nil,
-		nil,
 		1,
+		nil,
+		nil,
 	},
 	{
 		cars{},
+		1,
 		nil,
-		1,
+		nil,
 	},
 	{
 		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		1,
 		cars{car{"bar", "yellow"}},
-		1,
+		cars{car{"Baz", "black"}},
 	},
 	{
-		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
 		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
 		3,
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		cars{car{"Baz", "black"}, car{"bar", "yellow"}},
 	},
 	{
 		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
-		nil,
 		0,
+		nil,
+		nil,
 	},
 	{
 		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
-		nil,
 		-1,
+		nil,
+		nil,
 	},
 }
 
 func TestCars_Top(t *testing.T) {
-	for _, test := range carsTopTests {
+	for _, test := range carsTopAndBottomTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCars(t, &test.ss)()
 			assert.Equal(t, test.top, test.ss.Top(test.n))
@@ -535,45 +542,8 @@ func TestCars_Top(t *testing.T) {
 	}
 }
 
-var carsBottomTests = []struct {
-	ss     cars
-	bottom cars
-	n      int
-}{
-	{
-		nil,
-		nil,
-		1,
-	},
-	{
-		cars{},
-		nil,
-		1,
-	},
-	{
-		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
-		cars{car{"Baz", "black"}},
-		1,
-	},
-	{
-		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
-		cars{car{"Baz", "black"}, car{"bar", "yellow"}},
-		3,
-	},
-	{
-		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
-		nil,
-		0,
-	},
-	{
-		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
-		nil,
-		-1,
-	},
-}
-
 func TestCars_Bottom(t *testing.T) {
-	for _, test := range carsBottomTests {
+	for _, test := range carsTopAndBottomTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCars(t, &test.ss)()
 			assert.Equal(t, test.bottom, test.ss.Bottom(test.n))
