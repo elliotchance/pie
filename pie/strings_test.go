@@ -580,45 +580,52 @@ func TestStrings_Shuffle(t *testing.T) {
 	}
 }
 
-var stringsTopTests = []struct {
-	ss  Strings
-	top Strings
-	n   int
+var stringsTopAndBottomTests = []struct {
+	ss     Strings
+	n      int
+	top    Strings
+	bottom Strings
 }{
 	{
 		nil,
-		nil,
 		1,
+		nil,
+		nil,
 	},
 	{
 		Strings{},
+		1,
 		nil,
-		1,
+		nil,
 	},
 	{
 		Strings{"foo", "bar"},
+		1,
 		Strings{"foo"},
-		1,
+		Strings{"bar"},
 	},
 	{
-		Strings{"foo", "bar"},
 		Strings{"foo", "bar"},
 		3,
+		Strings{"foo", "bar"},
+		Strings{"bar", "foo"},
 	},
 	{
 		Strings{"foo", "bar"},
-		nil,
 		0,
+		nil,
+		nil,
 	},
 	{
 		Strings{"foo", "bar"},
-		nil,
 		-1,
+		nil,
+		nil,
 	},
 }
 
 func TestStrings_Top(t *testing.T) {
-	for _, test := range stringsTopTests {
+	for _, test := range stringsTopAndBottomTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
 			assert.Equal(t, test.top, test.ss.Top(test.n))
@@ -626,45 +633,8 @@ func TestStrings_Top(t *testing.T) {
 	}
 }
 
-var stringsBottomTests = []struct {
-	ss     Strings
-	bottom Strings
-	n      int
-}{
-	{
-		nil,
-		nil,
-		1,
-	},
-	{
-		Strings{},
-		nil,
-		1,
-	},
-	{
-		Strings{"foo", "bar"},
-		Strings{"bar"},
-		1,
-	},
-	{
-		Strings{"foo", "bar"},
-		Strings{"bar", "foo"},
-		3,
-	},
-	{
-		Strings{"foo", "bar"},
-		nil,
-		0,
-	},
-	{
-		Strings{"foo", "bar"},
-		nil,
-		-1,
-	},
-}
-
 func TestStrings_Bottom(t *testing.T) {
-	for _, test := range stringsBottomTests {
+	for _, test := range stringsTopAndBottomTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
 			assert.Equal(t, test.bottom, test.ss.Bottom(test.n))
