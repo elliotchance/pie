@@ -648,3 +648,10 @@ func TestInts_Bottom(t *testing.T) {
 		})
 	}
 }
+
+func TestInts_Median(t *testing.T) {
+	assert.Equal(t, 0, Ints{}.Median())
+	assert.Equal(t, 12, Ints{12}.Median())
+	assert.Equal(t, 8, Ints{12, 4}.Median())
+	assert.Equal(t, 4, Ints{2, 12, 4}.Median())
+}
