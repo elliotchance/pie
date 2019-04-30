@@ -1,4 +1,4 @@
 package pie
 
-//go:generate pie Strings
+//go:generate pie Strings.*
 type Strings []string

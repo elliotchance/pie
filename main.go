@@ -141,7 +141,7 @@ func main() {
 
 		var templates []string
 		for _, function := range functions.Functions {
-			if len(fns) > 0 && !pie.Strings(fns).Contains(function.Name) {
+			if fns[0] != "*" && !pie.Strings(fns).Contains(function.Name) {
 				continue
 			}
 
@@ -209,6 +209,10 @@ func main() {
 
 func getFunctionsFromArg(arg string) (mapOrSliceType string, fns []string) {
 	parts := strings.Split(arg, ".")
+
+	if len(parts) < 2 {
+		panic("must specify at least one function or *: " + arg)
+	}
 
 	return parts[0], parts[1:]
 }

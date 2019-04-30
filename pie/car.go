@@ -1,6 +1,6 @@
 package pie
 
-//go:generate pie cars carPointers
+//go:generate pie cars.* carPointers.*
 type cars []car
 type carPointers []*car
 
