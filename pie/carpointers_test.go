@@ -498,3 +498,65 @@ func TestCarPointers_Shuffle(t *testing.T) {
 		})
 	}
 }
+
+var carPointersTopAndBottomTests = []struct {
+	ss     carPointers
+	n      int
+	top    carPointers
+	bottom carPointers
+}{
+	{
+		nil,
+		1,
+		nil,
+		nil,
+	},
+	{
+		carPointers{},
+		1,
+		nil,
+		nil,
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+		1,
+		carPointers{&car{"bar", "yellow"}},
+		carPointers{&car{"Baz", "black"}},
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+		3,
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+		carPointers{&car{"Baz", "black"}, &car{"bar", "yellow"}},
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+		0,
+		nil,
+		nil,
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+		-1,
+		nil,
+		nil,
+	},
+}
+
+func TestCarPointers_Top(t *testing.T) {
+	for _, test := range carPointersTopAndBottomTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			assert.Equal(t, test.top, test.ss.Top(test.n))
+		})
+	}
+}
+
+func TestCarPointers_Bottom(t *testing.T) {
+	for _, test := range carPointersTopAndBottomTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			assert.Equal(t, test.bottom, test.ss.Bottom(test.n))
+		})
+	}
+}

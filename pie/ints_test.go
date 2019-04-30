@@ -586,3 +586,65 @@ func TestInts_Shuffle(t *testing.T) {
 		})
 	}
 }
+
+var intsTopAndBottomTests = []struct {
+	ss     Ints
+	n      int
+	top    Ints
+	bottom Ints
+}{
+	{
+		nil,
+		1,
+		nil,
+		nil,
+	},
+	{
+		Ints{},
+		1,
+		nil,
+		nil,
+	},
+	{
+		Ints{1, 2},
+		1,
+		Ints{1},
+		Ints{2},
+	},
+	{
+		Ints{1, 2},
+		3,
+		Ints{1, 2},
+		Ints{2, 1},
+	},
+	{
+		Ints{1, 2},
+		0,
+		nil,
+		nil,
+	},
+	{
+		Ints{1, 2},
+		-1,
+		nil,
+		nil,
+	},
+}
+
+func TestInts_Top(t *testing.T) {
+	for _, test := range intsTopAndBottomTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.top, test.ss.Top(test.n))
+		})
+	}
+}
+
+func TestInts_Bottom(t *testing.T) {
+	for _, test := range intsTopAndBottomTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.bottom, test.ss.Bottom(test.n))
+		})
+	}
+}

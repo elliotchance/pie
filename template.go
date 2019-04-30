@@ -79,6 +79,21 @@ func (ss SliceType) Average() float64 {
 	return 0
 }
 `,
+	"Bottom": `package functions
+
+// Bottom will return n elements from bottom
+// if the slice has less elements then n that'll return all elements
+// if n < 0 it'll return empty slice.
+func (ss SliceType) Bottom(n int) (top SliceType) {
+	var lastIndex = len(ss) - 1
+	for i := lastIndex; i > -1 && n > 0; i-- {
+		top = append(top, ss[i])
+		n--
+	}
+
+	return
+}
+`,
 	"Contains": `package functions
 
 // Contains returns true if the element exists in the slice.
@@ -375,6 +390,20 @@ func (ss SliceType) ToStrings(transform func(ElementType) string) pie.Strings {
 	}
 
 	return result
+}
+`,
+	"Top": `package functions
+
+// Top will return n elements from head of the slice
+// if the slice has less elements then n that'll return all elements
+// if n < 0 it'll return empty slice.
+func (ss SliceType) Top(n int) (top SliceType) {
+	for i := 0; i < len(ss) && n > 0; i++ {
+		top = append(top, ss[i])
+		n--
+	}
+
+	return
 }
 `,
 	"Transform": `package functions

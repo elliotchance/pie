@@ -43,6 +43,19 @@ func (ss carPointers) Append(elements ...*car) carPointers {
 	return append(ss, elements...)
 }
 
+// Bottom will return n elements from bottom
+// if the slice has less elements then n that'll return all elements
+// if n < 0 it'll return empty slice.
+func (ss carPointers) Bottom(n int) (top carPointers) {
+	var lastIndex = len(ss) - 1
+	for i := lastIndex; i > -1 && n > 0; i-- {
+		top = append(top, ss[i])
+		n--
+	}
+
+	return
+}
+
 // Contains returns true if the element exists in the slice.
 //
 // When using slices of pointers it will only compare by address, not value.
@@ -175,6 +188,18 @@ func (ss carPointers) Shuffle(source rand.Source) carPointers {
 	})
 
 	return shuffled
+}
+
+// Top will return n elements from head of the slice
+// if the slice has less elements then n that'll return all elements
+// if n < 0 it'll return empty slice.
+func (ss carPointers) Top(n int) (top carPointers) {
+	for i := 0; i < len(ss) && n > 0; i++ {
+		top = append(top, ss[i])
+		n--
+	}
+
+	return
 }
 
 // ToStrings transforms each element to a string.

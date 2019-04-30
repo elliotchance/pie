@@ -600,3 +600,65 @@ func TestFloat64s_Shuffle(t *testing.T) {
 		})
 	}
 }
+
+var float64sTopAndBottomTests = []struct {
+	ss     Float64s
+	n      int
+	top    Float64s
+	bottom Float64s
+}{
+	{
+		nil,
+		1,
+		nil,
+		nil,
+	},
+	{
+		Float64s{},
+		1,
+		nil,
+		nil,
+	},
+	{
+		Float64s{1.23, 2.34},
+		1,
+		Float64s{1.23},
+		Float64s{2.34},
+	},
+	{
+		Float64s{1.23, 2.34},
+		3,
+		Float64s{1.23, 2.34},
+		Float64s{2.34, 1.23},
+	},
+	{
+		Float64s{1.23, 2.34},
+		0,
+		nil,
+		nil,
+	},
+	{
+		Float64s{1.23, 2.34},
+		-1,
+		nil,
+		nil,
+	},
+}
+
+func TestFloat64s_Top(t *testing.T) {
+	for _, test := range float64sTopAndBottomTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, test.top, test.ss.Top(test.n))
+		})
+	}
+}
+
+func TestFloat64s_Bottom(t *testing.T) {
+	for _, test := range float64sTopAndBottomTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, test.bottom, test.ss.Bottom(test.n))
+		})
+	}
+}

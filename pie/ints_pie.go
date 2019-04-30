@@ -68,6 +68,19 @@ func (ss Ints) Average() float64 {
 	return 0
 }
 
+// Bottom will return n elements from bottom
+// if the slice has less elements then n that'll return all elements
+// if n < 0 it'll return empty slice.
+func (ss Ints) Bottom(n int) (top Ints) {
+	var lastIndex = len(ss) - 1
+	for i := lastIndex; i > -1 && n > 0; i-- {
+		top = append(top, ss[i])
+		n--
+	}
+
+	return
+}
+
 // Contains returns true if the element exists in the slice.
 //
 // When using slices of pointers it will only compare by address, not value.
@@ -261,6 +274,18 @@ func (ss Ints) Shuffle(source rand.Source) Ints {
 	})
 
 	return shuffled
+}
+
+// Top will return n elements from head of the slice
+// if the slice has less elements then n that'll return all elements
+// if n < 0 it'll return empty slice.
+func (ss Ints) Top(n int) (top Ints) {
+	for i := 0; i < len(ss) && n > 0; i++ {
+		top = append(top, ss[i])
+		n--
+	}
+
+	return
 }
 
 // ToStrings transforms each element to a string.
