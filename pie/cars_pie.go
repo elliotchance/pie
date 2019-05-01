@@ -2,8 +2,9 @@ package pie
 
 import (
 	"encoding/json"
-	"github.com/elliotchance/pie/pie/util"
 	"math/rand"
+
+	"github.com/elliotchance/pie/pie/util"
 )
 
 // All will return true if all callbacks return true. It follows the same logic

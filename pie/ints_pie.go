@@ -2,9 +2,10 @@ package pie
 
 import (
 	"encoding/json"
-	"github.com/elliotchance/pie/pie/util"
 	"math/rand"
 	"sort"
+
+	"github.com/elliotchance/pie/pie/util"
 )
 
 // All will return true if all callbacks return true. It follows the same logic
@@ -216,6 +217,22 @@ func (ss Ints) Min() (min int) {
 	return
 }
 
+// Pop is function get element at the end of slice, or zero value
+func (ss Ints) Pop() (popValue int) {
+	if len(ss) == 0 {
+		return
+	}
+	popValue, ss = ss[len(ss)-1], ss[:len(ss)-1]
+
+	return popValue
+}
+
+// Push is function add element at the end of slice, or zero value
+func (ss Ints) Push(element int) Ints {
+	ss = append(ss, element)
+	return ss
+}
+
 // Reverse returns a new copy of the slice with the elements ordered in reverse.
 // This is useful when combined with Sort to get a descending sort order:
 //
@@ -394,3 +411,19 @@ func (ss Ints) Unselect(condition func(int) bool) (ss2 Ints) {
 
 	return
 }
+
+// // Pop is function get element at the end of slice, or zero value
+// func (ss Ints) Pop() (popValue int) {
+// 	if len(ss) == 0 {
+// 		return
+// 	}
+// 	popValue, ss = ss[len(ss)-1], ss[:len(ss)-1]
+
+// 	return popValue
+// }
+
+// // Push is function add element at the end of slice, or zero value
+// func (ss Ints) Push(element int) Ints {
+// 	ss = append(ss, element)
+// 	return ss
+// }

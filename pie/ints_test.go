@@ -155,9 +155,11 @@ var intsStatsTests = []struct {
 	ss                 []int
 	min, max, sum, len int
 	average            float64
+	pop                int
 }{
 	{
 		nil,
+		0,
 		0,
 		0,
 		0,
@@ -171,9 +173,11 @@ var intsStatsTests = []struct {
 		0,
 		0,
 		0,
+		0,
 	},
 	{
 		[]int{1},
+		1,
 		1,
 		1,
 		1,
@@ -187,6 +191,7 @@ var intsStatsTests = []struct {
 		11,
 		4,
 		2.75,
+		1,
 	},
 }
 
@@ -654,4 +659,25 @@ func TestInts_Median(t *testing.T) {
 	assert.Equal(t, 12, Ints{12}.Median())
 	assert.Equal(t, 8, Ints{12, 4}.Median())
 	assert.Equal(t, 4, Ints{2, 12, 4}.Median())
+}
+
+func TestInts_Pop(t *testing.T) {
+	for _, test := range intsStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.pop, Ints(test.ss).Pop())
+		})
+	}
+}
+
+func TestInts_Push(t *testing.T) {
+	assert.Equal(t,
+		Ints{}.Push(3),
+		Ints{3},
+	)
+
+	assert.Equal(t,
+		Ints{3}.Push(4),
+		Ints{3, 4},
+	)
+
 }

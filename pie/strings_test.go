@@ -163,30 +163,35 @@ var stringsStatsTests = []struct {
 	ss       Strings
 	min, max string
 	len      int
+	pop      string
 }{
 	{
 		nil,
 		"",
 		"",
 		0,
+		"",
 	},
 	{
 		[]string{},
 		"",
 		"",
 		0,
+		"",
 	},
 	{
 		[]string{"foo"},
 		"foo",
 		"foo",
 		1,
+		"foo",
 	},
 	{
 		[]string{"bar", "Baz", "qux", "foo"},
 		"Baz",
 		"qux",
 		4,
+		"foo",
 	},
 }
 
@@ -640,4 +645,26 @@ func TestStrings_Bottom(t *testing.T) {
 			assert.Equal(t, test.bottom, test.ss.Bottom(test.n))
 		})
 	}
+}
+
+func TestStrings_Pop(t *testing.T) {
+	for _, test := range stringsStatsTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.pop, Strings(test.ss).Pop())
+		})
+	}
+}
+
+func TestStrings_Push(t *testing.T) {
+	assert.Equal(t,
+		Strings{}.Push("foo"),
+		Strings{"foo"},
+	)
+
+	assert.Equal(t,
+		Strings{"foo"}.Push("bar"),
+		Strings{"foo", "bar"},
+	)
+
 }

@@ -82,9 +82,6 @@ func (ss SliceType) Average() float64 {
 	"Bottom": `package functions
 
 // Bottom will return n elements from bottom
-//
-// that means that elements is taken from the end of the slice
-// for this [1,2,3] slice with n == 2 will be returned [3,2]
 // if the slice has less elements then n that'll return all elements
 // if n < 0 it'll return empty slice.
 func (ss SliceType) Bottom(n int) (top SliceType) {
@@ -248,32 +245,6 @@ func (ss SliceType) Max() (max ElementType) {
 	return
 }
 `,
-	"Median": `package functions
-
-// Median returns the value separating the higher half from the lower half of a
-// data sample.
-//
-// Zero is returned if there are no elements in the slice.
-func (ss SliceType) Median() ElementType {
-	l := len(ss)
-
-	switch {
-	case l == 0:
-		return ElementZeroValue
-
-	case l == 1:
-		return ss[0]
-	}
-
-	sorted := ss.Sort()
-
-	if l%2 != 0 {
-		return sorted[l/2]
-	}
-
-	return (sorted[l/2-1] + sorted[l/2]) / 2
-}
-`,
 	"Min": `package functions
 
 // Min is the minimum value, or zero.
@@ -292,6 +263,30 @@ func (ss SliceType) Min() (min ElementType) {
 	return
 }
 `,
+
+	"Pop": `package functions
+
+// Pop is method get one element at the end of slices, or zero value.
+func (ss SliceType) Pop() ElementType {
+	if len(ss) == 0 {
+		return
+	}
+	popValue, ss = ss[len(ss)-1], ss[:len(ss)-1]
+
+	return popValue
+}
+`,
+
+	"Push": `package functions
+
+// Push is method pass one element as argument and add element to the end of slice, or zero value.
+func (ss SliceType) Push(element ElementType) SliceType {
+	ss = append(ss, element)
+	return ss
+}
+
+`,
+
 	"Reverse": `package functions
 
 // Reverse returns a new copy of the slice with the elements ordered in reverse.

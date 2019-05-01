@@ -164,9 +164,11 @@ var float64sStatsTests = []struct {
 	min, max, sum float64
 	len           int
 	average       float64
+	pop           float64
 }{
 	{
 		nil,
+		0,
 		0,
 		0,
 		0,
@@ -180,6 +182,7 @@ var float64sStatsTests = []struct {
 		0,
 		0,
 		0,
+		0,
 	},
 	{
 		[]float64{1.5},
@@ -187,6 +190,7 @@ var float64sStatsTests = []struct {
 		1.5,
 		1.5,
 		1,
+		1.5,
 		1.5,
 	},
 	{
@@ -196,6 +200,7 @@ var float64sStatsTests = []struct {
 		12.3,
 		4,
 		3.075,
+		1.9,
 	},
 }
 
@@ -668,4 +673,26 @@ func TestFloat64s_Median(t *testing.T) {
 	assert.Equal(t, 12.3, Float64s{12.3}.Median())
 	assert.Equal(t, 8.4, Float64s{12.3, 4.5}.Median())
 	assert.Equal(t, 4.5, Float64s{2.1, 12.3, 4.5}.Median())
+}
+
+func TestFloat64s_Pop(t *testing.T) {
+	for _, test := range float64sStatsTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, test.pop, Float64s(test.ss).Pop())
+		})
+	}
+}
+
+func TestFloat64s_Push(t *testing.T) {
+	assert.Equal(t,
+		Float64s{}.Push(3.45),
+		Float64s{3.45},
+	)
+
+	assert.Equal(t,
+		Float64s{3.45}.Push(4.56),
+		Float64s{3.45, 4.56},
+	)
+
 }
