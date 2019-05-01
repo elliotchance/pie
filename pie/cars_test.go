@@ -550,3 +550,19 @@ func TestCars_Bottom(t *testing.T) {
 		})
 	}
 }
+
+func TestCars_Each(t *testing.T) {
+	var names []string
+
+	names = []string{}
+	cars{}.Each(func(car car) {
+		names = append(names, car.Name)
+	})
+	assert.Equal(t, []string{}, names)
+
+	names = []string{}
+	cars{car{"bar", "yellow"}, car{"Baz", "black"}}.Each(func(car car) {
+		names = append(names, car.Name)
+	})
+	assert.Equal(t, []string{"bar", "Baz"}, names)
+}

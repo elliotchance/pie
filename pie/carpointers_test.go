@@ -560,3 +560,25 @@ func TestCarPointers_Bottom(t *testing.T) {
 		})
 	}
 }
+
+func TestCarPointers_Each(t *testing.T) {
+	var names []string
+
+	names = []string{}
+	carPointers(nil).Each(func(car *car) {
+		names = append(names, car.Name)
+	})
+	assert.Equal(t, []string{}, names)
+
+	names = []string{}
+	carPointers{}.Each(func(car *car) {
+		names = append(names, car.Name)
+	})
+	assert.Equal(t, []string{}, names)
+
+	names = []string{}
+	carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}}.Each(func(car *car) {
+		names = append(names, car.Name)
+	})
+	assert.Equal(t, []string{"bar", "Baz"}, names)
+}

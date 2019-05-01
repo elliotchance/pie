@@ -97,6 +97,29 @@ func (ss Ints) Contains(lookingFor int) bool {
 	return false
 }
 
+// Each is more condensed version of Transform that allows an action to happen
+// on each elements and pass the original slice on.
+//
+//   cars.Each(func (car *Car) {
+//       fmt.Printf("Car color is: %s\n", car.Color)
+//   })
+//
+// Pie will not ensure immutability on items passed in so they can be
+// manipulated, if you choose to do it this way, for example:
+//
+//   // Set all car colors to Red.
+//   cars.Each(func (car *Car) {
+//       car.Color = "Red"
+//   })
+//
+func (ss Ints) Each(fn func(int)) Ints {
+	for _, s := range ss {
+		fn(s)
+	}
+
+	return ss
+}
+
 // Extend will return a new slice with the slices of elements appended to the
 // end.
 //

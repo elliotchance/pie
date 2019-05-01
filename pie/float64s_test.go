@@ -669,3 +669,19 @@ func TestFloat64s_Median(t *testing.T) {
 	assert.Equal(t, 8.4, Float64s{12.3, 4.5}.Median())
 	assert.Equal(t, 4.5, Float64s{2.1, 12.3, 4.5}.Median())
 }
+
+func TestFloat64s_Each(t *testing.T) {
+	var values []float64
+
+	values = []float64{}
+	Float64s{}.Each(func(value float64) {
+		values = append(values, value)
+	})
+	assert.Equal(t, []float64{}, values)
+
+	values = []float64{}
+	Float64s{435.34, 8923.1}.Each(func(value float64) {
+		values = append(values, value)
+	})
+	assert.Equal(t, []float64{435.34, 8923.1}, values)
+}
