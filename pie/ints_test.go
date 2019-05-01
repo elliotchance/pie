@@ -655,3 +655,19 @@ func TestInts_Median(t *testing.T) {
 	assert.Equal(t, 8, Ints{12, 4}.Median())
 	assert.Equal(t, 4, Ints{2, 12, 4}.Median())
 }
+
+func TestInts_Each(t *testing.T) {
+	var values []int
+
+	values = []int{}
+	Ints{}.Each(func(value int) {
+		values = append(values, value)
+	})
+	assert.Equal(t, []int{}, values)
+
+	values = []int{}
+	Ints{435, 8923}.Each(func(value int) {
+		values = append(values, value)
+	})
+	assert.Equal(t, []int{435, 8923}, values)
+}

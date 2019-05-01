@@ -7,6 +7,7 @@
 focuses on type safety, performance and immutability.
 
 - [Quick Start](#quick-start)
+  * [Install/Update](#install-update)
   * [Built-in Types](#built-in-types)
   * [Custom Types](#custom-types)
   * [Limiting Functions Generated](#limiting-functions-generated)
@@ -19,7 +20,7 @@ focuses on type safety, performance and immutability.
 
 # Quick Start
 
-Install/update:
+## Install/Update
 
 ```bash
 go get -u github.com/elliotchance/pie
@@ -132,6 +133,7 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Select`.
 | `Bottom`     | ✓      | ✓      | ✓     |      | n        | Gets n elements from bottom. |
 | `Contains`   | ✓      | ✓      | ✓     |      | n        | Check if the value exists in the slice. |
 | `Extend`     | ✓      | ✓      | ✓     |      | n        | A new slice with the elements from each slice appended to the end. |
+| `Each`       | ✓      | ✓      | ✓     |      | n        | Perform an action on each element. |
 | `First`      | ✓      | ✓      | ✓     |      | 1        | The first element, or a zeroed value. |
 | `FirstOr`    | ✓      | ✓      | ✓     |      | 1        | The first element, or a default value. |
 | `Join`       | ✓      |        |       |      | n        | A string from joining each of the elements. |

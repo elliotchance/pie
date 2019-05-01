@@ -26,6 +26,7 @@ var Functions = []struct {
 	{"Average", "average.go", ForNumbers},
 	{"Bottom", "bottom.go", ForAll},
 	{"Contains", "contains.go", ForAll},
+	{"Each", "each.go", ForAll},
 	{"Extend", "extend.go", ForAll},
 	{"First", "first.go", ForAll},
 	{"FirstOr", "first_or.go", ForAll},

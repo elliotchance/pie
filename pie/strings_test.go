@@ -641,3 +641,19 @@ func TestStrings_Bottom(t *testing.T) {
 		})
 	}
 }
+
+func TestStrings_Each(t *testing.T) {
+	var values []string
+
+	values = []string{}
+	Strings{}.Each(func(value string) {
+		values = append(values, value)
+	})
+	assert.Equal(t, []string{}, values)
+
+	values = []string{}
+	Strings{"baz", "qux"}.Each(func(value string) {
+		values = append(values, value)
+	})
+	assert.Equal(t, []string{"baz", "qux"}, values)
+}
