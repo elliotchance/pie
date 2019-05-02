@@ -42,7 +42,7 @@ package main
 import (
     "fmt"
     "strings"
-    
+
     "github.com/elliotchance/pie/pie"
 )
 
@@ -100,7 +100,7 @@ cars.Unselect(func (car Car) {
     }).
     Transform(func (car Car) Car {
         car.Name = strings.ToUpper(car.Name)
-        
+
         return car
     }).
     Last()
@@ -145,6 +145,7 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Select`.
 | `Max`        | ✓      | ✓      |       |      | n        | The maximum value, or a zeroes value. |
 | `Median`     |        | ✓      |       |      | n⋅log(n) | Median returns the value separating the higher half from the lower half of a data sample. |
 | `Min`        | ✓      | ✓      |       |      | n        | The minimum value, or a zeroed value. |
+| `Random`     | ✓      | ✓      | ✓     |      | n        | Select a random element, or a zeroed value if empty. |
 | `Reverse`    | ✓      | ✓      | ✓     |      | n        | Reverse elements. |
 | `Select`     | ✓      | ✓      | ✓     |      | n        | A new slice containing only the elements that returned true from the condition. |
 | `Sort`       | ✓      | ✓      |       |      | n⋅log(n) | Return a new sorted slice. |

@@ -566,3 +566,44 @@ func TestCars_Each(t *testing.T) {
 	})
 	assert.Equal(t, []string{"bar", "Baz"}, names)
 }
+
+var carsRandomTests = []struct {
+	ss       cars
+	expected car
+	source   rand.Source
+}{
+	{
+		nil,
+		car{},
+		nil,
+	},
+	{
+		nil,
+		car{},
+		rand.NewSource(0),
+	},
+	{
+		cars{},
+		car{},
+		rand.NewSource(0),
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"foo", "red"}},
+		car{"foo", "red"},
+		rand.NewSource(0),
+	},
+	{
+		cars{car{"bar", "yellow"}},
+		car{"bar", "yellow"},
+		rand.NewSource(0),
+	},
+}
+
+func TestCars_Random(t *testing.T) {
+	for _, test := range carsRandomTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Random(test.source))
+		})
+	}
+}

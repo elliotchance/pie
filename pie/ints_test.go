@@ -671,3 +671,44 @@ func TestInts_Each(t *testing.T) {
 	})
 	assert.Equal(t, []int{435, 8923}, values)
 }
+
+var intsRandomTests = []struct {
+	ss       Ints
+	expected int
+	source   rand.Source
+}{
+	{
+		nil,
+		0,
+		nil,
+	},
+	{
+		nil,
+		0,
+		rand.NewSource(0),
+	},
+	{
+		Ints{},
+		0,
+		rand.NewSource(0),
+	},
+	{
+		Ints{1, 2, 4},
+		4,
+		rand.NewSource(0),
+	},
+	{
+		Ints{12},
+		12,
+		rand.NewSource(0),
+	},
+}
+
+func TestInts_Random(t *testing.T) {
+	for _, test := range intsRandomTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Random(test.source))
+		})
+	}
+}

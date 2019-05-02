@@ -239,6 +239,22 @@ func (ss Ints) Min() (min int) {
 	return
 }
 
+// Random returns a random element by your rand.Source, or zero
+func (ss Ints) Random(source rand.Source) int {
+	n := len(ss)
+
+	// Avoid the extra allocation.
+	if n < 1 {
+		return 0
+	}
+	if n < 2 {
+		return ss[0]
+	}
+	rnd := rand.New(source)
+	i := rnd.Intn(n + 1)
+	return ss[i]
+}
+
 // Reverse returns a new copy of the slice with the elements ordered in reverse.
 // This is useful when combined with Sort to get a descending sort order:
 //
