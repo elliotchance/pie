@@ -9,7 +9,10 @@ go:
 
 script:
   # Make sure everything is formatted correctly.
-  - $(exit $(go fmt ./... | grep -v /vendor/ | wc -l))
+  - $(exit $(go fmt ./... | wc -l))
+
+  # Record all assertions for stats.
+  - $(exit $(grep -r '"github.com/stretchr/testify"' . --include \*.go | wc -l))
 
   # Make sure go generate is in sync.
   - go generate ./... && go install && go generate ./...
