@@ -1,9 +1,15 @@
 package pie
 
 import (
-	"github.com/stretchr/testify/assert"
+	testify_stats "github.com/elliotchance/testify-stats"
+	"github.com/elliotchance/testify-stats/assert"
+	"os"
 	"testing"
 )
+
+func TestMain(m *testing.M) {
+	os.Exit(testify_stats.Run(m))
+}
 
 func assertImmutableStrings(t *testing.T, ss *Strings) func() {
 	before := (*ss).JSONString()

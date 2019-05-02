@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/elliotchance/testify-stats/assert"
 )
 
 var intsContainsTests = []struct {
