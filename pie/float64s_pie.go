@@ -3,9 +3,19 @@ package pie
 import (
 	"encoding/json"
 	"github.com/elliotchance/pie/pie/util"
+	"math"
 	"math/rand"
 	"sort"
 )
+
+// Abs is a function which returns the absolute value of all the
+// elements in the slice.
+func (ss Float64s) Abs() Float64s {
+	for i, val := range ss {
+		ss[i] = float64(math.Abs(float64(val)))
+	}
+	return ss
+}
 
 // All will return true if all callbacks return true. It follows the same logic
 // as the all() function in Python.
