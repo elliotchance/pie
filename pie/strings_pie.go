@@ -340,13 +340,13 @@ func (ss Strings) ToStrings(transform func(string) string) Strings {
 	return result
 }
 
-// Transform will return a new slice where each element has been transformed.
-// The number of element returned will always be the same as the input.
+// Map will return a new slice where each element has been mapped (transformed).
+// The number of elements returned will always be the same as the input.
 //
 // Be careful when using this with slices of pointers. If you modify the input
 // value it will affect the original slice. Be sure to return a new allocated
 // object or deep copy the existing one.
-func (ss Strings) Transform(fn func(string) string) (ss2 Strings) {
+func (ss Strings) Map(fn func(string) string) (ss2 Strings) {
 	if ss == nil {
 		return nil
 	}

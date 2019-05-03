@@ -39,7 +39,7 @@ var carsFilterTests = []struct {
 	condition         func(car) bool
 	expectedFilter    cars
 	expectedFilterNot cars
-	expectedTransform cars
+	expectedMap       cars
 }{
 	{
 		nil,
@@ -79,11 +79,11 @@ func TestCars_FilterNot(t *testing.T) {
 	}
 }
 
-func TestCars_Transform(t *testing.T) {
+func TestCars_Map(t *testing.T) {
 	for _, test := range carsFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCars(t, &test.ss)()
-			assert.Equal(t, test.expectedTransform, test.ss.Transform(func(car car) car {
+			assert.Equal(t, test.expectedMap, test.ss.Map(func(car car) car {
 				car.Name = strings.ToUpper(car.Name)
 
 				return car

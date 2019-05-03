@@ -37,9 +37,9 @@ func TestStrings_Contains(t *testing.T) {
 var stringsFilterTests = []struct {
 	ss                Strings
 	condition         func(string) bool
-	expectedFilter Strings
+	expectedFilter    Strings
 	expectedFilterNot Strings
-	expectedTransform Strings
+	expectedMap       Strings
 }{
 	{
 		nil,
@@ -79,11 +79,11 @@ func TestStrings_FilterNot(t *testing.T) {
 	}
 }
 
-func TestStrings_Transform(t *testing.T) {
+func TestStrings_Map(t *testing.T) {
 	for _, test := range stringsFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
-			assert.Equal(t, test.expectedTransform, test.ss.Transform(strings.ToUpper))
+			assert.Equal(t, test.expectedMap, test.ss.Map(strings.ToUpper))
 		})
 	}
 }

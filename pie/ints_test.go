@@ -34,9 +34,9 @@ func TestInts_Contains(t *testing.T) {
 var intsFilterTests = []struct {
 	ss                Ints
 	condition         func(int) bool
-	expectedFilter Ints
+	expectedFilter    Ints
 	expectedFilterNot Ints
-	expectedTransform Ints
+	expectedMap       Ints
 }{
 	{
 		nil,
@@ -74,10 +74,10 @@ func TestInts_FilterNot(t *testing.T) {
 	}
 }
 
-func TestInts_Transform(t *testing.T) {
+func TestInts_Map(t *testing.T) {
 	for _, test := range intsFilterTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expectedTransform, test.ss.Transform(func(i int) int {
+			assert.Equal(t, test.expectedMap, test.ss.Map(func(i int) int {
 				return i + 5
 			}))
 		})

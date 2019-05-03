@@ -48,7 +48,7 @@ var Functions = []struct {
 	{"Shuffle", "shuffle.go", ForAll},
 	{"Top", "top.go", ForAll},
 	{"ToStrings", "to_strings.go", ForAll},
-	{"Transform", "transform.go", ForAll},
+	{"Map", "map.go", ForAll},
 	{"Unique", "unique.go", ForNumbersAndStrings},
 	{"FilterNot", "filternot.go", ForAll},
 	{"Values", "values.go", ForMaps},
