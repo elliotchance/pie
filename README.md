@@ -124,6 +124,7 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Select`.
 
 | Function     | String | Number | Struct| Maps | Big-O    | Description |
 | ------------ | :----: | :----: | :----:| :--: | :------: | ----------- |
+| `Abs`        |        | ✓      |       |      | n        | Abs will return the absolute value of all values in the slice.
 | `All`        | ✓      | ✓      | ✓     |      | n        | All will return true if all callbacks return true. If the list is empty then true is always returned. |
 | `Any`        | ✓      | ✓      | ✓     |      | n        | Any will return true if any callbacks return true. If the list is empty then false is always returned. |
 | `Append`     | ✓      | ✓      | ✓     |      | n        | A new slice with the elements appended to the end. |

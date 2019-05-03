@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/elliotchance/testify-stats/assert"
 )
 
 var float64sContainsTests = []struct {
@@ -728,6 +728,32 @@ func TestFloat64s_Random(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableFloat64s(t, &test.ss)()
 			assert.Equal(t, test.expected, test.ss.Random(test.source))
+		})
+	}
+}
+
+var float64sAbsTests = []struct {
+	ss  Float64s
+	abs Float64s
+}{
+	{
+		Float64s{1, 2, 3, 4, 5},
+		Float64s{1, 2, 3, 4, 5},
+	},
+	{
+		Float64s{636, -5828, 444, -29281, 0},
+		Float64s{636, 5828, 444, 29281, 0},
+	},
+	{
+		Float64s{-584.2727, -47474.2112, 96843, -0.000004, 13},
+		Float64s{584.2727, 47474.2112, 96843, 0.000004, 13},
+	},
+}
+
+func TestFloat64s_Abs(t *testing.T) {
+	for _, test := range float64sAbsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.abs, test.ss.Abs())
 		})
 	}
 }

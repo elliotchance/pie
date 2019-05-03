@@ -1,7 +1,7 @@
 package pie
 
 import (
-	"github.com/stretchr/testify/assert"
+	"github.com/elliotchance/testify-stats/assert"
 	"sort"
 	"testing"
 )
