@@ -671,3 +671,9 @@ func TestInts_Each(t *testing.T) {
 	})
 	assert.Equal(t, []int{435, 8923}, values)
 }
+
+func TestMyInts_Abs(t *testing.T) {
+	assert.Equal(t, Ints{1, 5, 7}, Ints{-1, 5, -7}.Abs())
+	assert.Equal(t, Ints{689845, 688969, 220373, 89437, 308836}, Ints{-689845, -688969, -220373, -89437, 308836}.Abs())
+	assert.Equal(t, Ints{1, 2}, Ints{1, 2}.Abs())
+}
