@@ -47,7 +47,7 @@ var carPointersFilterTests = []struct {
 	ss                carPointers
 	condition         func(*car) bool
 	expectedFilter    carPointers
-	expectedUnselect  carPointers
+	expectedFilterNot carPointers
 	expectedTransform carPointers
 }{
 	{
@@ -79,11 +79,11 @@ func TestCarPointers_Filter(t *testing.T) {
 	}
 }
 
-func TestCarPointers_Unselect(t *testing.T) {
+func TestCarPointers_FilterNot(t *testing.T) {
 	for _, test := range carPointersFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCarPointers(t, &test.ss)()
-			assert.Equal(t, test.expectedUnselect, test.ss.Unselect(test.condition))
+			assert.Equal(t, test.expectedFilterNot, test.ss.FilterNot(test.condition))
 		})
 	}
 }

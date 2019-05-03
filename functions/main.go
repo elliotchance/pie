@@ -50,7 +50,7 @@ var Functions = []struct {
 	{"ToStrings", "to_strings.go", ForAll},
 	{"Transform", "transform.go", ForAll},
 	{"Unique", "unique.go", ForNumbersAndStrings},
-	{"Unselect", "unselect.go", ForAll},
+	{"FilterNot", "filternot.go", ForAll},
 	{"Values", "values.go", ForMaps},
 }
 

@@ -430,10 +430,10 @@ func (ss Float64s) Unique() Float64s {
 	return uniqueValues
 }
 
-// Unselect works the same as Select, with a negated condition. That is, it will
+// FilterNot works the same as Filter, with a negated condition. That is, it will
 // return a new slice only containing the elements that returned false from the
 // condition. The returned slice may contain zero elements (nil).
-func (ss Float64s) Unselect(condition func(float64) bool) (ss2 Float64s) {
+func (ss Float64s) FilterNot(condition func(float64) bool) (ss2 Float64s) {
 	for _, s := range ss {
 		if !condition(s) {
 			ss2 = append(ss2, s)

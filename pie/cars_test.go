@@ -38,7 +38,7 @@ var carsFilterTests = []struct {
 	ss                cars
 	condition         func(car) bool
 	expectedFilter    cars
-	expectedUnselect  cars
+	expectedFilterNot cars
 	expectedTransform cars
 }{
 	{
@@ -70,11 +70,11 @@ func TestCars_Filter(t *testing.T) {
 	}
 }
 
-func TestCars_Unselect(t *testing.T) {
+func TestCars_FilterNot(t *testing.T) {
 	for _, test := range carsFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCars(t, &test.ss)()
-			assert.Equal(t, test.expectedUnselect, test.ss.Unselect(test.condition))
+			assert.Equal(t, test.expectedFilterNot, test.ss.FilterNot(test.condition))
 		})
 	}
 }

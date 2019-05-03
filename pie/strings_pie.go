@@ -390,10 +390,10 @@ func (ss Strings) Unique() Strings {
 	return uniqueValues
 }
 
-// Unselect works the same as Select, with a negated condition. That is, it will
+// FilterNot works the same as Filter, with a negated condition. That is, it will
 // return a new slice only containing the elements that returned false from the
 // condition. The returned slice may contain zero elements (nil).
-func (ss Strings) Unselect(condition func(string) bool) (ss2 Strings) {
+func (ss Strings) FilterNot(condition func(string) bool) (ss2 Strings) {
 	for _, s := range ss {
 		if !condition(s) {
 			ss2 = append(ss2, s)
