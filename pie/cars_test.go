@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/elliotchance/testify-stats/assert"
 )
@@ -609,6 +610,66 @@ func TestCars_Random(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCars(t, &test.ss)()
 			assert.Equal(t, test.expected, test.ss.Random(test.source))
+		})
+	}
+}
+
+var carsSendTests = []struct {
+	ss             cars
+	recieveDelay   time.Duration
+	canceledDelay  time.Duration
+	expectedAmount int
+	expected       cars
+}{
+	{
+		nil,
+		0,
+		0,
+		0,
+		nil,
+	},
+	{
+		cars{},
+		0,
+		0,
+		0,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		0,
+		0,
+		2,
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		time.Millisecond * 30,
+		time.Millisecond * 10,
+		1,
+		cars{car{"bar", "yellow"}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		time.Millisecond * 3,
+		time.Millisecond * 10,
+		2,
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+	},
+}
+
+func TestCar_Send(t *testing.T) {
+	for _, test := range carsSendTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss)()
+			ch := make(chan car)
+			actual := getCarsFromChan(ch, test.recieveDelay)
+			ctx := createContextByDelay(test.canceledDelay)
+
+			actualSendedCount := test.ss.Send(ctx, ch)
+
+			assert.Equal(t, test.expectedAmount, actualSendedCount)
+			assert.Equal(t, test.expected, actual())
 		})
 	}
 }
