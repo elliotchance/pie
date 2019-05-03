@@ -685,3 +685,29 @@ func TestFloat64s_Each(t *testing.T) {
 	})
 	assert.Equal(t, []float64{435.34, 8923.1}, values)
 }
+
+var float64sAbsTests = []struct {
+	ss  Float64s
+	abs Float64s
+}{
+	{
+		Float64s{1, 2, 3, 4, 5},
+		Float64s{1, 2, 3, 4, 5},
+	},
+	{
+		Float64s{636, -5828, 444, -29281, 0},
+		Float64s{636, 5828, 444, 29281, 0},
+	},
+	{
+		Float64s{-584.2727, -47474.2112, 96843, -0.000004, 13},
+		Float64s{584.2727, 47474.2112, 96843, 0.000004, 13},
+	},
+}
+
+func TestFloat64s_Abs(t *testing.T) {
+	for _, test := range float64sAbsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.abs, test.ss.Abs())
+		})
+	}
+}
