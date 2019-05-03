@@ -686,6 +686,52 @@ func TestFloat64s_Each(t *testing.T) {
 	assert.Equal(t, []float64{435.34, 8923.1}, values)
 }
 
+var float64sRandomTests = []struct {
+	ss       Float64s
+	expected float64
+	source   rand.Source
+}{
+	{
+		nil,
+		0.0,
+		nil,
+	},
+	{
+		nil,
+		0.0,
+		rand.NewSource(0),
+	},
+	{
+		Float64s{},
+		0.0,
+		rand.NewSource(0),
+	},
+	{
+		Float64s{12.3, 2.34, 4.56},
+		12.3,
+		rand.NewSource(0),
+	},
+	{
+		Float64s{12.3, 2.34, 4.56},
+		4.56,
+		rand.NewSource(1),
+	},
+	{
+		Float64s{12.3},
+		12.3,
+		rand.NewSource(0),
+	},
+}
+
+func TestFloat64s_Random(t *testing.T) {
+	for _, test := range float64sRandomTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Random(test.source))
+		})
+	}
+}
+
 var float64sAbsTests = []struct {
 	ss  Float64s
 	abs Float64s

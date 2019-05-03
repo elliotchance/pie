@@ -582,3 +582,49 @@ func TestCarPointers_Each(t *testing.T) {
 	})
 	assert.Equal(t, []string{"bar", "Baz"}, names)
 }
+
+var carPointersRandomTests = []struct {
+	ss       carPointers
+	expected *car
+	source   rand.Source
+}{
+	{
+		nil,
+		&car{},
+		nil,
+	},
+	{
+		nil,
+		&car{},
+		rand.NewSource(0),
+	},
+	{
+		carPointers{},
+		&car{},
+		rand.NewSource(0),
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}, &car{"foo", "red"}},
+		&car{"bar", "yellow"},
+		rand.NewSource(0),
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}, &car{"foo", "red"}},
+		&car{"foo", "red"},
+		rand.NewSource(1),
+	},
+	{
+		carPointers{&car{"bar", "yellow"}},
+		&car{"bar", "yellow"},
+		rand.NewSource(0),
+	},
+}
+
+func TestCarPointers_Random(t *testing.T) {
+	for _, test := range carPointersRandomTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Random(test.source))
+		})
+	}
+}

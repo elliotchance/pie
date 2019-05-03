@@ -657,3 +657,49 @@ func TestStrings_Each(t *testing.T) {
 	})
 	assert.Equal(t, []string{"baz", "qux"}, values)
 }
+
+var stringsRandomTests = []struct {
+	ss       Strings
+	expected string
+	source   rand.Source
+}{
+	{
+		nil,
+		"",
+		nil,
+	},
+	{
+		nil,
+		"",
+		rand.NewSource(0),
+	},
+	{
+		Strings{},
+		"",
+		rand.NewSource(0),
+	},
+	{
+		Strings{"foo", "bar", "baz"},
+		"baz",
+		rand.NewSource(1),
+	},
+	{
+		Strings{"foo", "bar", "baz"},
+		"foo",
+		rand.NewSource(0),
+	},
+	{
+		Strings{"foo"},
+		"foo",
+		rand.NewSource(0),
+	},
+}
+
+func TestStrings_Random(t *testing.T) {
+	for _, test := range stringsRandomTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Random(test.source))
+		})
+	}
+}
