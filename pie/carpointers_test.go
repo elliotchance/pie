@@ -605,8 +605,13 @@ var carPointersRandomTests = []struct {
 	},
 	{
 		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}, &car{"foo", "red"}},
-		&car{"foo", "red"},
+		&car{"bar", "yellow"},
 		rand.NewSource(0),
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}, &car{"foo", "red"}},
+		&car{"foo", "red"},
+		rand.NewSource(1),
 	},
 	{
 		carPointers{&car{"bar", "yellow"}},

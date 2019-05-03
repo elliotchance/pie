@@ -230,7 +230,7 @@ func (ss Strings) Random(source rand.Source) string {
 		return ss[0]
 	}
 	rnd := rand.New(source)
-	i := rnd.Intn(n + 1)
+	i := rnd.Intn(n)
 	return ss[i]
 }
 

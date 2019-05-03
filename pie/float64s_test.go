@@ -708,8 +708,13 @@ var float64sRandomTests = []struct {
 	},
 	{
 		Float64s{12.3, 2.34, 4.56},
-		4.56,
+		12.3,
 		rand.NewSource(0),
+	},
+	{
+		Float64s{12.3, 2.34, 4.56},
+		4.56,
+		rand.NewSource(1),
 	},
 	{
 		Float64s{12.3},

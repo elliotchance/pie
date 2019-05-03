@@ -251,7 +251,7 @@ func (ss Ints) Random(source rand.Source) int {
 		return ss[0]
 	}
 	rnd := rand.New(source)
-	i := rnd.Intn(n + 1)
+	i := rnd.Intn(n)
 	return ss[i]
 }
 

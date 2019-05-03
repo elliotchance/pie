@@ -251,7 +251,7 @@ func (ss Float64s) Random(source rand.Source) float64 {
 		return ss[0]
 	}
 	rnd := rand.New(source)
-	i := rnd.Intn(n + 1)
+	i := rnd.Intn(n)
 	return ss[i]
 }
 

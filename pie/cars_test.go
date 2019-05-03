@@ -589,8 +589,13 @@ var carsRandomTests = []struct {
 	},
 	{
 		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"foo", "red"}},
-		car{"foo", "red"},
+		car{"bar", "yellow"},
 		rand.NewSource(0),
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"foo", "red"}},
+		car{"foo", "red"},
+		rand.NewSource(1),
 	},
 	{
 		cars{car{"bar", "yellow"}},

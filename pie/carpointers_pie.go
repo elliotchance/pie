@@ -170,7 +170,7 @@ func (ss carPointers) Random(source rand.Source) *car {
 		return ss[0]
 	}
 	rnd := rand.New(source)
-	i := rnd.Intn(n + 1)
+	i := rnd.Intn(n)
 	return ss[i]
 }
 

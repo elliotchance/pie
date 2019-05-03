@@ -681,6 +681,11 @@ var stringsRandomTests = []struct {
 	{
 		Strings{"foo", "bar", "baz"},
 		"baz",
+		rand.NewSource(1),
+	},
+	{
+		Strings{"foo", "bar", "baz"},
+		"foo",
 		rand.NewSource(0),
 	},
 	{

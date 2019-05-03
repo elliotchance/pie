@@ -695,6 +695,11 @@ var intsRandomTests = []struct {
 	{
 		Ints{1, 2, 4},
 		4,
+		rand.NewSource(1),
+	},
+	{
+		Ints{1, 2, 4},
+		1,
 		rand.NewSource(0),
 	},
 	{
