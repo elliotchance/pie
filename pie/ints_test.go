@@ -34,7 +34,7 @@ func TestInts_Contains(t *testing.T) {
 var intsSelectTests = []struct {
 	ss                Ints
 	condition         func(int) bool
-	expectedSelect    Ints
+	expectedFilter Ints
 	expectedUnselect  Ints
 	expectedTransform Ints
 }{
@@ -58,10 +58,10 @@ var intsSelectTests = []struct {
 	},
 }
 
-func TestInts_Select(t *testing.T) {
+func TestInts_Filter(t *testing.T) {
 	for _, test := range intsSelectTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expectedSelect, test.ss.Select(test.condition))
+			assert.Equal(t, test.expectedFilter, test.ss.Filter(test.condition))
 		})
 	}
 }

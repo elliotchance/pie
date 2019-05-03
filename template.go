@@ -168,6 +168,21 @@ func (ss SliceType) Extend(slices ...SliceType) (ss2 SliceType) {
 	return ss2
 }
 `,
+	"Filter": `package functions
+
+// Filter will return a new slice containing only the elements that return
+// true from the condition. The returned slice may contain zero elements (nil).
+//
+// FilterNot works in the opposite way of Filter.
+func (ss SliceType) Filter(condition func(ElementType) bool) (ss2 SliceType) {
+	for _, s := range ss {
+		if condition(s) {
+			ss2 = append(ss2, s)
+		}
+	}
+	return
+}
+`,
 	"First": `package functions
 
 // First returns the first element, or zero. Also see FirstOr().
@@ -374,22 +389,6 @@ func (ss SliceType) Reverse() SliceType {
 	}
 
 	return sorted
-}
-`,
-	"Select": `package functions
-
-// Select will return a new slice containing only the elements that return
-// true from the condition. The returned slice may contain zero elements (nil).
-//
-// Unselect works in the opposite way as Select.
-func (ss SliceType) Select(condition func(ElementType) bool) (ss2 SliceType) {
-	for _, s := range ss {
-		if condition(s) {
-			ss2 = append(ss2, s)
-		}
-	}
-
-	return
 }
 `,
 	"Shuffle": `package functions

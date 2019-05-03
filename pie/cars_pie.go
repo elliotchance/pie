@@ -194,17 +194,16 @@ func (ss cars) Reverse() cars {
 	return sorted
 }
 
-// Select will return a new slice containing only the elements that return
+// Filter will return a new slice containing only the elements that return
 // true from the condition. The returned slice may contain zero elements (nil).
 //
-// Unselect works in the opposite way as Select.
-func (ss cars) Select(condition func(car) bool) (ss2 cars) {
+// FilterNot works in the opposite way of Filter.
+func (ss cars) Filter(condition func(car) bool) (ss2 cars) {
 	for _, s := range ss {
 		if condition(s) {
 			ss2 = append(ss2, s)
 		}
 	}
-
 	return
 }
 

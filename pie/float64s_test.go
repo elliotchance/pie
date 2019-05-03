@@ -35,7 +35,7 @@ func TestFloat64s_Contains(t *testing.T) {
 var float64sSelectTests = []struct {
 	ss                Float64s
 	condition         func(float64) bool
-	expectedSelect    Float64s
+	expectedFilter   Float64s
 	expectedUnselect  Float64s
 	expectedTransform Float64s
 }{
@@ -59,11 +59,11 @@ var float64sSelectTests = []struct {
 	},
 }
 
-func TestFloat64s_Select(t *testing.T) {
+func TestFloat64s_Filter(t *testing.T) {
 	for _, test := range float64sSelectTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableFloat64s(t, &test.ss)()
-			assert.Equal(t, test.expectedSelect, test.ss.Select(test.condition))
+			assert.Equal(t, test.expectedFilter, test.ss.Filter(test.condition))
 		})
 	}
 }

@@ -37,7 +37,7 @@ func TestStrings_Contains(t *testing.T) {
 var stringsSelectTests = []struct {
 	ss                Strings
 	condition         func(string) bool
-	expectedSelect    Strings
+	expectedFilter Strings
 	expectedUnselect  Strings
 	expectedTransform Strings
 }{
@@ -61,11 +61,11 @@ var stringsSelectTests = []struct {
 	},
 }
 
-func TestStrings_Select(t *testing.T) {
+func TestStrings_Filter(t *testing.T) {
 	for _, test := range stringsSelectTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
-			assert.Equal(t, test.expectedSelect, test.ss.Select(test.condition))
+			assert.Equal(t, test.expectedFilter, test.ss.Filter(test.condition))
 		})
 	}
 }

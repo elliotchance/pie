@@ -285,17 +285,16 @@ func (ss Float64s) Reverse() Float64s {
 	return sorted
 }
 
-// Select will return a new slice containing only the elements that return
+// Filter will return a new slice containing only the elements that return
 // true from the condition. The returned slice may contain zero elements (nil).
 //
-// Unselect works in the opposite way as Select.
-func (ss Float64s) Select(condition func(float64) bool) (ss2 Float64s) {
+// FilterNot works in the opposite way of Filter.
+func (ss Float64s) Filter(condition func(float64) bool) (ss2 Float64s) {
 	for _, s := range ss {
 		if condition(s) {
 			ss2 = append(ss2, s)
 		}
 	}
-
 	return
 }
 
