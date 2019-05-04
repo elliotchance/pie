@@ -631,22 +631,13 @@ func TestCarPointers_Random(t *testing.T) {
 }
 
 var carPointersSendTests = []struct {
-	ss             carPointers
-	recieveDelay   time.Duration
-	canceledDelay  time.Duration
-	expectedAmount int
-	expected       carPointers
+	ss            carPointers
+	recieveDelay  time.Duration
+	canceledDelay time.Duration
+	expected      carPointers
 }{
 	{
 		nil,
-		0,
-		0,
-		0,
-		nil,
-	},
-	{
-		carPointers{},
-		0,
 		0,
 		0,
 		nil,
@@ -655,21 +646,18 @@ var carPointersSendTests = []struct {
 		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
 		0,
 		0,
-		2,
 		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
 	},
 	{
 		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
 		time.Millisecond * 30,
 		time.Millisecond * 10,
-		1,
 		carPointers{&car{"bar", "yellow"}},
 	},
 	{
 		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
 		time.Millisecond * 3,
 		time.Millisecond * 10,
-		2,
 		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
 	},
 }
@@ -682,9 +670,10 @@ func TestCarPointers_Send(t *testing.T) {
 			actual := getCarPointersFromChan(ch, test.recieveDelay)
 			ctx := createContextByDelay(test.canceledDelay)
 
-			actualSendedCount := test.ss.Send(ctx, ch)
+			actualSended := test.ss.Send(ctx, ch)
+			close(ch)
 
-			assert.Equal(t, test.expectedAmount, actualSendedCount)
+			assert.Equal(t, test.expected, actualSended)
 			assert.Equal(t, test.expected, actual())
 		})
 	}

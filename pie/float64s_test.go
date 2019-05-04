@@ -760,22 +760,13 @@ func TestFloat64s_Abs(t *testing.T) {
 }
 
 var float64sSendTests = []struct {
-	ss             Float64s
-	recieveDelay   time.Duration
-	canceledDelay  time.Duration
-	expectedAmount int
-	expected       Float64s
+	ss            Float64s
+	recieveDelay  time.Duration
+	canceledDelay time.Duration
+	expected      Float64s
 }{
 	{
 		nil,
-		0,
-		0,
-		0,
-		nil,
-	},
-	{
-		Float64s{},
-		0,
 		0,
 		0,
 		nil,
@@ -784,21 +775,18 @@ var float64sSendTests = []struct {
 		Float64s{1.2, 3.2},
 		0,
 		0,
-		2,
 		Float64s{1.2, 3.2},
 	},
 	{
 		Float64s{1.2, 3.2},
 		time.Millisecond * 30,
 		time.Millisecond * 10,
-		1,
 		Float64s{1.2},
 	},
 	{
 		Float64s{1.2, 3.2},
 		time.Millisecond * 3,
 		time.Millisecond * 10,
-		2,
 		Float64s{1.2, 3.2},
 	},
 }
@@ -811,9 +799,10 @@ func TestFloat64s_Send(t *testing.T) {
 			actual := getFloat64sFromChan(ch, test.recieveDelay)
 			ctx := createContextByDelay(test.canceledDelay)
 
-			actualSendedCount := test.ss.Send(ctx, ch)
+			actualSended := test.ss.Send(ctx, ch)
+			close(ch)
 
-			assert.Equal(t, test.expectedAmount, actualSendedCount)
+			assert.Equal(t, test.expected, actualSended)
 			assert.Equal(t, test.expected, actual())
 		})
 	}

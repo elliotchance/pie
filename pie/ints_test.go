@@ -726,22 +726,13 @@ func TestInts_Abs(t *testing.T) {
 }
 
 var intsSendTests = []struct {
-	ss             Ints
-	recieveDelay   time.Duration
-	canceledDelay  time.Duration
-	expectedAmount int
-	expected       Ints
+	ss            Ints
+	recieveDelay  time.Duration
+	canceledDelay time.Duration
+	expected      Ints
 }{
 	{
 		nil,
-		0,
-		0,
-		0,
-		nil,
-	},
-	{
-		Ints{},
-		0,
 		0,
 		0,
 		nil,
@@ -750,21 +741,18 @@ var intsSendTests = []struct {
 		Ints{1, 3},
 		0,
 		0,
-		2,
 		Ints{1, 3},
 	},
 	{
 		Ints{1, 3},
 		time.Millisecond * 30,
 		time.Millisecond * 10,
-		1,
 		Ints{1},
 	},
 	{
 		Ints{1, 3},
 		time.Millisecond * 3,
 		time.Millisecond * 10,
-		2,
 		Ints{1, 3},
 	},
 }
@@ -777,9 +765,10 @@ func TestInts_Send(t *testing.T) {
 			actual := getIntsFromChan(ch, test.recieveDelay)
 			ctx := createContextByDelay(test.canceledDelay)
 
-			actualSendedCount := test.ss.Send(ctx, ch)
+			actualSended := test.ss.Send(ctx, ch)
+			close(ch)
 
-			assert.Equal(t, test.expectedAmount, actualSendedCount)
+			assert.Equal(t, test.expected, actualSended)
 			assert.Equal(t, test.expected, actual())
 		})
 	}

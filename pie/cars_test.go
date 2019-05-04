@@ -615,22 +615,13 @@ func TestCars_Random(t *testing.T) {
 }
 
 var carsSendTests = []struct {
-	ss             cars
-	recieveDelay   time.Duration
-	canceledDelay  time.Duration
-	expectedAmount int
-	expected       cars
+	ss            cars
+	recieveDelay  time.Duration
+	canceledDelay time.Duration
+	expected      cars
 }{
 	{
 		nil,
-		0,
-		0,
-		0,
-		nil,
-	},
-	{
-		cars{},
-		0,
 		0,
 		0,
 		nil,
@@ -639,21 +630,18 @@ var carsSendTests = []struct {
 		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
 		0,
 		0,
-		2,
 		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
 	},
 	{
 		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
 		time.Millisecond * 30,
 		time.Millisecond * 10,
-		1,
 		cars{car{"bar", "yellow"}},
 	},
 	{
 		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
 		time.Millisecond * 3,
 		time.Millisecond * 10,
-		2,
 		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
 	},
 }
@@ -666,9 +654,10 @@ func TestCar_Send(t *testing.T) {
 			actual := getCarsFromChan(ch, test.recieveDelay)
 			ctx := createContextByDelay(test.canceledDelay)
 
-			actualSendedCount := test.ss.Send(ctx, ch)
+			actualSended := test.ss.Send(ctx, ch)
+			close(ch)
 
-			assert.Equal(t, test.expectedAmount, actualSendedCount)
+			assert.Equal(t, test.expected, actualSended)
 			assert.Equal(t, test.expected, actual())
 		})
 	}

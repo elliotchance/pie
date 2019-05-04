@@ -706,22 +706,13 @@ func TestStrings_Random(t *testing.T) {
 }
 
 var stringsSendTests = []struct {
-	ss             Strings
-	recieveDelay   time.Duration
-	canceledDelay  time.Duration
-	expectedAmount int
-	expected       Strings
+	ss            Strings
+	recieveDelay  time.Duration
+	canceledDelay time.Duration
+	expected      Strings
 }{
 	{
 		nil,
-		0,
-		0,
-		0,
-		nil,
-	},
-	{
-		Strings{},
-		0,
 		0,
 		0,
 		nil,
@@ -730,21 +721,18 @@ var stringsSendTests = []struct {
 		Strings{"foo", "bar"},
 		0,
 		0,
-		2,
 		Strings{"foo", "bar"},
 	},
 	{
 		Strings{"foo", "bar"},
 		time.Millisecond * 30,
 		time.Millisecond * 10,
-		1,
 		Strings{"foo"},
 	},
 	{
 		Strings{"foo", "bar"},
 		time.Millisecond * 3,
 		time.Millisecond * 10,
-		2,
 		Strings{"foo", "bar"},
 	},
 }
@@ -757,9 +745,10 @@ func TestStrings_Send(t *testing.T) {
 			actual := getStringsFromChan(ch, test.recieveDelay)
 			ctx := createContextByDelay(test.canceledDelay)
 
-			actualSendedCount := test.ss.Send(ctx, ch)
+			actualSended := test.ss.Send(ctx, ch)
+			close(ch)
 
-			assert.Equal(t, test.expectedAmount, actualSendedCount)
+			assert.Equal(t, test.expected, actualSended)
 			assert.Equal(t, test.expected, actual())
 		})
 	}
