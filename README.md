@@ -1,5 +1,5 @@
 # 🍕 `github.com/elliotchance/pie`
-[![GoDoc](https://godoc.org/github.com/elliotchance/pie?status.svg)](https://godoc.org/github.com/elliotchance/pie)
+[![GoDoc](https://godoc.org/github.com/elliotchance/pie/pkg/pie?status.svg)](https://godoc.org/github.com/elliotchance/pie/pkg/pie)
 [![Build Status](https://travis-ci.org/elliotchance/pie.svg?branch=master)](https://travis-ci.org/elliotchance/pie)
 [![codecov](https://codecov.io/gh/elliotchance/pie/branch/master/graph/badge.svg)](https://codecov.io/gh/elliotchance/pie)
 
@@ -124,7 +124,7 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Select`.
 
 | Function     | String | Number | Struct| Maps | Big-O    | Description |
 | ------------ | :----: | :----: | :----:| :--: | :------: | ----------- |
-| `Abs`        |        | ✓      |       |      | n        | Abs will return the absolute value of all values in the slice.
+| `Abs`        |        | ✓      |       |      | n        | Abs will return the absolute value of all values in the slice. |
 | `All`        | ✓      | ✓      | ✓     |      | n        | All will return true if all callbacks return true. If the list is empty then true is always returned. |
 | `Any`        | ✓      | ✓      | ✓     |      | n        | Any will return true if any callbacks return true. If the list is empty then false is always returned. |
 | `Append`     | ✓      | ✓      | ✓     |      | n        | A new slice with the elements appended to the end. |
@@ -185,31 +185,32 @@ Pull requests are always welcome.
 
 Here is a comprehensive list of steps to follow to add a new function:
 
-1. Create a new file in the `functions/` directory. The file should be named the
+1. Create a new file in the `internal/pkg/function/templates/` directory. The file should be named the
 same as the function. You must include documentation for your function.
 
-2. Update `functions/main.go` to register the new function by adding an entry to
+2. Update `internal/pkg/function/templates/template_metadata.go` to register the new function by adding an entry to
 `Functions`. Make sure you choose the correct `For` value that is appropriate
 for your function.
 
-3. Run `go generate ./... && go install && go generate ./...`. The first
-`generate` is to create the pie templates, `install` will update your binary for
-the annotations and the second `generate` will use the newly created templates
-to update the generated code for the internal types. If you encounter errors
-with your code you can safely rerun the command above.
 
-4. If you chose `ForAll` or `ForStructs`, then you must add unit tests to
+3. Generate updated template by executing `go generate -v ./cmd/pie` from the projects root directory.
+
+4. Install the `pie` command by by executing `cd ./cmd/pie && go install` from the projects root directory.
+ 
+5. Generate updated implementations by executing `go generate -v ./...` from the projects root directory.
+
+6. If you chose `ForAll` or `ForStructs`, then you must add unit tests to
 `pie/carpointers_test.go` and `pie/cars_test.go`.
 
-5. If you chose `ForAll`, `ForNumbersAndStrings` or `ForNumbers`, then you must
+7. If you chose `ForAll`, `ForNumbersAndStrings` or `ForNumbers`, then you must
 add unit tests to `pie/float64s_test.go` and `pie/ints_test.go`.
 
-6. If you chose `ForAll` or `ForStrings`, then you must add unit tests to
+8. If you chose `ForAll` or `ForStrings`, then you must add unit tests to
 `pie/strings_test.go`.
 
-7. If you chose `ForMaps`, then you must add unit tests to `pie/currencies.go`.
+9. If you chose `ForMaps`, then you must add unit tests to `pie/currencies.go`.
 
-8. Update the README to list the new functions.
+10. Update the README to list the new functions.
 
 ## Why is the emoji a slice of pizza instead of a pie?
 
