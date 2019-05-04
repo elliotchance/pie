@@ -139,6 +139,36 @@ func (ss Strings) FirstOr(defaultValue string) string {
 	return ss[0]
 }
 
+// Intersect returns items that exist in all lists.
+//
+// if there are no this kind of items it will return nil
+func (ss Strings) Intersect(slices ...Strings) (ss2 Strings) {
+	if slices == nil {
+		return nil
+	}
+
+	var uniqs []Strings
+	for _, s := range slices {
+		uniqs = append(uniqs, s.Unique())
+	}
+
+	containsInAll := false
+	for _, el := range ss.Unique() {
+		for _, u := range uniqs {
+			if !u.Contains(el) {
+				containsInAll = false
+				break
+			}
+			containsInAll = true
+		}
+		if containsInAll {
+			ss2 = append(ss2, el)
+		}
+	}
+
+	return
+}
+
 // Join returns a string from joining each of the elements.
 func (ss Strings) Join(glue string) (s string) {
 	for i, element := range ss {

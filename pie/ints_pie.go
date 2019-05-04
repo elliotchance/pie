@@ -159,6 +159,36 @@ func (ss Ints) FirstOr(defaultValue int) int {
 	return ss[0]
 }
 
+// Intersect returns items that exist in all lists.
+//
+// if there are no this kind of items it will return nil
+func (ss Ints) Intersect(slices ...Ints) (ss2 Ints) {
+	if slices == nil {
+		return nil
+	}
+
+	var uniqs []Ints
+	for _, s := range slices {
+		uniqs = append(uniqs, s.Unique())
+	}
+
+	containsInAll := false
+	for _, el := range ss.Unique() {
+		for _, u := range uniqs {
+			if !u.Contains(el) {
+				containsInAll = false
+				break
+			}
+			containsInAll = true
+		}
+		if containsInAll {
+			ss2 = append(ss2, el)
+		}
+	}
+
+	return
+}
+
 // JSONString returns the JSON encoded array as a string.
 //
 // One important thing to note is that it will treat a nil slice as an empty
