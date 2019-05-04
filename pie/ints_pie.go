@@ -290,24 +290,19 @@ func (ss Ints) Reverse() Ints {
 // in normal act it sends all elements but if func canceled it can be less
 //
 // it locks execution of gorutine
-// it closes channel after work
-// returns quantity of sended elements if that != len(slice) considered func was canceled
-func (ss Ints) Send(ctx context.Context, ch chan<- int) int {
-	var amountSendedElements = 0
-
-DONE:
-	for _, s := range ss {
+// it doesn't close channel after work
+// returns sended elements if len(this) != len(old) considered func was canceled
+func (ss Ints) Send(ctx context.Context, ch chan<- int) Ints {
+	for i, s := range ss {
 		select {
 		case <-ctx.Done():
-			break DONE
+			return ss[:i]
 		default:
 			ch <- s
-			amountSendedElements++
 		}
 	}
 
-	close(ch)
-	return amountSendedElements
+	return ss
 }
 
 // Select will return a new slice containing only the elements that return
