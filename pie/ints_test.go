@@ -723,3 +723,49 @@ func TestInts_Abs(t *testing.T) {
 	assert.Equal(t, Ints{689845, 688969, 220373, 89437, 308836}, Ints{-689845, -688969, -220373, -89437, 308836}.Abs())
 	assert.Equal(t, Ints{1, 2}, Ints{1, 2}.Abs())
 }
+
+var intsIntersectTests = []struct {
+	ss       Ints
+	params   []Ints
+	expected Ints
+}{
+	{
+		nil,
+		nil,
+		nil,
+	},
+	{
+		Ints{1, 3},
+		nil,
+		nil,
+	},
+	{
+		nil,
+		[]Ints{{1, 3, 5}, {5, 1}},
+		nil,
+	},
+	{
+		Ints{1, 3},
+		[]Ints{{1}, {3}},
+		nil,
+	},
+	{
+		Ints{1, 3},
+		[]Ints{{1}},
+		Ints{1},
+	},
+	{
+		Ints{1, 3},
+		[]Ints{{1, 3, 5}, {5, 1}},
+		Ints{1},
+	},
+}
+
+func TestInts_Intersect(t *testing.T) {
+	for _, test := range intsIntersectTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Intersect(test.params...))
+		})
+	}
+}

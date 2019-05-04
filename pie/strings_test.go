@@ -703,3 +703,49 @@ func TestStrings_Random(t *testing.T) {
 		})
 	}
 }
+
+var stringsIntersectTests = []struct {
+	ss       Strings
+	params   []Strings
+	expected Strings
+}{
+	{
+		nil,
+		nil,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		nil,
+		nil,
+	},
+	{
+		nil,
+		[]Strings{{"foo", "bar", "baz"}, {"baz", "foo"}},
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		[]Strings{{"bar"}, {"foo"}},
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		[]Strings{{"bar"}},
+		Strings{"bar"},
+	},
+	{
+		Strings{"foo", "bar"},
+		[]Strings{{"foo", "bar", "baz"}, {"baz", "foo"}},
+		Strings{"foo"},
+	},
+}
+
+func TestStrings_Intersect(t *testing.T) {
+	for _, test := range stringsIntersectTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Intersect(test.params...))
+		})
+	}
+}
