@@ -34,13 +34,11 @@ func (ss carPointers) Any(fn func(value *car) bool) bool {
 	return false
 }
 
-// Append will return a new slice with the elements appended to the end. It is a
-// wrapper for the internal append(). It is offered as a function so that it can
-// more easily chained.
+// Append will return a new slice with the elements appended to the end.
 //
 // It is acceptable to provide zero arguments.
-func (ss carPointers) Append(elements ...*car) carPointers {
-	return append(ss, elements...)
+func (ss carPointers) Append(elements ...*car) (result carPointers) {
+	return append(append(result, ss...), elements...)
 }
 
 // Bottom will return n elements from bottom

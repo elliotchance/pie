@@ -45,13 +45,11 @@ func (ss Ints) Any(fn func(value int) bool) bool {
 	return false
 }
 
-// Append will return a new slice with the elements appended to the end. It is a
-// wrapper for the internal append(). It is offered as a function so that it can
-// more easily chained.
+// Append will return a new slice with the elements appended to the end.
 //
 // It is acceptable to provide zero arguments.
-func (ss Ints) Append(elements ...int) Ints {
-	return append(ss, elements...)
+func (ss Ints) Append(elements ...int) (result Ints) {
+	return append(append(result, ss...), elements...)
 }
 
 // AreSorted will return true if the slice is already sorted. It is a wrapper

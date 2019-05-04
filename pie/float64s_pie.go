@@ -45,13 +45,11 @@ func (ss Float64s) Any(fn func(value float64) bool) bool {
 	return false
 }
 
-// Append will return a new slice with the elements appended to the end. It is a
-// wrapper for the internal append(). It is offered as a function so that it can
-// more easily chained.
+// Append will return a new slice with the elements appended to the end.
 //
 // It is acceptable to provide zero arguments.
-func (ss Float64s) Append(elements ...float64) Float64s {
-	return append(ss, elements...)
+func (ss Float64s) Append(elements ...float64) (result Float64s) {
+	return append(append(result, ss...), elements...)
 }
 
 // AreSorted will return true if the slice is already sorted. It is a wrapper
