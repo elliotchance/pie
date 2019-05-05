@@ -705,6 +705,42 @@ func TestStrings_Random(t *testing.T) {
 	}
 }
 
+var stringsReduceTests = []struct {
+	ss       Strings 
+	expected string 
+	reducer  func(a, b string) string 
+}{
+	{
+		Strings{"Hello"," " ,"World"},
+		"Hello World",
+		func(a, b string) string{return a + b},
+	},
+	{
+		Strings{},
+		"",
+		func(a, b string) string{return a + b},
+	},
+	{
+		Strings{"Hello"},
+		"Hello",
+		func(a, b string) string{return a + b},
+	},
+	{
+		Strings{"Hello", "World"},
+		"",
+		nil,	
+	},
+}
+
+func TestStrings_Reduce(t *testing.T) {
+	for _, test := range stringsReduceTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.expected, test.ss.Reduce(test.reducer))
+		})
+	}
+}
+
+
 var stringsSendTests = []struct {
 	ss            Strings
 	recieveDelay  time.Duration
