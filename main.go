@@ -5,7 +5,6 @@ package main
 import (
 	"fmt"
 	"github.com/elliotchance/pie/functions"
-	"github.com/elliotchance/pie/pie"
 	"go/ast"
 	"go/parser"
 	"go/token"
@@ -141,7 +140,7 @@ func main() {
 
 		var templates []string
 		for _, function := range functions.Functions {
-			if fns[0] != "*" && !pie.Strings(fns).Contains(function.Name) {
+			if fns[0] != "*" && !stringSliceContains(fns, function.Name) {
 				continue
 			}
 
@@ -215,4 +214,17 @@ func getFunctionsFromArg(arg string) (mapOrSliceType string, fns []string) {
 	}
 
 	return parts[0], parts[1:]
+}
+
+func stringSliceContains(haystack []string, needle string) bool {
+	if haystack == nil {
+		return false
+	}
+
+	for _, w := range haystack {
+		if w == needle {
+			return true
+		}
+	}
+	return false
 }
