@@ -4,6 +4,8 @@ import (
 	"testing"
 )
 
+// Make sure that Append never alters the receiver, or other
+// slices sharing the same memory, unlike the built-in append.
 func TestAppendNonDestructive(t *testing.T) {
 	ab := Strings{"A", "B"}
 	if x, expected := ab.Join(""), "AB"; x != expected {
