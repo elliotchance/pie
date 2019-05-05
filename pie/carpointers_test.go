@@ -336,8 +336,8 @@ func TestCarPointers_ToStrings(t *testing.T) {
 
 func TestCarPointers_Append(t *testing.T) {
 	assert.Equal(t,
-		(carPointers)(nil).Append(),
-		(carPointers)(nil),
+		len((carPointers)(nil).Append()),
+		0,
 	)
 
 	assert.Equal(t,

@@ -326,8 +326,8 @@ func TestCars_ToStrings(t *testing.T) {
 
 func TestCars_Append(t *testing.T) {
 	assert.Equal(t,
-		cars{}.Append(),
-		cars{},
+		len(cars{}.Append()),
+		0,
 	)
 
 	assert.Equal(t,

@@ -417,8 +417,8 @@ func TestStrings_Join(t *testing.T) {
 
 func TestStrings_Append(t *testing.T) {
 	assert.Equal(t,
-		Strings{}.Append(),
-		Strings{},
+		len(Strings{}.Append()),
+		0,
 	)
 
 	assert.Equal(t,

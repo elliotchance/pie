@@ -424,8 +424,8 @@ func TestInts_ToStrings(t *testing.T) {
 
 func TestInts_Append(t *testing.T) {
 	assert.Equal(t,
-		Ints{}.Append(),
-		Ints{},
+		len(Ints{}.Append()),
+		0,
 	)
 
 	assert.Equal(t,
