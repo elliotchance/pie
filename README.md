@@ -149,6 +149,7 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Select`.
 | `Min`        | ✓      | ✓      |       |      | n        | The minimum value, or a zeroed value. |
 | `Random`     | ✓      | ✓      | ✓     |      | 1        | Select a random element, or a zeroed value if empty. |
 | `Reverse`    | ✓      | ✓      | ✓     |      | n        | Reverse elements. |
+| `Send`     | ✓      | ✓      | ✓     |      | n        | Send all element to channel. |
 | `Select`     | ✓      | ✓      | ✓     |      | n        | A new slice containing only the elements that returned true from the condition. |
 | `Sort`       | ✓      | ✓      |       |      | n⋅log(n) | Return a new sorted slice. |
 | `Sum`        |        | ✓      |       |      | n        | Sum (total) of all elements. |

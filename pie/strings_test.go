@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/elliotchance/testify-stats/assert"
 )
@@ -700,6 +701,55 @@ func TestStrings_Random(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
 			assert.Equal(t, test.expected, test.ss.Random(test.source))
+		})
+	}
+}
+
+var stringsSendTests = []struct {
+	ss            Strings
+	recieveDelay  time.Duration
+	canceledDelay time.Duration
+	expected      Strings
+}{
+	{
+		nil,
+		0,
+		0,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		0,
+		0,
+		Strings{"foo", "bar"},
+	},
+	{
+		Strings{"foo", "bar"},
+		time.Millisecond * 30,
+		time.Millisecond * 10,
+		Strings{"foo"},
+	},
+	{
+		Strings{"foo", "bar"},
+		time.Millisecond * 3,
+		time.Millisecond * 10,
+		Strings{"foo", "bar"},
+	},
+}
+
+func TestStrings_Send(t *testing.T) {
+	for _, test := range stringsSendTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			ch := make(chan string)
+			actual := getStringsFromChan(ch, test.recieveDelay)
+			ctx := createContextByDelay(test.canceledDelay)
+
+			actualSended := test.ss.Send(ctx, ch)
+			close(ch)
+
+			assert.Equal(t, test.expected, actualSended)
+			assert.Equal(t, test.expected, actual())
 		})
 	}
 }
