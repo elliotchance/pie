@@ -156,7 +156,7 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Select`.
 | `Top`        | ✓      | ✓      | ✓     |      | n        | Gets several elements from top(head of slice).|
 | `ToStrings`  | ✓      | ✓      | ✓     |      | n        | Transforms each element to a string. |
 | `Transform`  | ✓      | ✓      | ✓     |      | n        | A new slice where each element has been transformed. |
-| `Unique`     | ✓      | ✓      |       |      | n⋅log(n) | Return a new slice with only unique elements. |
+| `Unique`     | ✓      | ✓      |       |      | n        | Return a new slice with only unique elements. |
 | `Unselect`   | ✓      | ✓      | ✓     |      | n        | A new slice containing only the elements that returned false from the condition. |
 | `Values`     |        |        |       | ✓    | n        | Returns all values in the map (in random order). |
 
