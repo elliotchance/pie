@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"testing"
+	"time"
 
 	"github.com/elliotchance/testify-stats/assert"
 )
@@ -754,6 +755,55 @@ func TestFloat64s_Abs(t *testing.T) {
 	for _, test := range float64sAbsTests {
 		t.Run("", func(t *testing.T) {
 			assert.Equal(t, test.abs, test.ss.Abs())
+		})
+	}
+}
+
+var float64sSendTests = []struct {
+	ss            Float64s
+	recieveDelay  time.Duration
+	canceledDelay time.Duration
+	expected      Float64s
+}{
+	{
+		nil,
+		0,
+		0,
+		nil,
+	},
+	{
+		Float64s{1.2, 3.2},
+		0,
+		0,
+		Float64s{1.2, 3.2},
+	},
+	{
+		Float64s{1.2, 3.2},
+		time.Millisecond * 30,
+		time.Millisecond * 10,
+		Float64s{1.2},
+	},
+	{
+		Float64s{1.2, 3.2},
+		time.Millisecond * 3,
+		time.Millisecond * 10,
+		Float64s{1.2, 3.2},
+	},
+}
+
+func TestFloat64s_Send(t *testing.T) {
+	for _, test := range float64sSendTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			ch := make(chan float64)
+			actual := getFloat64sFromChan(ch, test.recieveDelay)
+			ctx := createContextByDelay(test.canceledDelay)
+
+			actualSended := test.ss.Send(ctx, ch)
+			close(ch)
+
+			assert.Equal(t, test.expected, actualSended)
+			assert.Equal(t, test.expected, actual())
 		})
 	}
 }
