@@ -161,7 +161,7 @@ func (ss Float64s) FirstOr(defaultValue float64) float64 {
 
 // Intersect returns items that exist in all lists.
 //
-// if there are no this kind of items it will return nil
+// If zero slice arguments are provided, then nil is returned.
 func (ss Float64s) Intersect(slices ...Float64s) (ss2 Float64s) {
 	if slices == nil {
 		return nil

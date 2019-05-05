@@ -141,7 +141,7 @@ func (ss Strings) FirstOr(defaultValue string) string {
 
 // Intersect returns items that exist in all lists.
 //
-// if there are no this kind of items it will return nil
+// If zero slice arguments are provided, then nil is returned.
 func (ss Strings) Intersect(slices ...Strings) (ss2 Strings) {
 	if slices == nil {
 		return nil

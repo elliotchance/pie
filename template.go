@@ -191,7 +191,7 @@ func (ss SliceType) FirstOr(defaultValue ElementType) ElementType {
 
 // Intersect returns items that exist in all lists.
 //
-// if there are no this kind of items it will return nil
+// If zero slice arguments are provided, then nil is returned.
 func (ss SliceType) Intersect(slices ...SliceType) (ss2 SliceType) {
 	if slices == nil {
 		return nil
