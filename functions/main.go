@@ -32,7 +32,6 @@ var Functions = []struct {
 	{"First", "first.go", ForAll},
 	{"FirstOr", "first_or.go", ForAll},
 	{"Intersect", "intersect.go", ForNumbersAndStrings},
-	{"Intersect2", "intersect2.go", ForNumbersAndStrings},
 	{"Join", "join.go", ForStrings},
 	{"JSONString", "json_string.go", ForAll},
 	{"Keys", "keys.go", ForMaps},
