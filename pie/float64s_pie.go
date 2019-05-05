@@ -330,7 +330,7 @@ func (ss Float64s) Sort() Float64s {
 		return ss
 	}
 
-	sorted := make([]float64, len(ss))
+	sorted := make(Float64s, len(ss))
 	copy(sorted, ss)
 	sort.Slice(sorted, func(i, j int) bool {
 		return sorted[i] < sorted[j]

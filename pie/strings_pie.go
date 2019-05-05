@@ -299,10 +299,46 @@ func (ss Strings) Sort() Strings {
 		return ss
 	}
 
-	sorted := make([]string, len(ss))
+	sorted := make(Strings, len(ss))
 	copy(sorted, ss)
 	sort.Slice(sorted, func(i, j int) bool {
 		return sorted[i] < sorted[j]
+	})
+
+	return sorted
+}
+
+// SortUsing works similar to sort.Slice. However, unlike sort.Slice the
+// slice returned will be reallocated as to not modify the input slice.
+func (ss Strings) SortUsing(less func(a, b string) bool) Strings {
+	// Avoid the allocation. If there is one element or less it is already
+	// sorted.
+	if len(ss) < 2 {
+		return ss
+	}
+
+	sorted := make(Strings, len(ss))
+	copy(sorted, ss)
+	sort.Slice(sorted, func(i, j int) bool {
+		return less(sorted[i], sorted[j])
+	})
+
+	return sorted
+}
+
+// SortStableUsing works similar to sort.SliceStable. However, unlike sort.SliceStable the
+// slice returned will be reallocated as to not modify the input slice.
+func (ss Strings) SortStableUsing(less func(a, b string) bool) Strings {
+	// Avoid the allocation. If there is one element or less it is already
+	// sorted.
+	if len(ss) < 2 {
+		return ss
+	}
+
+	sorted := make(Strings, len(ss))
+	copy(sorted, ss)
+	sort.SliceStable(sorted, func(i, j int) bool {
+		return less(sorted[i], sorted[j])
 	})
 
 	return sorted

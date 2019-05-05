@@ -151,6 +151,8 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Select`.
 | `Send`     | ✓      | ✓      | ✓     |      | n        | Send all element to channel. |
 | `Select`     | ✓      | ✓      | ✓     |      | n        | A new slice containing only the elements that returned true from the condition. |
 | `Sort`       | ✓      | ✓      |       |      | n⋅log(n) | Return a new sorted slice. |
+| `SortUsing`  | ✓      |        | ✓     |      | n | Return a new sorted slice, using custom comparator. |
+| `SortStableUsing`  | ✓ |       | ✓     |      | n | Return a new sorted slice, using custom comparator, keeping the original order of equal elements. |
 | `Sum`        |        | ✓      |       |      | n        | Sum (total) of all elements. |
 | `Shuffle`    | ✓      | ✓      | ✓     |      | n        | Returns a new shuffled slice. |
 | `Top`        | ✓      | ✓      | ✓     |      | n        | Gets several elements from top(head of slice).|

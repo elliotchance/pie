@@ -320,6 +320,65 @@ func TestStrings_AreSorted(t *testing.T) {
 	}
 }
 
+func stringShorter(a, b string) bool {
+	return len(a) < len(b)
+}
+
+var stringsSortByLengthTests = []struct {
+	ss           Strings
+	sortedStable Strings
+}{
+	{
+		nil,
+		nil,
+	},
+	{
+		Strings{},
+		Strings{},
+	},
+	{
+		Strings{"foo"},
+		Strings{"foo"},
+	},
+	{
+		Strings{"aaa", "b", "cc"},
+		Strings{"b", "cc", "aaa"},
+	},
+	{
+		Strings{"zz", "aaa", "b", "cc"},
+		Strings{"b", "zz", "cc", "aaa"},
+	},
+}
+
+func TestStrings_SortUsing(t *testing.T) {
+	isSortedByLength := func(ss Strings) bool {
+		for i := 1; i < len(ss); i++ {
+			if stringShorter(ss[i], ss[i-1]) {
+				return false
+			}
+		}
+		return true
+	}
+	less := stringShorter
+	for _, test := range stringsSortByLengthTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			sortedCustom := test.ss.SortUsing(less)
+			assert.True(t, isSortedByLength(sortedCustom))
+		})
+	}
+}
+
+func TestStrings_SortStableUsing(t *testing.T) {
+	less := stringShorter
+	for _, test := range stringsSortByLengthTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.sortedStable, test.ss.SortStableUsing(less))
+		})
+	}
+}
+
 var stringsUniqueTests = []struct {
 	ss        Strings
 	unique    Strings
