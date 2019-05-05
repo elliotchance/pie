@@ -1,6 +1,7 @@
 package pie
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/elliotchance/pie/pie/util"
 	"math"
@@ -328,6 +329,25 @@ func (ss Ints) Reverse() Ints {
 	}
 
 	return sorted
+}
+
+// Send sends elements to channel
+// in normal act it sends all elements but if func canceled it can be less
+//
+// it locks execution of gorutine
+// it doesn't close channel after work
+// returns sended elements if len(this) != len(old) considered func was canceled
+func (ss Ints) Send(ctx context.Context, ch chan<- int) Ints {
+	for i, s := range ss {
+		select {
+		case <-ctx.Done():
+			return ss[:i]
+		default:
+			ch <- s
+		}
+	}
+
+	return ss
 }
 
 // Sort works similar to sort.Ints(). However, unlike sort.Ints the

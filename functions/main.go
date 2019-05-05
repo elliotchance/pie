@@ -45,6 +45,7 @@ var Functions = []struct {
 	{"Min", "min.go", ForNumbersAndStrings},
 	{"Random", "random.go", ForAll},
 	{"Reverse", "reverse.go", ForAll},
+	{"Send", "send.go", ForAll},
 	{"Sort", "sort.go", ForNumbersAndStrings},
 	{"Sum", "sum.go", ForNumbers},
 	{"Shuffle", "shuffle.go", ForAll},

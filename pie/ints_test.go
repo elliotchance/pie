@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"testing"
+	"time"
 
 	"github.com/elliotchance/testify-stats/assert"
 )
@@ -722,4 +723,53 @@ func TestInts_Abs(t *testing.T) {
 	assert.Equal(t, Ints{1, 5, 7}, Ints{-1, 5, -7}.Abs())
 	assert.Equal(t, Ints{689845, 688969, 220373, 89437, 308836}, Ints{-689845, -688969, -220373, -89437, 308836}.Abs())
 	assert.Equal(t, Ints{1, 2}, Ints{1, 2}.Abs())
+}
+
+var intsSendTests = []struct {
+	ss            Ints
+	recieveDelay  time.Duration
+	canceledDelay time.Duration
+	expected      Ints
+}{
+	{
+		nil,
+		0,
+		0,
+		nil,
+	},
+	{
+		Ints{1, 3},
+		0,
+		0,
+		Ints{1, 3},
+	},
+	{
+		Ints{1, 3},
+		time.Millisecond * 30,
+		time.Millisecond * 10,
+		Ints{1},
+	},
+	{
+		Ints{1, 3},
+		time.Millisecond * 3,
+		time.Millisecond * 10,
+		Ints{1, 3},
+	},
+}
+
+func TestInts_Send(t *testing.T) {
+	for _, test := range intsSendTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			ch := make(chan int)
+			actual := getIntsFromChan(ch, test.recieveDelay)
+			ctx := createContextByDelay(test.canceledDelay)
+
+			actualSended := test.ss.Send(ctx, ch)
+			close(ch)
+
+			assert.Equal(t, test.expected, actualSended)
+			assert.Equal(t, test.expected, actual())
+		})
+	}
 }
