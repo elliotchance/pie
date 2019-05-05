@@ -235,6 +235,21 @@ func (ss Strings) Random(source rand.Source) string {
 	return ss[i]
 }
 
+// Reduce continually applies the provided function
+// over the slice. Reducing the elements to a single value.
+//
+// returns: nil if no elements in slice, or result of applying reducer from left to right.
+func (ss Strings) Reduce(reducer func(string, string) string) (el string) {
+	if reducer == nil || len (ss) == 0{
+		return 
+	}
+	el = ss[0]
+	for _, s := range ss[1:] {
+	    el = reducer(el, s)
+	}
+	return
+}
+
 // Reverse returns a new copy of the slice with the elements ordered in reverse.
 // This is useful when combined with Sort to get a descending sort order:
 //
