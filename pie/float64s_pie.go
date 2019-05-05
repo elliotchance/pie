@@ -161,38 +161,9 @@ func (ss Float64s) FirstOr(defaultValue float64) float64 {
 
 // Intersect returns items that exist in all lists.
 //
+// It returns without any duplicates.
 // If zero slice arguments are provided, then nil is returned.
 func (ss Float64s) Intersect(slices ...Float64s) (ss2 Float64s) {
-	if slices == nil {
-		return nil
-	}
-
-	var uniqs []Float64s
-	for _, s := range slices {
-		uniqs = append(uniqs, s.Unique())
-	}
-
-	containsInAll := false
-	for _, el := range ss.Unique() {
-		for _, u := range uniqs {
-			if !u.Contains(el) {
-				containsInAll = false
-				break
-			}
-			containsInAll = true
-		}
-		if containsInAll {
-			ss2 = append(ss2, el)
-		}
-	}
-
-	return
-}
-
-// Intersect returns items that exist in all lists.
-//
-// If zero slice arguments are provided, then nil is returned.
-func (ss Float64s) Intersect2(slices ...Float64s) (ss2 Float64s) {
 	if slices == nil {
 		return nil
 	}

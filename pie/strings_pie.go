@@ -141,38 +141,9 @@ func (ss Strings) FirstOr(defaultValue string) string {
 
 // Intersect returns items that exist in all lists.
 //
+// It returns without any duplicates.
 // If zero slice arguments are provided, then nil is returned.
 func (ss Strings) Intersect(slices ...Strings) (ss2 Strings) {
-	if slices == nil {
-		return nil
-	}
-
-	var uniqs []Strings
-	for _, s := range slices {
-		uniqs = append(uniqs, s.Unique())
-	}
-
-	containsInAll := false
-	for _, el := range ss.Unique() {
-		for _, u := range uniqs {
-			if !u.Contains(el) {
-				containsInAll = false
-				break
-			}
-			containsInAll = true
-		}
-		if containsInAll {
-			ss2 = append(ss2, el)
-		}
-	}
-
-	return
-}
-
-// Intersect returns items that exist in all lists.
-//
-// If zero slice arguments are provided, then nil is returned.
-func (ss Strings) Intersect2(slices ...Strings) (ss2 Strings) {
 	if slices == nil {
 		return nil
 	}
