@@ -2,21 +2,26 @@ package functions
 
 // Intersect returns items that exist in all lists.
 //
+// It returns without any duplicates.
 // If zero slice arguments are provided, then nil is returned.
 func (ss SliceType) Intersect(slices ...SliceType) (ss2 SliceType) {
 	if slices == nil {
 		return nil
 	}
 
-	var uniqs []SliceType
+	var uniqs []map[ElementType]struct{}
 	for _, s := range slices {
-		uniqs = append(uniqs, s.Unique())
+		m := make(map[ElementType]struct{})
+		for _, el := range s {
+			m[el] = struct{}{}
+		}
+		uniqs = append(uniqs, m)
 	}
 
-	containsInAll := false
+	var containsInAll = false
 	for _, el := range ss.Unique() {
 		for _, u := range uniqs {
-			if !u.Contains(el) {
+			if _, exists := u[el]; !exists {
 				containsInAll = false
 				break
 			}
