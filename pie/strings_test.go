@@ -6,6 +6,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gofrs/uuid"
+
 	"github.com/elliotchance/testify-stats/assert"
 )
 
@@ -748,4 +750,46 @@ func TestStrings_Intersect(t *testing.T) {
 			assert.Equal(t, test.expected, test.ss.Intersect(test.params...))
 		})
 	}
+}
+
+func BenchmarkStrings_SmallSet_Intersect(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		Strings{"Hello", "World"}.Intersect(Strings{"Hello", "World"}, Strings{"World"})
+	}
+}
+
+func BenchmarkStrings_SmallSet_Intersect2(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		Strings{"Hello", "World"}.Intersect2(Strings{"Hello", "World"}, Strings{"World"})
+	}
+}
+
+func BenchmarkStrings_LargeSet_Intersect(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		s := getRandomString(10000)
+		s1 := getRandomString(10000)
+		b.StartTimer()
+
+		s.Intersect(s1)
+	}
+}
+
+func BenchmarkStrings_LargeSet_Intersect2(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		s := getRandomString(10000)
+		s1 := getRandomString(10000)
+		b.StartTimer()
+
+		s.Intersect2(s1)
+	}
+}
+
+func getRandomString(n int) (s Strings) {
+	for ; n > 0; n-- {
+		id, _ := uuid.NewV1()
+		s = append(s, id.String())
+	}
+	return
 }

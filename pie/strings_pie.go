@@ -169,6 +169,40 @@ func (ss Strings) Intersect(slices ...Strings) (ss2 Strings) {
 	return
 }
 
+// Intersect returns items that exist in all lists.
+//
+// If zero slice arguments are provided, then nil is returned.
+func (ss Strings) Intersect2(slices ...Strings) (ss2 Strings) {
+	if slices == nil {
+		return nil
+	}
+
+	var uniqs []map[string]struct{}
+	for _, s := range slices {
+		m := make(map[string]struct{})
+		for _, el := range s {
+			m[el] = struct{}{}
+		}
+		uniqs = append(uniqs, m)
+	}
+
+	var containsInAll = false
+	for _, el := range ss.Unique() {
+		for _, u := range uniqs {
+			if _, exists := u[el]; !exists {
+				containsInAll = false
+				break
+			}
+			containsInAll = true
+		}
+		if containsInAll {
+			ss2 = append(ss2, el)
+		}
+	}
+
+	return
+}
+
 // Join returns a string from joining each of the elements.
 func (ss Strings) Join(glue string) (s string) {
 	for i, element := range ss {

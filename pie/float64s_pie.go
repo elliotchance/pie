@@ -189,6 +189,40 @@ func (ss Float64s) Intersect(slices ...Float64s) (ss2 Float64s) {
 	return
 }
 
+// Intersect returns items that exist in all lists.
+//
+// If zero slice arguments are provided, then nil is returned.
+func (ss Float64s) Intersect2(slices ...Float64s) (ss2 Float64s) {
+	if slices == nil {
+		return nil
+	}
+
+	var uniqs []map[float64]struct{}
+	for _, s := range slices {
+		m := make(map[float64]struct{})
+		for _, el := range s {
+			m[el] = struct{}{}
+		}
+		uniqs = append(uniqs, m)
+	}
+
+	var containsInAll = false
+	for _, el := range ss.Unique() {
+		for _, u := range uniqs {
+			if _, exists := u[el]; !exists {
+				containsInAll = false
+				break
+			}
+			containsInAll = true
+		}
+		if containsInAll {
+			ss2 = append(ss2, el)
+		}
+	}
+
+	return
+}
+
 // JSONString returns the JSON encoded array as a string.
 //
 // One important thing to note is that it will treat a nil slice as an empty
