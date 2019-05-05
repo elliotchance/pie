@@ -110,6 +110,32 @@ func (ss cars) Extend(slices ...cars) (ss2 cars) {
 	return ss2
 }
 
+// Filter will return a new slice containing only the elements that return
+// true from the condition. The returned slice may contain zero elements (nil).
+//
+// FilterNot works in the opposite way of Filter.
+func (ss cars) Filter(condition func(car) bool) (ss2 cars) {
+	for _, s := range ss {
+		if condition(s) {
+			ss2 = append(ss2, s)
+		}
+	}
+	return
+}
+
+// FilterNot works the same as Filter, with a negated condition. That is, it will
+// return a new slice only containing the elements that returned false from the
+// condition. The returned slice may contain zero elements (nil).
+func (ss cars) FilterNot(condition func(car) bool) (ss2 cars) {
+	for _, s := range ss {
+		if !condition(s) {
+			ss2 = append(ss2, s)
+		}
+	}
+
+	return
+}
+
 // First returns the first element, or zero. Also see FirstOr().
 func (ss cars) First() car {
 	return ss.FirstOr(car{})
@@ -157,6 +183,25 @@ func (ss cars) LastOr(defaultValue car) car {
 // Len returns the number of elements.
 func (ss cars) Len() int {
 	return len(ss)
+}
+
+// Map will return a new slice where each element has been mapped (transformed).
+// The number of elements returned will always be the same as the input.
+//
+// Be careful when using this with slices of pointers. If you modify the input
+// value it will affect the original slice. Be sure to return a new allocated
+// object or deep copy the existing one.
+func (ss cars) Map(fn func(car) car) (ss2 cars) {
+	if ss == nil {
+		return nil
+	}
+
+	ss2 = make([]car, len(ss))
+	for i, s := range ss {
+		ss2[i] = fn(s)
+	}
+
+	return
 }
 
 // Random returns a random element by your rand.Source, or zero
@@ -214,20 +259,6 @@ func (ss cars) Send(ctx context.Context, ch chan<- car) cars {
 	return ss
 }
 
-// Select will return a new slice containing only the elements that return
-// true from the condition. The returned slice may contain zero elements (nil).
-//
-// Unselect works in the opposite way as Select.
-func (ss cars) Select(condition func(car) bool) (ss2 cars) {
-	for _, s := range ss {
-		if condition(s) {
-			ss2 = append(ss2, s)
-		}
-	}
-
-	return
-}
-
 // Shuffle returns shuffled slice by your rand.Source
 func (ss cars) Shuffle(source rand.Source) cars {
 	n := len(ss)
@@ -279,36 +310,4 @@ func (ss cars) ToStrings(transform func(car) string) Strings {
 	}
 
 	return result
-}
-
-// Transform will return a new slice where each element has been transformed.
-// The number of element returned will always be the same as the input.
-//
-// Be careful when using this with slices of pointers. If you modify the input
-// value it will affect the original slice. Be sure to return a new allocated
-// object or deep copy the existing one.
-func (ss cars) Transform(fn func(car) car) (ss2 cars) {
-	if ss == nil {
-		return nil
-	}
-
-	ss2 = make([]car, len(ss))
-	for i, s := range ss {
-		ss2[i] = fn(s)
-	}
-
-	return
-}
-
-// Unselect works the same as Select, with a negated condition. That is, it will
-// return a new slice only containing the elements that returned false from the
-// condition. The returned slice may contain zero elements (nil).
-func (ss cars) Unselect(condition func(car) bool) (ss2 cars) {
-	for _, s := range ss {
-		if !condition(s) {
-			ss2 = append(ss2, s)
-		}
-	}
-
-	return
 }
