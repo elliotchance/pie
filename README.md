@@ -147,8 +147,9 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Select`.
 | `Median`     |        | ✓      |       |      | n⋅log(n) | Median returns the value separating the higher half from the lower half of a data sample. |
 | `Min`        | ✓      | ✓      |       |      | n        | The minimum value, or a zeroed value. |
 | `Random`     | ✓      | ✓      | ✓     |      | 1        | Select a random element, or a zeroed value if empty. |
+| `Reduce`     | ✓      | ✓      |       |      | n        | Continously apply a function to the slice (left to right), reducing it to a single value. |
 | `Reverse`    | ✓      | ✓      | ✓     |      | n        | Reverse elements. |
-| `Send`     | ✓      | ✓      | ✓     |      | n        | Send all element to channel. |
+| `Send`       | ✓      | ✓      | ✓     |      | n        | Send all element to channel. |
 | `Select`     | ✓      | ✓      | ✓     |      | n        | A new slice containing only the elements that returned true from the condition. |
 | `Sort`       | ✓      | ✓      |       |      | n⋅log(n) | Return a new sorted slice. |
 | `Sum`        |        | ✓      |       |      | n        | Sum (total) of all elements. |
