@@ -152,6 +152,7 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Filter`.
 | `Random`     | ✓      | ✓      | ✓     |      | 1        | Select a random element, or a zeroed value if empty. |
 | `Reverse`    | ✓      | ✓      | ✓     |      | n        | Reverse elements. |
 | `Send`     | ✓      | ✓      | ✓     |      | n        | Send all element to channel. |
+| `Sequence`     | ✓      | ✓      |    |      | n        | Generates sequence of numbers. |
 | `Sort`       | ✓      | ✓      |       |      | n⋅log(n) | Return a new sorted slice. |
 | `Sum`        |        | ✓      |       |      | n        | Sum (total) of all elements. |
 | `Shuffle`    | ✓      | ✓      | ✓     |      | n        | Returns a new shuffled slice. |
