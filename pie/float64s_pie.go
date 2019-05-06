@@ -271,12 +271,12 @@ func (ss Float64s) Random(source rand.Source) float64 {
 //
 // returns: nil if no elements in slice, or result of applying reducer from left to right.
 func (ss Float64s) Reduce(reducer func(float64, float64) float64) (el float64) {
-	if reducer == nil || len (ss) == 0{
-		return 
+	if reducer == nil || len(ss) == 0 {
+		return
 	}
 	el = ss[0]
 	for _, s := range ss[1:] {
-	    el = reducer(el, s)
+		el = reducer(el, s)
 	}
 	return
 }

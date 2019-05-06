@@ -719,36 +719,35 @@ func TestInts_Random(t *testing.T) {
 	}
 }
 
-
 var intsReduceTests = []struct {
 	ss       Ints
-	expected int 
-	reducer  func(a, b int) int 
+	expected int
+	reducer  func(a, b int) int
 }{
 	{
-		Ints{1,2,3},
+		Ints{1, 2, 3},
 		6,
-		func(a, b int) int{return a + b},
+		func(a, b int) int { return a + b },
 	},
 	{
-		Ints{1,2,3},
+		Ints{1, 2, 3},
 		-4,
-		func(a, b int) int{return a - b},
+		func(a, b int) int { return a - b },
 	},
 	{
 		Ints{},
 		0,
-		func(a, b int) int{return a - b},
+		func(a, b int) int { return a - b },
 	},
 	{
 		Ints{1},
 		1,
-		func(a, b int) int{return a - b},
+		func(a, b int) int { return a - b },
 	},
 	{
-		Ints{1,2,3},
+		Ints{1, 2, 3},
 		0,
-		nil,	
+		nil,
 	},
 }
 
@@ -759,7 +758,6 @@ func TestInts_Reduce(t *testing.T) {
 		})
 	}
 }
-
 
 func TestInts_Abs(t *testing.T) {
 	assert.Equal(t, Ints{1, 5, 7}, Ints{-1, 5, -7}.Abs())

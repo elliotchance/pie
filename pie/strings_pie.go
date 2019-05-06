@@ -240,12 +240,12 @@ func (ss Strings) Random(source rand.Source) string {
 //
 // returns: nil if no elements in slice, or result of applying reducer from left to right.
 func (ss Strings) Reduce(reducer func(string, string) string) (el string) {
-	if reducer == nil || len (ss) == 0{
-		return 
+	if reducer == nil || len(ss) == 0 {
+		return
 	}
 	el = ss[0]
 	for _, s := range ss[1:] {
-	    el = reducer(el, s)
+		el = reducer(el, s)
 	}
 	return
 }

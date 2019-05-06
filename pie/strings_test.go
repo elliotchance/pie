@@ -706,29 +706,29 @@ func TestStrings_Random(t *testing.T) {
 }
 
 var stringsReduceTests = []struct {
-	ss       Strings 
-	expected string 
-	reducer  func(a, b string) string 
+	ss       Strings
+	expected string
+	reducer  func(a, b string) string
 }{
 	{
-		Strings{"Hello"," " ,"World"},
+		Strings{"Hello", " ", "World"},
 		"Hello World",
-		func(a, b string) string{return a + b},
+		func(a, b string) string { return a + b },
 	},
 	{
 		Strings{},
 		"",
-		func(a, b string) string{return a + b},
+		func(a, b string) string { return a + b },
 	},
 	{
 		Strings{"Hello"},
 		"Hello",
-		func(a, b string) string{return a + b},
+		func(a, b string) string { return a + b },
 	},
 	{
 		Strings{"Hello", "World"},
 		"",
-		nil,	
+		nil,
 	},
 }
 
@@ -739,7 +739,6 @@ func TestStrings_Reduce(t *testing.T) {
 		})
 	}
 }
-
 
 var stringsSendTests = []struct {
 	ss            Strings
