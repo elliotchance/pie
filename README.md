@@ -137,7 +137,7 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Select`.
 | `Each`       | ✓      | ✓      | ✓     |      | n        | Perform an action on each element. |
 | `First`      | ✓      | ✓      | ✓     |      | 1        | The first element, or a zeroed value. |
 | `FirstOr`    | ✓      | ✓      | ✓     |      | 1        | The first element, or a default value. |
-| `Intersect`       | ✓      | ✓        |       |      | n⋅log(n) | Intersect returns elements which exists in all slices. |
+| `Intersect`       | ✓      | ✓        |       |      | n | Intersect returns elements which exists in all slices. |
 | `Join`       | ✓      |        |       |      | n        | A string from joining each of the elements. |
 | `JSONString` | ✓      | ✓      | ✓     |      | n        | The JSON encoded string. |
 | `Keys`       |        |        |       | ✓    | n        | Returns all keys in the map (in random order). |
