@@ -139,6 +139,7 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Filter`.
 | `FilterNot`  | ✓      | ✓      | ✓     |      | n        | A new slice containing only the elements that returned false from the condition. |
 | `First`      | ✓      | ✓      | ✓     |      | 1        | The first element, or a zeroed value. |
 | `FirstOr`    | ✓      | ✓      | ✓     |      | 1        | The first element, or a default value. |
+| `Intersect`       | ✓      | ✓        |       |      | n | Intersect returns elements which exists in all slices. |
 | `Join`       | ✓      |        |       |      | n        | A string from joining each of the elements. |
 | `JSONString` | ✓      | ✓      | ✓     |      | n        | The JSON encoded string. |
 | `Keys`       |        |        |       | ✓    | n        | Returns all keys in the map (in random order). |

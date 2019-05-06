@@ -807,3 +807,49 @@ func TestFloat64s_Send(t *testing.T) {
 		})
 	}
 }
+
+var float64sIntersectTests = []struct {
+	ss       Float64s
+	params   []Float64s
+	expected Float64s
+}{
+	{
+		nil,
+		nil,
+		nil,
+	},
+	{
+		Float64s{1.2, 3.2},
+		nil,
+		nil,
+	},
+	{
+		nil,
+		[]Float64s{{1.2, 3.2, 5.5}, {5.5, 1.2}},
+		nil,
+	},
+	{
+		Float64s{1.2, 3.2},
+		[]Float64s{{1.2}, {3.2}},
+		nil,
+	},
+	{
+		Float64s{1.2, 3.2},
+		[]Float64s{{1.2}},
+		Float64s{1.2},
+	},
+	{
+		Float64s{1.2, 3.2},
+		[]Float64s{{1.2, 3.2, 5.5}, {5.5, 1.2}},
+		Float64s{1.2},
+	},
+}
+
+func TestFloat64s_Intersect(t *testing.T) {
+	for _, test := range float64sIntersectTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Intersect(test.params...))
+		})
+	}
+}
