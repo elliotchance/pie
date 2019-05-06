@@ -6,7 +6,7 @@ package functions
 // returns: zero value of type if no elements in slice or no function provided.
 // Otherwise returns result of applying reducer from left to right.
 func (ss SliceType) Reduce(reducer func(ElementType, ElementType) ElementType) (el ElementType) {
-	if reducer == nil || len(ss) == 0 {
+	len(ss) == 0 {
 		return
 	}
 	el = ss[0]
