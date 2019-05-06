@@ -9,13 +9,13 @@ func (ss SliceType) Intersect(slices ...SliceType) (ss2 SliceType) {
 		return nil
 	}
 
-	var uniqs []map[ElementType]struct{}
-	for _, s := range slices {
+	var uniqs = make([]map[ElementType]struct{}, len(slices))
+	for i := 0; i < len(slices); i++ {
 		m := make(map[ElementType]struct{})
-		for _, el := range s {
+		for _, el := range slices[i] {
 			m[el] = struct{}{}
 		}
-		uniqs = append(uniqs, m)
+		uniqs[i] = m
 	}
 
 	var containsInAll = false

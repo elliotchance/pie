@@ -142,20 +142,20 @@ func (ss Strings) FirstOr(defaultValue string) string {
 
 // Intersect returns items that exist in all lists.
 //
-// It returns without any duplicates.
+// It returns slice without any duplicates.
 // If zero slice arguments are provided, then nil is returned.
 func (ss Strings) Intersect(slices ...Strings) (ss2 Strings) {
 	if slices == nil {
 		return nil
 	}
 
-	var uniqs []map[string]struct{}
-	for _, s := range slices {
+	var uniqs = make([]map[string]struct{}, len(slices))
+	for i := 0; i < len(slices); i++ {
 		m := make(map[string]struct{})
-		for _, el := range s {
+		for _, el := range slices[i] {
 			m[el] = struct{}{}
 		}
-		uniqs = append(uniqs, m)
+		uniqs[i] = m
 	}
 
 	var containsInAll = false

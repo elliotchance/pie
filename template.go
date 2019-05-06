@@ -191,20 +191,20 @@ func (ss SliceType) FirstOr(defaultValue ElementType) ElementType {
 
 // Intersect returns items that exist in all lists.
 //
-// It returns without any duplicates.
+// It returns slice without any duplicates.
 // If zero slice arguments are provided, then nil is returned.
 func (ss SliceType) Intersect(slices ...SliceType) (ss2 SliceType) {
 	if slices == nil {
 		return nil
 	}
 
-	var uniqs []map[ElementType]struct{}
-	for _, s := range slices {
+	var uniqs = make([]map[ElementType]struct{}, len(slices))
+	for i := 0; i < len(slices); i++ {
 		m := make(map[ElementType]struct{})
-		for _, el := range s {
+		for _, el := range slices[i] {
 			m[el] = struct{}{}
 		}
-		uniqs = append(uniqs, m)
+		uniqs[i] = m
 	}
 
 	var containsInAll = false
