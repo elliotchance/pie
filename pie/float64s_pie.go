@@ -145,6 +145,32 @@ func (ss Float64s) Extend(slices ...Float64s) (ss2 Float64s) {
 	return ss2
 }
 
+// Filter will return a new slice containing only the elements that return
+// true from the condition. The returned slice may contain zero elements (nil).
+//
+// FilterNot works in the opposite way of Filter.
+func (ss Float64s) Filter(condition func(float64) bool) (ss2 Float64s) {
+	for _, s := range ss {
+		if condition(s) {
+			ss2 = append(ss2, s)
+		}
+	}
+	return
+}
+
+// FilterNot works the same as Filter, with a negated condition. That is, it will
+// return a new slice only containing the elements that returned false from the
+// condition. The returned slice may contain zero elements (nil).
+func (ss Float64s) FilterNot(condition func(float64) bool) (ss2 Float64s) {
+	for _, s := range ss {
+		if !condition(s) {
+			ss2 = append(ss2, s)
+		}
+	}
+
+	return
+}
+
 // First returns the first element, or zero. Also see FirstOr().
 func (ss Float64s) First() float64 {
 	return ss.FirstOr(0)
@@ -227,6 +253,25 @@ func (ss Float64s) LastOr(defaultValue float64) float64 {
 // Len returns the number of elements.
 func (ss Float64s) Len() int {
 	return len(ss)
+}
+
+// Map will return a new slice where each element has been mapped (transformed).
+// The number of elements returned will always be the same as the input.
+//
+// Be careful when using this with slices of pointers. If you modify the input
+// value it will affect the original slice. Be sure to return a new allocated
+// object or deep copy the existing one.
+func (ss Float64s) Map(fn func(float64) float64) (ss2 Float64s) {
+	if ss == nil {
+		return nil
+	}
+
+	ss2 = make([]float64, len(ss))
+	for i, s := range ss {
+		ss2[i] = fn(s)
+	}
+
+	return
 }
 
 // Max is the maximum value, or zero.
@@ -340,20 +385,6 @@ func (ss Float64s) Send(ctx context.Context, ch chan<- float64) Float64s {
 	return ss
 }
 
-// Select will return a new slice containing only the elements that return
-// true from the condition. The returned slice may contain zero elements (nil).
-//
-// Unselect works in the opposite way as Select.
-func (ss Float64s) Select(condition func(float64) bool) (ss2 Float64s) {
-	for _, s := range ss {
-		if condition(s) {
-			ss2 = append(ss2, s)
-		}
-	}
-
-	return
-}
-
 // Sort works similar to sort.Float64s(). However, unlike sort.Float64s the
 // slice returned will be reallocated as to not modify the input slice.
 //
@@ -436,25 +467,6 @@ func (ss Float64s) ToStrings(transform func(float64) string) Strings {
 	return result
 }
 
-// Transform will return a new slice where each element has been transformed.
-// The number of element returned will always be the same as the input.
-//
-// Be careful when using this with slices of pointers. If you modify the input
-// value it will affect the original slice. Be sure to return a new allocated
-// object or deep copy the existing one.
-func (ss Float64s) Transform(fn func(float64) float64) (ss2 Float64s) {
-	if ss == nil {
-		return nil
-	}
-
-	ss2 = make([]float64, len(ss))
-	for i, s := range ss {
-		ss2[i] = fn(s)
-	}
-
-	return
-}
-
 // Unique returns a new slice with all of the unique values.
 //
 // The items will be returned in a randomized order, even with the same input.
@@ -484,17 +496,4 @@ func (ss Float64s) Unique() Float64s {
 	}
 
 	return uniqueValues
-}
-
-// Unselect works the same as Select, with a negated condition. That is, it will
-// return a new slice only containing the elements that returned false from the
-// condition. The returned slice may contain zero elements (nil).
-func (ss Float64s) Unselect(condition func(float64) bool) (ss2 Float64s) {
-	for _, s := range ss {
-		if !condition(s) {
-			ss2 = append(ss2, s)
-		}
-	}
-
-	return
 }
