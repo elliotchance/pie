@@ -744,11 +744,6 @@ var intsReduceTests = []struct {
 		1,
 		func(a, b int) int { return a - b },
 	},
-	{
-		Ints{1, 2, 3},
-		0,
-		nil,
-	},
 }
 
 func TestInts_Reduce(t *testing.T) {

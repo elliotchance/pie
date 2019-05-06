@@ -758,11 +758,6 @@ var float64sReduceTests = []struct {
 		1,
 		func(a, b float64) float64 { return a - b },
 	},
-	{
-		Float64s{1, 2, 3},
-		0,
-		nil,
-	},
 }
 
 func TestFloat64s_Reduce(t *testing.T) {

@@ -314,9 +314,10 @@ func (ss Ints) Random(source rand.Source) int {
 // Reduce continually applies the provided function
 // over the slice. Reducing the elements to a single value.
 //
-// returns: nil if no elements in slice, or result of applying reducer from left to right.
+// returns: zero value of type if no elements in slice or no function provided.
+// Otherwise returns result of applying reducer from left to right.
 func (ss Ints) Reduce(reducer func(int, int) int) (el int) {
-	if reducer == nil || len(ss) == 0 {
+	if len(ss) == 0 {
 		return
 	}
 	el = ss[0]

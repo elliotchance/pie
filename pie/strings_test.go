@@ -725,11 +725,6 @@ var stringsReduceTests = []struct {
 		"Hello",
 		func(a, b string) string { return a + b },
 	},
-	{
-		Strings{"Hello", "World"},
-		"",
-		nil,
-	},
 }
 
 func TestStrings_Reduce(t *testing.T) {
