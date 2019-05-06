@@ -168,6 +168,36 @@ func (ss SliceType) Extend(slices ...SliceType) (ss2 SliceType) {
 	return ss2
 }
 `,
+	"Filter": `package functions
+
+// Filter will return a new slice containing only the elements that return
+// true from the condition. The returned slice may contain zero elements (nil).
+//
+// FilterNot works in the opposite way of Filter.
+func (ss SliceType) Filter(condition func(ElementType) bool) (ss2 SliceType) {
+	for _, s := range ss {
+		if condition(s) {
+			ss2 = append(ss2, s)
+		}
+	}
+	return
+}
+`,
+	"FilterNot": `package functions
+
+// FilterNot works the same as Filter, with a negated condition. That is, it will
+// return a new slice only containing the elements that returned false from the
+// condition. The returned slice may contain zero elements (nil).
+func (ss SliceType) FilterNot(condition func(ElementType) bool) (ss2 SliceType) {
+	for _, s := range ss {
+		if !condition(s) {
+			ss2 = append(ss2, s)
+		}
+	}
+
+	return
+}
+`,
 	"First": `package functions
 
 // First returns the first element, or zero. Also see FirstOr().
@@ -268,6 +298,27 @@ func (ss SliceType) LastOr(defaultValue ElementType) ElementType {
 // Len returns the number of elements.
 func (ss SliceType) Len() int {
 	return len(ss)
+}
+`,
+	"Map": `package functions
+
+// Map will return a new slice where each element has been mapped (transformed).
+// The number of elements returned will always be the same as the input.
+//
+// Be careful when using this with slices of pointers. If you modify the input
+// value it will affect the original slice. Be sure to return a new allocated
+// object or deep copy the existing one.
+func (ss SliceType) Map(fn func(ElementType) ElementType) (ss2 SliceType) {
+	if ss == nil {
+		return nil
+	}
+
+	ss2 = make([]ElementType, len(ss))
+	for i, s := range ss {
+		ss2[i] = fn(s)
+	}
+
+	return
 }
 `,
 	"Max": `package functions
@@ -391,22 +442,6 @@ func (ss SliceType) Reverse() SliceType {
 	}
 
 	return sorted
-}
-`,
-	"Select": `package functions
-
-// Select will return a new slice containing only the elements that return
-// true from the condition. The returned slice may contain zero elements (nil).
-//
-// Unselect works in the opposite way as Select.
-func (ss SliceType) Select(condition func(ElementType) bool) (ss2 SliceType) {
-	for _, s := range ss {
-		if condition(s) {
-			ss2 = append(ss2, s)
-		}
-	}
-
-	return
 }
 `,
 	"Send": `package functions
@@ -539,27 +574,6 @@ func (ss SliceType) Top(n int) (top SliceType) {
 	return
 }
 `,
-	"Transform": `package functions
-
-// Transform will return a new slice where each element has been transformed.
-// The number of element returned will always be the same as the input.
-//
-// Be careful when using this with slices of pointers. If you modify the input
-// value it will affect the original slice. Be sure to return a new allocated
-// object or deep copy the existing one.
-func (ss SliceType) Transform(fn func(ElementType) ElementType) (ss2 SliceType) {
-	if ss == nil {
-		return nil
-	}
-
-	ss2 = make([]ElementType, len(ss))
-	for i, s := range ss {
-		ss2[i] = fn(s)
-	}
-
-	return
-}
-`,
 	"Unique": `package functions
 
 // Unique returns a new slice with all of the unique values.
@@ -591,21 +605,6 @@ func (ss SliceType) Unique() SliceType {
 	}
 
 	return uniqueValues
-}
-`,
-	"Unselect": `package functions
-
-// Unselect works the same as Select, with a negated condition. That is, it will
-// return a new slice only containing the elements that returned false from the
-// condition. The returned slice may contain zero elements (nil).
-func (ss SliceType) Unselect(condition func(ElementType) bool) (ss2 SliceType) {
-	for _, s := range ss {
-		if !condition(s) {
-			ss2 = append(ss2, s)
-		}
-	}
-
-	return
 }
 `,
 	"Values": `package functions

@@ -35,12 +35,12 @@ func TestCars_Contains(t *testing.T) {
 	}
 }
 
-var carsSelectTests = []struct {
+var carsFilterTests = []struct {
 	ss                cars
 	condition         func(car) bool
-	expectedSelect    cars
-	expectedUnselect  cars
-	expectedTransform cars
+	expectedFilter    cars
+	expectedFilterNot cars
+	expectedMap       cars
 }{
 	{
 		nil,
@@ -62,29 +62,29 @@ var carsSelectTests = []struct {
 	},
 }
 
-func TestCars_Select(t *testing.T) {
-	for _, test := range carsSelectTests {
+func TestCars_Filter(t *testing.T) {
+	for _, test := range carsFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCars(t, &test.ss)()
-			assert.Equal(t, test.expectedSelect, test.ss.Select(test.condition))
+			assert.Equal(t, test.expectedFilter, test.ss.Filter(test.condition))
 		})
 	}
 }
 
-func TestCars_Unselect(t *testing.T) {
-	for _, test := range carsSelectTests {
+func TestCars_FilterNot(t *testing.T) {
+	for _, test := range carsFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCars(t, &test.ss)()
-			assert.Equal(t, test.expectedUnselect, test.ss.Unselect(test.condition))
+			assert.Equal(t, test.expectedFilterNot, test.ss.FilterNot(test.condition))
 		})
 	}
 }
 
-func TestCars_Transform(t *testing.T) {
-	for _, test := range carsSelectTests {
+func TestCars_Map(t *testing.T) {
+	for _, test := range carsFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCars(t, &test.ss)()
-			assert.Equal(t, test.expectedTransform, test.ss.Transform(func(car car) car {
+			assert.Equal(t, test.expectedMap, test.ss.Map(func(car car) car {
 				car.Name = strings.ToUpper(car.Name)
 
 				return car

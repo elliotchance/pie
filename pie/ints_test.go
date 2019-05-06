@@ -32,12 +32,12 @@ func TestInts_Contains(t *testing.T) {
 	}
 }
 
-var intsSelectTests = []struct {
+var intsFilterTests = []struct {
 	ss                Ints
 	condition         func(int) bool
-	expectedSelect    Ints
-	expectedUnselect  Ints
-	expectedTransform Ints
+	expectedFilter    Ints
+	expectedFilterNot Ints
+	expectedMap       Ints
 }{
 	{
 		nil,
@@ -59,26 +59,26 @@ var intsSelectTests = []struct {
 	},
 }
 
-func TestInts_Select(t *testing.T) {
-	for _, test := range intsSelectTests {
+func TestInts_Filter(t *testing.T) {
+	for _, test := range intsFilterTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expectedSelect, test.ss.Select(test.condition))
+			assert.Equal(t, test.expectedFilter, test.ss.Filter(test.condition))
 		})
 	}
 }
 
-func TestInts_Unselect(t *testing.T) {
-	for _, test := range intsSelectTests {
+func TestInts_FilterNot(t *testing.T) {
+	for _, test := range intsFilterTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expectedUnselect, test.ss.Unselect(test.condition))
+			assert.Equal(t, test.expectedFilterNot, test.ss.FilterNot(test.condition))
 		})
 	}
 }
 
-func TestInts_Transform(t *testing.T) {
-	for _, test := range intsSelectTests {
+func TestInts_Map(t *testing.T) {
+	for _, test := range intsFilterTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expectedTransform, test.ss.Transform(func(i int) int {
+			assert.Equal(t, test.expectedMap, test.ss.Map(func(i int) int {
 				return i + 5
 			}))
 		})
