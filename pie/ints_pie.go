@@ -295,6 +295,19 @@ func (ss Ints) Min() (min int) {
 	return
 }
 
+// Product is the product of all of the elements.
+func (ss Ints) Product() (product int) {
+	if len(ss) == 0 {
+		return
+	}
+	product = ss[0]
+	for _, s := range ss[1:] {
+		product *= s
+	}
+
+	return
+}
+
 // Random returns a random element by your rand.Source, or zero
 func (ss Ints) Random(source rand.Source) int {
 	n := len(ss)
