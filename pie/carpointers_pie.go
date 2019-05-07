@@ -260,20 +260,6 @@ func (ss carPointers) Send(ctx context.Context, ch chan<- *car) carPointers {
 	return ss
 }
 
-// Select will return a new slice containing only the elements that return
-// true from the condition. The returned slice may contain zero elements (nil).
-//
-// Unselect works in the opposite way as Select.
-func (ss carPointers) Select(condition func(*car) bool) (ss2 carPointers) {
-	for _, s := range ss {
-		if condition(s) {
-			ss2 = append(ss2, s)
-		}
-	}
-
-	return
-}
-
 // SortUsing works similar to sort.Slice. However, unlike sort.Slice the
 // slice returned will be reallocated as to not modify the input slice.
 func (ss carPointers) SortUsing(less func(a, b *car) bool) carPointers {
