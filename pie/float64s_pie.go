@@ -359,6 +359,22 @@ func (ss Float64s) Random(source rand.Source) float64 {
 	return ss[i]
 }
 
+// Reduce continually applies the provided function
+// over the slice. Reducing the elements to a single value.
+//
+// Returns a zero value of float64 if there are no elements in the slice. It will panic if the reducer is nil and the slice has more than one element (required to invoke reduce).
+// Otherwise returns result of applying reducer from left to right.
+func (ss Float64s) Reduce(reducer func(float64, float64) float64) (el float64) {
+	if len(ss) == 0 {
+		return
+	}
+	el = ss[0]
+	for _, s := range ss[1:] {
+		el = reducer(el, s)
+	}
+	return
+}
+
 // Reverse returns a new copy of the slice with the elements ordered in reverse.
 // This is useful when combined with Sort to get a descending sort order:
 //

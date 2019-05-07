@@ -746,6 +746,41 @@ func TestFloat64s_Random(t *testing.T) {
 	}
 }
 
+var float64sReduceTests = []struct {
+	ss       Float64s
+	expected float64
+	reducer  func(a, b float64) float64
+}{
+	{
+		Float64s{1, 2, 3},
+		6,
+		func(a, b float64) float64 { return a + b },
+	},
+	{
+		Float64s{1, 2, 3},
+		-4,
+		func(a, b float64) float64 { return a - b },
+	},
+	{
+		Float64s{},
+		0,
+		func(a, b float64) float64 { return a - b },
+	},
+	{
+		Float64s{1},
+		1,
+		func(a, b float64) float64 { return a - b },
+	},
+}
+
+func TestFloat64s_Reduce(t *testing.T) {
+	for _, test := range float64sReduceTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.expected, test.ss.Reduce(test.reducer))
+		})
+	}
+}
+
 var float64sAbsTests = []struct {
 	ss  Float64s
 	abs Float64s

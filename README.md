@@ -152,8 +152,9 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Filter`.
 | `Min`        | ✓      | ✓      |       |      | n        | The minimum value, or a zeroed value. |
 | `Product`    |        | ✓      |       |      | n        | Product of all elements. |
 | `Random`     | ✓      | ✓      | ✓     |      | 1        | Select a random element, or a zeroed value if empty. |
+| `Reduce`     | ✓      | ✓      |       |      | n        | Continously apply a function to the slice (left to right), reducing it to a single value. |
 | `Reverse`    | ✓      | ✓      | ✓     |      | n        | Reverse elements. |
-| `Send`     | ✓      | ✓      | ✓     |      | n        | Send all element to channel. |
+| `Send`       | ✓      | ✓      | ✓     |      | n        | Send all element to channel. |
 | `Sort`       | ✓      | ✓      |       |      | n⋅log(n) | Return a new sorted slice. |
 | `Sum`        |        | ✓      |       |      | n        | Sum (total) of all elements. |
 | `Shuffle`    | ✓      | ✓      | ✓     |      | n        | Returns a new shuffled slice. |
