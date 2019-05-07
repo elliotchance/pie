@@ -160,7 +160,7 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Filter`.
 | `Shuffle`    | ✓      | ✓      | ✓     |      | n        | Returns a new shuffled slice. |
 | `Top`        | ✓      | ✓      | ✓     |      | n        | Gets several elements from top(head of slice).|
 | `ToStrings`  | ✓      | ✓      | ✓     |      | n        | Transforms each element to a string. |
-| `Unique`     | ✓      | ✓      |       |      | n⋅log(n) | Return a new slice with only unique elements. |
+| `Unique`     | ✓      | ✓      |       |      | n        | Return a new slice with only unique elements. |
 | `Values`     |        |        |       | ✓    | n        | Returns all values in the map (in random order). |
 
 # FAQ
