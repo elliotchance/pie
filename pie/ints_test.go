@@ -153,12 +153,13 @@ func TestInts_Last(t *testing.T) {
 }
 
 var intsStatsTests = []struct {
-	ss                 []int
-	min, max, sum, len int
-	average            float64
+	ss                          []int
+	min, max, sum, product, len int
+	average                     float64
 }{
 	{
 		nil,
+		0,
 		0,
 		0,
 		0,
@@ -172,9 +173,11 @@ var intsStatsTests = []struct {
 		0,
 		0,
 		0,
+		0,
 	},
 	{
 		[]int{1},
+		1,
 		1,
 		1,
 		1,
@@ -186,6 +189,7 @@ var intsStatsTests = []struct {
 		1,
 		5,
 		11,
+		30,
 		4,
 		2.75,
 	},
@@ -211,6 +215,14 @@ func TestInts_Sum(t *testing.T) {
 	for _, test := range intsStatsTests {
 		t.Run("", func(t *testing.T) {
 			assert.Equal(t, test.sum, Ints(test.ss).Sum())
+		})
+	}
+}
+
+func TestInts_Product(t *testing.T) {
+	for _, test := range intsStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.product, Ints(test.ss).Product())
 		})
 	}
 }
