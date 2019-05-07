@@ -1,6 +1,7 @@
 package pie
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/elliotchance/pie/pie/util"
 	"math/rand"
@@ -112,6 +113,32 @@ func (ss carPointers) Extend(slices ...carPointers) (ss2 carPointers) {
 	return ss2
 }
 
+// Filter will return a new slice containing only the elements that return
+// true from the condition. The returned slice may contain zero elements (nil).
+//
+// FilterNot works in the opposite way of Filter.
+func (ss carPointers) Filter(condition func(*car) bool) (ss2 carPointers) {
+	for _, s := range ss {
+		if condition(s) {
+			ss2 = append(ss2, s)
+		}
+	}
+	return
+}
+
+// FilterNot works the same as Filter, with a negated condition. That is, it will
+// return a new slice only containing the elements that returned false from the
+// condition. The returned slice may contain zero elements (nil).
+func (ss carPointers) FilterNot(condition func(*car) bool) (ss2 carPointers) {
+	for _, s := range ss {
+		if !condition(s) {
+			ss2 = append(ss2, s)
+		}
+	}
+
+	return
+}
+
 // First returns the first element, or zero. Also see FirstOr().
 func (ss carPointers) First() *car {
 	return ss.FirstOr(&car{})
@@ -161,6 +188,25 @@ func (ss carPointers) Len() int {
 	return len(ss)
 }
 
+// Map will return a new slice where each element has been mapped (transformed).
+// The number of elements returned will always be the same as the input.
+//
+// Be careful when using this with slices of pointers. If you modify the input
+// value it will affect the original slice. Be sure to return a new allocated
+// object or deep copy the existing one.
+func (ss carPointers) Map(fn func(*car) *car) (ss2 carPointers) {
+	if ss == nil {
+		return nil
+	}
+
+	ss2 = make([]*car, len(ss))
+	for i, s := range ss {
+		ss2[i] = fn(s)
+	}
+
+	return
+}
+
 // Random returns a random element by your rand.Source, or zero
 func (ss carPointers) Random(source rand.Source) *car {
 	n := len(ss)
@@ -197,18 +243,23 @@ func (ss carPointers) Reverse() carPointers {
 	return sorted
 }
 
-// Select will return a new slice containing only the elements that return
-// true from the condition. The returned slice may contain zero elements (nil).
+// Send sends elements to channel
+// in normal act it sends all elements but if func canceled it can be less
 //
-// Unselect works in the opposite way as Select.
-func (ss carPointers) Select(condition func(*car) bool) (ss2 carPointers) {
-	for _, s := range ss {
-		if condition(s) {
-			ss2 = append(ss2, s)
+// it locks execution of gorutine
+// it doesn't close channel after work
+// returns sended elements if len(this) != len(old) considered func was canceled
+func (ss carPointers) Send(ctx context.Context, ch chan<- *car) carPointers {
+	for i, s := range ss {
+		select {
+		case <-ctx.Done():
+			return ss[:i]
+		default:
+			ch <- s
 		}
 	}
 
-	return
+	return ss
 }
 
 // Shuffle returns shuffled slice by your rand.Source
@@ -262,36 +313,4 @@ func (ss carPointers) ToStrings(transform func(*car) string) Strings {
 	}
 
 	return result
-}
-
-// Transform will return a new slice where each element has been transformed.
-// The number of element returned will always be the same as the input.
-//
-// Be careful when using this with slices of pointers. If you modify the input
-// value it will affect the original slice. Be sure to return a new allocated
-// object or deep copy the existing one.
-func (ss carPointers) Transform(fn func(*car) *car) (ss2 carPointers) {
-	if ss == nil {
-		return nil
-	}
-
-	ss2 = make([]*car, len(ss))
-	for i, s := range ss {
-		ss2[i] = fn(s)
-	}
-
-	return
-}
-
-// Unselect works the same as Select, with a negated condition. That is, it will
-// return a new slice only containing the elements that returned false from the
-// condition. The returned slice may contain zero elements (nil).
-func (ss carPointers) Unselect(condition func(*car) bool) (ss2 carPointers) {
-	for _, s := range ss {
-		if !condition(s) {
-			ss2 = append(ss2, s)
-		}
-	}
-
-	return
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"testing"
+	"time"
 
 	"github.com/elliotchance/testify-stats/assert"
 )
@@ -31,12 +32,12 @@ func TestInts_Contains(t *testing.T) {
 	}
 }
 
-var intsSelectTests = []struct {
+var intsFilterTests = []struct {
 	ss                Ints
 	condition         func(int) bool
-	expectedSelect    Ints
-	expectedUnselect  Ints
-	expectedTransform Ints
+	expectedFilter    Ints
+	expectedFilterNot Ints
+	expectedMap       Ints
 }{
 	{
 		nil,
@@ -58,26 +59,26 @@ var intsSelectTests = []struct {
 	},
 }
 
-func TestInts_Select(t *testing.T) {
-	for _, test := range intsSelectTests {
+func TestInts_Filter(t *testing.T) {
+	for _, test := range intsFilterTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expectedSelect, test.ss.Select(test.condition))
+			assert.Equal(t, test.expectedFilter, test.ss.Filter(test.condition))
 		})
 	}
 }
 
-func TestInts_Unselect(t *testing.T) {
-	for _, test := range intsSelectTests {
+func TestInts_FilterNot(t *testing.T) {
+	for _, test := range intsFilterTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expectedUnselect, test.ss.Unselect(test.condition))
+			assert.Equal(t, test.expectedFilterNot, test.ss.FilterNot(test.condition))
 		})
 	}
 }
 
-func TestInts_Transform(t *testing.T) {
-	for _, test := range intsSelectTests {
+func TestInts_Map(t *testing.T) {
+	for _, test := range intsFilterTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expectedTransform, test.ss.Transform(func(i int) int {
+			assert.Equal(t, test.expectedMap, test.ss.Map(func(i int) int {
 				return i + 5
 			}))
 		})
@@ -152,12 +153,13 @@ func TestInts_Last(t *testing.T) {
 }
 
 var intsStatsTests = []struct {
-	ss                 []int
-	min, max, sum, len int
-	average            float64
+	ss                          []int
+	min, max, sum, product, len int
+	average                     float64
 }{
 	{
 		nil,
+		0,
 		0,
 		0,
 		0,
@@ -171,9 +173,11 @@ var intsStatsTests = []struct {
 		0,
 		0,
 		0,
+		0,
 	},
 	{
 		[]int{1},
+		1,
 		1,
 		1,
 		1,
@@ -185,6 +189,7 @@ var intsStatsTests = []struct {
 		1,
 		5,
 		11,
+		30,
 		4,
 		2.75,
 	},
@@ -210,6 +215,14 @@ func TestInts_Sum(t *testing.T) {
 	for _, test := range intsStatsTests {
 		t.Run("", func(t *testing.T) {
 			assert.Equal(t, test.sum, Ints(test.ss).Sum())
+		})
+	}
+}
+
+func TestInts_Product(t *testing.T) {
+	for _, test := range intsStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.product, Ints(test.ss).Product())
 		})
 	}
 }
@@ -722,4 +735,99 @@ func TestInts_Abs(t *testing.T) {
 	assert.Equal(t, Ints{1, 5, 7}, Ints{-1, 5, -7}.Abs())
 	assert.Equal(t, Ints{689845, 688969, 220373, 89437, 308836}, Ints{-689845, -688969, -220373, -89437, 308836}.Abs())
 	assert.Equal(t, Ints{1, 2}, Ints{1, 2}.Abs())
+}
+
+var intsSendTests = []struct {
+	ss            Ints
+	recieveDelay  time.Duration
+	canceledDelay time.Duration
+	expected      Ints
+}{
+	{
+		nil,
+		0,
+		0,
+		nil,
+	},
+	{
+		Ints{1, 3},
+		0,
+		0,
+		Ints{1, 3},
+	},
+	{
+		Ints{1, 3},
+		time.Millisecond * 30,
+		time.Millisecond * 10,
+		Ints{1},
+	},
+	{
+		Ints{1, 3},
+		time.Millisecond * 3,
+		time.Millisecond * 10,
+		Ints{1, 3},
+	},
+}
+
+func TestInts_Send(t *testing.T) {
+	for _, test := range intsSendTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			ch := make(chan int)
+			actual := getIntsFromChan(ch, test.recieveDelay)
+			ctx := createContextByDelay(test.canceledDelay)
+
+			actualSended := test.ss.Send(ctx, ch)
+			close(ch)
+
+			assert.Equal(t, test.expected, actualSended)
+			assert.Equal(t, test.expected, actual())
+		})
+	}
+}
+
+var intsIntersectTests = []struct {
+	ss       Ints
+	params   []Ints
+	expected Ints
+}{
+	{
+		nil,
+		nil,
+		nil,
+	},
+	{
+		Ints{1, 3},
+		nil,
+		nil,
+	},
+	{
+		nil,
+		[]Ints{{1, 3, 5}, {5, 1}},
+		nil,
+	},
+	{
+		Ints{1, 3},
+		[]Ints{{1}, {3}},
+		nil,
+	},
+	{
+		Ints{1, 3},
+		[]Ints{{1}},
+		Ints{1},
+	},
+	{
+		Ints{1, 3},
+		[]Ints{{1, 3, 5}, {5, 1}},
+		Ints{1},
+	},
+}
+
+func TestInts_Intersect(t *testing.T) {
+	for _, test := range intsIntersectTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Intersect(test.params...))
+		})
+	}
 }

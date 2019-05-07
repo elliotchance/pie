@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/elliotchance/testify-stats/assert"
 )
@@ -34,12 +35,12 @@ func TestCars_Contains(t *testing.T) {
 	}
 }
 
-var carsSelectTests = []struct {
+var carsFilterTests = []struct {
 	ss                cars
 	condition         func(car) bool
-	expectedSelect    cars
-	expectedUnselect  cars
-	expectedTransform cars
+	expectedFilter    cars
+	expectedFilterNot cars
+	expectedMap       cars
 }{
 	{
 		nil,
@@ -61,29 +62,29 @@ var carsSelectTests = []struct {
 	},
 }
 
-func TestCars_Select(t *testing.T) {
-	for _, test := range carsSelectTests {
+func TestCars_Filter(t *testing.T) {
+	for _, test := range carsFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCars(t, &test.ss)()
-			assert.Equal(t, test.expectedSelect, test.ss.Select(test.condition))
+			assert.Equal(t, test.expectedFilter, test.ss.Filter(test.condition))
 		})
 	}
 }
 
-func TestCars_Unselect(t *testing.T) {
-	for _, test := range carsSelectTests {
+func TestCars_FilterNot(t *testing.T) {
+	for _, test := range carsFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCars(t, &test.ss)()
-			assert.Equal(t, test.expectedUnselect, test.ss.Unselect(test.condition))
+			assert.Equal(t, test.expectedFilterNot, test.ss.FilterNot(test.condition))
 		})
 	}
 }
 
-func TestCars_Transform(t *testing.T) {
-	for _, test := range carsSelectTests {
+func TestCars_Map(t *testing.T) {
+	for _, test := range carsFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCars(t, &test.ss)()
-			assert.Equal(t, test.expectedTransform, test.ss.Transform(func(car car) car {
+			assert.Equal(t, test.expectedMap, test.ss.Map(func(car car) car {
 				car.Name = strings.ToUpper(car.Name)
 
 				return car
@@ -609,6 +610,55 @@ func TestCars_Random(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCars(t, &test.ss)()
 			assert.Equal(t, test.expected, test.ss.Random(test.source))
+		})
+	}
+}
+
+var carsSendTests = []struct {
+	ss            cars
+	recieveDelay  time.Duration
+	canceledDelay time.Duration
+	expected      cars
+}{
+	{
+		nil,
+		0,
+		0,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		0,
+		0,
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		time.Millisecond * 30,
+		time.Millisecond * 10,
+		cars{car{"bar", "yellow"}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		time.Millisecond * 3,
+		time.Millisecond * 10,
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+	},
+}
+
+func TestCar_Send(t *testing.T) {
+	for _, test := range carsSendTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss)()
+			ch := make(chan car)
+			actual := getCarsFromChan(ch, test.recieveDelay)
+			ctx := createContextByDelay(test.canceledDelay)
+
+			actualSended := test.ss.Send(ctx, ch)
+			close(ch)
+
+			assert.Equal(t, test.expected, actualSended)
+			assert.Equal(t, test.expected, actual())
 		})
 	}
 }

@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/elliotchance/testify-stats/assert"
 )
@@ -43,12 +44,12 @@ func TestCarPointers_Contains(t *testing.T) {
 	}
 }
 
-var carPointersSelectTests = []struct {
+var carPointersFilterTests = []struct {
 	ss                carPointers
 	condition         func(*car) bool
-	expectedSelect    carPointers
-	expectedUnselect  carPointers
-	expectedTransform carPointers
+	expectedFilter    carPointers
+	expectedFilterNot carPointers
+	expectedMap       carPointers
 }{
 	{
 		nil,
@@ -70,29 +71,29 @@ var carPointersSelectTests = []struct {
 	},
 }
 
-func TestCarPointers_Select(t *testing.T) {
-	for _, test := range carPointersSelectTests {
+func TestCarPointers_Filter(t *testing.T) {
+	for _, test := range carPointersFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCarPointers(t, &test.ss)()
-			assert.Equal(t, test.expectedSelect, test.ss.Select(test.condition))
+			assert.Equal(t, test.expectedFilter, test.ss.Filter(test.condition))
 		})
 	}
 }
 
-func TestCarPointers_Unselect(t *testing.T) {
-	for _, test := range carPointersSelectTests {
+func TestCarPointers_FilterNot(t *testing.T) {
+	for _, test := range carPointersFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCarPointers(t, &test.ss)()
-			assert.Equal(t, test.expectedUnselect, test.ss.Unselect(test.condition))
+			assert.Equal(t, test.expectedFilterNot, test.ss.FilterNot(test.condition))
 		})
 	}
 }
 
-func TestCarPointers_Transform(t *testing.T) {
-	for _, test := range carPointersSelectTests {
+func TestCarPointers_Map(t *testing.T) {
+	for _, test := range carPointersFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCarPointers(t, &test.ss)()
-			assert.Equal(t, test.expectedTransform, test.ss.Transform(func(c *car) *car {
+			assert.Equal(t, test.expectedMap, test.ss.Map(func(c *car) *car {
 				return &car{
 					Name:  strings.ToUpper(c.Name),
 					Color: c.Color,
@@ -625,6 +626,55 @@ func TestCarPointers_Random(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCarPointers(t, &test.ss)()
 			assert.Equal(t, test.expected, test.ss.Random(test.source))
+		})
+	}
+}
+
+var carPointersSendTests = []struct {
+	ss            carPointers
+	recieveDelay  time.Duration
+	canceledDelay time.Duration
+	expected      carPointers
+}{
+	{
+		nil,
+		0,
+		0,
+		nil,
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+		0,
+		0,
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+		time.Millisecond * 30,
+		time.Millisecond * 10,
+		carPointers{&car{"bar", "yellow"}},
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+		time.Millisecond * 3,
+		time.Millisecond * 10,
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+	},
+}
+
+func TestCarPointers_Send(t *testing.T) {
+	for _, test := range carPointersSendTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			ch := make(chan *car)
+			actual := getCarPointersFromChan(ch, test.recieveDelay)
+			ctx := createContextByDelay(test.canceledDelay)
+
+			actualSended := test.ss.Send(ctx, ch)
+			close(ch)
+
+			assert.Equal(t, test.expected, actualSended)
+			assert.Equal(t, test.expected, actual())
 		})
 	}
 }
