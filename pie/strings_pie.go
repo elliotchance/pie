@@ -283,7 +283,7 @@ func (ss Strings) Random(source rand.Source) string {
 // Reduce continually applies the provided function
 // over the slice. Reducing the elements to a single value.
 //
-// returns: zero value of type if no elements in slice or no function provided.
+// Returns a zero value of string if there are no elements in the slice. It will panic if the reducer is nil and the slice has more than one element (required to invoke reduce).
 // Otherwise returns result of applying reducer from left to right.
 func (ss Strings) Reduce(reducer func(string, string) string) (el string) {
 	if len(ss) == 0 {
