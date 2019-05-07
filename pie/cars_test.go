@@ -288,6 +288,78 @@ func TestCars_Reverse(t *testing.T) {
 	}
 }
 
+var carsSortCustomTests = []struct {
+	ss                  cars
+	sortedStableByName  cars
+	sortedStableByColor cars
+}{
+	{
+		nil,
+		nil,
+		nil,
+	},
+	{
+		cars{},
+		cars{},
+		cars{},
+	},
+	{
+		cars{car{"foo", "red"}},
+		cars{car{"foo", "red"}},
+		cars{car{"foo", "red"}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"foo", "red"}},
+		cars{car{"Baz", "black"}, car{"bar", "yellow"}, car{"foo", "red"}},
+		cars{car{"Baz", "black"}, car{"foo", "red"}, car{"bar", "yellow"}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"qux", "cyan"}, car{"foo", "red"}},
+		cars{car{"Baz", "black"}, car{"bar", "yellow"}, car{"foo", "red"}, car{"qux", "cyan"}},
+		cars{car{"Baz", "black"}, car{"qux", "cyan"}, car{"foo", "red"}, car{"bar", "yellow"}},
+	},
+	{
+		cars{car{"aaa", "yellow"}, car{"aaa", "black"}, car{"bbb", "yellow"}, car{"bbb", "black"}},
+		cars{car{"aaa", "yellow"}, car{"aaa", "black"}, car{"bbb", "yellow"}, car{"bbb", "black"}},
+		cars{car{"aaa", "black"}, car{"bbb", "black"}, car{"aaa", "yellow"}, car{"bbb", "yellow"}},
+	},
+}
+
+func carNameLess(a, b car) bool {
+	return a.Name < b.Name
+}
+
+func carColorLess(a, b car) bool {
+	return a.Color < b.Color
+}
+
+func TestCars_SortUsing(t *testing.T) {
+	isSortedUsing := func(ss cars, less func(a, b car) bool) bool {
+		for i := 1; i < len(ss); i++ {
+			if less(ss[i], ss[i-1]) {
+				return false
+			}
+		}
+		return true
+	}
+
+	for _, test := range carsSortCustomTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss)()
+
+			sortedByName := test.ss.SortUsing(carNameLess)
+			assert.True(t, isSortedUsing(sortedByName, carNameLess))
+			sortedStableByName := test.ss.SortStableUsing(carNameLess)
+			assert.Equal(t, test.sortedStableByName, sortedStableByName)
+
+			sortedByColor := test.ss.SortUsing(carColorLess)
+			assert.True(t, isSortedUsing(sortedByColor, carColorLess))
+			sortedStableByColor := test.ss.SortStableUsing(carColorLess)
+			assert.Equal(t, test.sortedStableByColor, sortedStableByColor)
+		})
+	}
+}
+
 var carsToStringsTests = []struct {
 	ss        cars
 	transform func(car) string

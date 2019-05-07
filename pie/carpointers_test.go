@@ -326,6 +326,78 @@ var stringsToStringsTests = []struct {
 	},
 }
 
+var carPointersSortCustomTests = []struct {
+	ss                  carPointers
+	sortedStableByName  carPointers
+	sortedStableByColor carPointers
+}{
+	{
+		nil,
+		nil,
+		nil,
+	},
+	{
+		carPointers{},
+		carPointers{},
+		carPointers{},
+	},
+	{
+		carPointers{&car{"foo", "red"}},
+		carPointers{&car{"foo", "red"}},
+		carPointers{&car{"foo", "red"}},
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}, &car{"foo", "red"}},
+		carPointers{&car{"Baz", "black"}, &car{"bar", "yellow"}, &car{"foo", "red"}},
+		carPointers{&car{"Baz", "black"}, &car{"foo", "red"}, &car{"bar", "yellow"}},
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}, &car{"qux", "cyan"}, &car{"foo", "red"}},
+		carPointers{&car{"Baz", "black"}, &car{"bar", "yellow"}, &car{"foo", "red"}, &car{"qux", "cyan"}},
+		carPointers{&car{"Baz", "black"}, &car{"qux", "cyan"}, &car{"foo", "red"}, &car{"bar", "yellow"}},
+	},
+	{
+		carPointers{&car{"aaa", "yellow"}, &car{"aaa", "black"}, &car{"bbb", "yellow"}, &car{"bbb", "black"}},
+		carPointers{&car{"aaa", "yellow"}, &car{"aaa", "black"}, &car{"bbb", "yellow"}, &car{"bbb", "black"}},
+		carPointers{&car{"aaa", "black"}, &car{"bbb", "black"}, &car{"aaa", "yellow"}, &car{"bbb", "yellow"}},
+	},
+}
+
+func carPointerNameLess(a, b *car) bool {
+	return a.Name < b.Name
+}
+
+func carPointerColorLess(a, b *car) bool {
+	return a.Color < b.Color
+}
+
+func TestCarPointers_SortUsing(t *testing.T) {
+	isSortedUsing := func(ss carPointers, less func(a, b *car) bool) bool {
+		for i := 1; i < len(ss); i++ {
+			if less(ss[i], ss[i-1]) {
+				return false
+			}
+		}
+		return true
+	}
+
+	for _, test := range carPointersSortCustomTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+
+			sortedByName := test.ss.SortUsing(carPointerNameLess)
+			assert.True(t, isSortedUsing(sortedByName, carPointerNameLess))
+			sortedStableByName := test.ss.SortStableUsing(carPointerNameLess)
+			assert.Equal(t, test.sortedStableByName, sortedStableByName)
+
+			sortedByColor := test.ss.SortUsing(carPointerColorLess)
+			assert.True(t, isSortedUsing(sortedByColor, carPointerColorLess))
+			sortedStableByColor := test.ss.SortStableUsing(carPointerColorLess)
+			assert.Equal(t, test.sortedStableByColor, sortedStableByColor)
+		})
+	}
+}
+
 func TestCarPointers_ToStrings(t *testing.T) {
 	for _, test := range stringsToStringsTests {
 		t.Run("", func(t *testing.T) {

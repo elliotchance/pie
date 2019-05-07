@@ -425,7 +425,7 @@ func (ss Ints) Sort() Ints {
 		return ss
 	}
 
-	sorted := make([]int, len(ss))
+	sorted := make(Ints, len(ss))
 	copy(sorted, ss)
 	sort.Slice(sorted, func(i, j int) bool {
 		return sorted[i] < sorted[j]
