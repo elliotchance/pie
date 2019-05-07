@@ -54,8 +54,13 @@ func (ss SliceType) Any(fn func(value ElementType) bool) bool {
 // Append will return a new slice with the elements appended to the end.
 //
 // It is acceptable to provide zero arguments.
-func (ss SliceType) Append(elements ...ElementType) (result SliceType) {
-	return append(append(result, ss...), elements...)
+func (ss SliceType) Append(elements ...ElementType) SliceType {
+	// Copy ss, to make sure no memory is overlapping between input and
+	// output. See issue #97.
+	result := append(SliceType{}, ss...)
+
+	result = append(result, elements...)
+	return result
 }
 `,
 	"AreSorted": `package functions

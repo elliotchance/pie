@@ -48,8 +48,13 @@ func (ss Float64s) Any(fn func(value float64) bool) bool {
 // Append will return a new slice with the elements appended to the end.
 //
 // It is acceptable to provide zero arguments.
-func (ss Float64s) Append(elements ...float64) (result Float64s) {
-	return append(append(result, ss...), elements...)
+func (ss Float64s) Append(elements ...float64) Float64s {
+	// Copy ss, to make sure no memory is overlapping between input and
+	// output. See issue #97.
+	result := append(Float64s{}, ss...)
+
+	result = append(result, elements...)
+	return result
 }
 
 // AreSorted will return true if the slice is already sorted. It is a wrapper

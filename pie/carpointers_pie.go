@@ -37,8 +37,13 @@ func (ss carPointers) Any(fn func(value *car) bool) bool {
 // Append will return a new slice with the elements appended to the end.
 //
 // It is acceptable to provide zero arguments.
-func (ss carPointers) Append(elements ...*car) (result carPointers) {
-	return append(append(result, ss...), elements...)
+func (ss carPointers) Append(elements ...*car) carPointers {
+	// Copy ss, to make sure no memory is overlapping between input and
+	// output. See issue #97.
+	result := append(carPointers{}, ss...)
+
+	result = append(result, elements...)
+	return result
 }
 
 // Bottom will return n elements from bottom

@@ -48,8 +48,13 @@ func (ss Ints) Any(fn func(value int) bool) bool {
 // Append will return a new slice with the elements appended to the end.
 //
 // It is acceptable to provide zero arguments.
-func (ss Ints) Append(elements ...int) (result Ints) {
-	return append(append(result, ss...), elements...)
+func (ss Ints) Append(elements ...int) Ints {
+	// Copy ss, to make sure no memory is overlapping between input and
+	// output. See issue #97.
+	result := append(Ints{}, ss...)
+
+	result = append(result, elements...)
+	return result
 }
 
 // AreSorted will return true if the slice is already sorted. It is a wrapper

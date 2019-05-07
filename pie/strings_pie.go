@@ -38,8 +38,13 @@ func (ss Strings) Any(fn func(value string) bool) bool {
 // Append will return a new slice with the elements appended to the end.
 //
 // It is acceptable to provide zero arguments.
-func (ss Strings) Append(elements ...string) (result Strings) {
-	return append(append(result, ss...), elements...)
+func (ss Strings) Append(elements ...string) Strings {
+	// Copy ss, to make sure no memory is overlapping between input and
+	// output. See issue #97.
+	result := append(Strings{}, ss...)
+
+	result = append(result, elements...)
+	return result
 }
 
 // AreSorted will return true if the slice is already sorted. It is a wrapper
