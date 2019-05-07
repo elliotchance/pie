@@ -454,7 +454,7 @@ func (ss SliceType) Send(ctx context.Context, ch chan<- ElementType) SliceType {
 `,
 	"Sequence": `package functions
 
-import "math"
+import "github.com/elliotchance/pie/pie/util"
 
 // Sequence generates all numbers in range or returns nil if params invalid
 //
@@ -472,7 +472,7 @@ import "math"
 // others params will be ignored
 func (ss SliceType) Sequence(params ...int) SliceType {
 	var seq = func(min, max, step int) (seq SliceType) {
-		lenght := int(math.Round(float64(max-min) / float64(step)))
+		lenght := int(util.Round(float64(max-min) / float64(step)))
 		if lenght < 1 {
 			return
 		}

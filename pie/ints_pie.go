@@ -366,7 +366,7 @@ func (ss Ints) Send(ctx context.Context, ch chan<- int) Ints {
 // others params will be ignored
 func (ss Ints) Sequence(params ...int) Ints {
 	var seq = func(min, max, step int) (seq Ints) {
-		lenght := int(math.Round(float64(max-min) / float64(step)))
+		lenght := int(util.Round(float64(max-min) / float64(step)))
 		if lenght < 1 {
 			return
 		}
