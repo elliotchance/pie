@@ -139,6 +139,7 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Filter`.
 | `FilterNot`  | ✓      | ✓      | ✓     |      | n        | A new slice containing only the elements that returned false from the condition. |
 | `First`      | ✓      | ✓      | ✓     |      | 1        | The first element, or a zeroed value. |
 | `FirstOr`    | ✓      | ✓      | ✓     |      | 1        | The first element, or a default value. |
+| `Intersect`       | ✓      | ✓        |       |      | n | Intersect returns elements which exists in all slices. |
 | `Join`       | ✓      |        |       |      | n        | A string from joining each of the elements. |
 | `JSONString` | ✓      | ✓      | ✓     |      | n        | The JSON encoded string. |
 | `Keys`       |        |        |       | ✓    | n        | Returns all keys in the map (in random order). |
@@ -149,6 +150,7 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Filter`.
 | `Max`        | ✓      | ✓      |       |      | n        | The maximum value, or a zeroes value. |
 | `Median`     |        | ✓      |       |      | n⋅log(n) | Median returns the value separating the higher half from the lower half of a data sample. |
 | `Min`        | ✓      | ✓      |       |      | n        | The minimum value, or a zeroed value. |
+| `Product`    |        | ✓      |       |      | n        | Product of all elements. |
 | `Random`     | ✓      | ✓      | ✓     |      | 1        | Select a random element, or a zeroed value if empty. |
 | `Reverse`    | ✓      | ✓      | ✓     |      | n        | Reverse elements. |
 | `Send`     | ✓      | ✓      | ✓     |      | n        | Send all element to channel. |

@@ -186,6 +186,41 @@ func (ss Float64s) FirstOr(defaultValue float64) float64 {
 	return ss[0]
 }
 
+// Intersect returns items that exist in all lists.
+//
+// It returns slice without any duplicates.
+// If zero slice arguments are provided, then nil is returned.
+func (ss Float64s) Intersect(slices ...Float64s) (ss2 Float64s) {
+	if slices == nil {
+		return nil
+	}
+
+	var uniqs = make([]map[float64]struct{}, len(slices))
+	for i := 0; i < len(slices); i++ {
+		m := make(map[float64]struct{})
+		for _, el := range slices[i] {
+			m[el] = struct{}{}
+		}
+		uniqs[i] = m
+	}
+
+	var containsInAll = false
+	for _, el := range ss.Unique() {
+		for _, u := range uniqs {
+			if _, exists := u[el]; !exists {
+				containsInAll = false
+				break
+			}
+			containsInAll = true
+		}
+		if containsInAll {
+			ss2 = append(ss2, el)
+		}
+	}
+
+	return
+}
+
 // JSONString returns the JSON encoded array as a string.
 //
 // One important thing to note is that it will treat a nil slice as an empty
@@ -290,6 +325,19 @@ func (ss Float64s) Min() (min float64) {
 		if s < min {
 			min = s
 		}
+	}
+
+	return
+}
+
+// Product is the product of all of the elements.
+func (ss Float64s) Product() (product float64) {
+	if len(ss) == 0 {
+		return
+	}
+	product = ss[0]
+	for _, s := range ss[1:] {
+		product *= s
 	}
 
 	return

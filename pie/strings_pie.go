@@ -166,6 +166,41 @@ func (ss Strings) FirstOr(defaultValue string) string {
 	return ss[0]
 }
 
+// Intersect returns items that exist in all lists.
+//
+// It returns slice without any duplicates.
+// If zero slice arguments are provided, then nil is returned.
+func (ss Strings) Intersect(slices ...Strings) (ss2 Strings) {
+	if slices == nil {
+		return nil
+	}
+
+	var uniqs = make([]map[string]struct{}, len(slices))
+	for i := 0; i < len(slices); i++ {
+		m := make(map[string]struct{})
+		for _, el := range slices[i] {
+			m[el] = struct{}{}
+		}
+		uniqs[i] = m
+	}
+
+	var containsInAll = false
+	for _, el := range ss.Unique() {
+		for _, u := range uniqs {
+			if _, exists := u[el]; !exists {
+				containsInAll = false
+				break
+			}
+			containsInAll = true
+		}
+		if containsInAll {
+			ss2 = append(ss2, el)
+		}
+	}
+
+	return
+}
+
 // Join returns a string from joining each of the elements.
 func (ss Strings) Join(glue string) (s string) {
 	for i, element := range ss {
