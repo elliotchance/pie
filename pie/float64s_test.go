@@ -36,9 +36,9 @@ func TestFloat64s_Contains(t *testing.T) {
 var float64sSelectTests = []struct {
 	ss                Float64s
 	condition         func(float64) bool
-	expectedSelect    Float64s
-	expectedUnselect  Float64s
-	expectedTransform Float64s
+	expectedFilter    Float64s
+	expectedFilterNot Float64s
+	expectedMap       Float64s
 }{
 	{
 		nil,
@@ -60,29 +60,29 @@ var float64sSelectTests = []struct {
 	},
 }
 
-func TestFloat64s_Select(t *testing.T) {
+func TestFloat64s_Filter(t *testing.T) {
 	for _, test := range float64sSelectTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableFloat64s(t, &test.ss)()
-			assert.Equal(t, test.expectedSelect, test.ss.Select(test.condition))
+			assert.Equal(t, test.expectedFilter, test.ss.Filter(test.condition))
 		})
 	}
 }
 
-func TestFloat64s_Unselect(t *testing.T) {
+func TestFloat64s_FilterNot(t *testing.T) {
 	for _, test := range float64sSelectTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableFloat64s(t, &test.ss)()
-			assert.Equal(t, test.expectedUnselect, test.ss.Unselect(test.condition))
+			assert.Equal(t, test.expectedFilterNot, test.ss.FilterNot(test.condition))
 		})
 	}
 }
 
-func TestFloat64s_Transform(t *testing.T) {
+func TestFloat64s_Map(t *testing.T) {
 	for _, test := range float64sSelectTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableFloat64s(t, &test.ss)()
-			assert.Equal(t, test.expectedTransform, test.ss.Transform(func(a float64) float64 {
+			assert.Equal(t, test.expectedMap, test.ss.Map(func(a float64) float64 {
 				return a + 5.2
 			}))
 		})
@@ -161,13 +161,14 @@ func TestFloat64s_Last(t *testing.T) {
 }
 
 var float64sStatsTests = []struct {
-	ss            Float64s
-	min, max, sum float64
-	len           int
-	average       float64
+	ss                     Float64s
+	min, max, sum, product float64
+	len                    int
+	average                float64
 }{
 	{
 		nil,
+		0,
 		0,
 		0,
 		0,
@@ -181,9 +182,11 @@ var float64sStatsTests = []struct {
 		0,
 		0,
 		0,
+		0,
 	},
 	{
 		[]float64{1.5},
+		1.5,
 		1.5,
 		1.5,
 		1.5,
@@ -195,6 +198,7 @@ var float64sStatsTests = []struct {
 		1.9,
 		5.1,
 		12.3,
+		66.0858,
 		4,
 		3.075,
 	},
@@ -223,6 +227,15 @@ func TestFloat64s_Sum(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableFloat64s(t, &test.ss)()
 			assert.Equal(t, test.sum, Float64s(test.ss).Sum())
+		})
+	}
+}
+
+func TestFloat64s_Product(t *testing.T) {
+	for _, test := range float64sStatsTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, test.product, Float64s(test.ss).Product())
 		})
 	}
 }
@@ -804,6 +817,52 @@ func TestFloat64s_Send(t *testing.T) {
 
 			assert.Equal(t, test.expected, actualSended)
 			assert.Equal(t, test.expected, actual())
+		})
+	}
+}
+
+var float64sIntersectTests = []struct {
+	ss       Float64s
+	params   []Float64s
+	expected Float64s
+}{
+	{
+		nil,
+		nil,
+		nil,
+	},
+	{
+		Float64s{1.2, 3.2},
+		nil,
+		nil,
+	},
+	{
+		nil,
+		[]Float64s{{1.2, 3.2, 5.5}, {5.5, 1.2}},
+		nil,
+	},
+	{
+		Float64s{1.2, 3.2},
+		[]Float64s{{1.2}, {3.2}},
+		nil,
+	},
+	{
+		Float64s{1.2, 3.2},
+		[]Float64s{{1.2}},
+		Float64s{1.2},
+	},
+	{
+		Float64s{1.2, 3.2},
+		[]Float64s{{1.2, 3.2, 5.5}, {5.5, 1.2}},
+		Float64s{1.2},
+	},
+}
+
+func TestFloat64s_Intersect(t *testing.T) {
+	for _, test := range float64sIntersectTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Intersect(test.params...))
 		})
 	}
 }

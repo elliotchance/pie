@@ -35,12 +35,12 @@ func TestStrings_Contains(t *testing.T) {
 	}
 }
 
-var stringsSelectTests = []struct {
+var stringsFilterTests = []struct {
 	ss                Strings
 	condition         func(string) bool
-	expectedSelect    Strings
-	expectedUnselect  Strings
-	expectedTransform Strings
+	expectedFilter    Strings
+	expectedFilterNot Strings
+	expectedMap       Strings
 }{
 	{
 		nil,
@@ -62,29 +62,29 @@ var stringsSelectTests = []struct {
 	},
 }
 
-func TestStrings_Select(t *testing.T) {
-	for _, test := range stringsSelectTests {
+func TestStrings_Filter(t *testing.T) {
+	for _, test := range stringsFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
-			assert.Equal(t, test.expectedSelect, test.ss.Select(test.condition))
+			assert.Equal(t, test.expectedFilter, test.ss.Filter(test.condition))
 		})
 	}
 }
 
-func TestStrings_Unselect(t *testing.T) {
-	for _, test := range stringsSelectTests {
+func TestStrings_FilterNot(t *testing.T) {
+	for _, test := range stringsFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
-			assert.Equal(t, test.expectedUnselect, test.ss.Unselect(test.condition))
+			assert.Equal(t, test.expectedFilterNot, test.ss.FilterNot(test.condition))
 		})
 	}
 }
 
-func TestStrings_Transform(t *testing.T) {
-	for _, test := range stringsSelectTests {
+func TestStrings_Map(t *testing.T) {
+	for _, test := range stringsFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
-			assert.Equal(t, test.expectedTransform, test.ss.Transform(strings.ToUpper))
+			assert.Equal(t, test.expectedMap, test.ss.Map(strings.ToUpper))
 		})
 	}
 }
@@ -750,6 +750,52 @@ func TestStrings_Send(t *testing.T) {
 
 			assert.Equal(t, test.expected, actualSended)
 			assert.Equal(t, test.expected, actual())
+		})
+	}
+}
+
+var stringsIntersectTests = []struct {
+	ss       Strings
+	params   []Strings
+	expected Strings
+}{
+	{
+		nil,
+		nil,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		nil,
+		nil,
+	},
+	{
+		nil,
+		[]Strings{{"foo", "bar", "baz"}, {"baz", "foo"}},
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		[]Strings{{"bar"}, {"foo"}},
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		[]Strings{{"bar"}},
+		Strings{"bar"},
+	},
+	{
+		Strings{"foo", "bar"},
+		[]Strings{{"foo", "bar", "baz"}, {"baz", "foo"}},
+		Strings{"foo"},
+	},
+}
+
+func TestStrings_Intersect(t *testing.T) {
+	for _, test := range stringsIntersectTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Intersect(test.params...))
 		})
 	}
 }
