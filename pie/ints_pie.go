@@ -145,6 +145,32 @@ func (ss Ints) Extend(slices ...Ints) (ss2 Ints) {
 	return ss2
 }
 
+// Filter will return a new slice containing only the elements that return
+// true from the condition. The returned slice may contain zero elements (nil).
+//
+// FilterNot works in the opposite way of Filter.
+func (ss Ints) Filter(condition func(int) bool) (ss2 Ints) {
+	for _, s := range ss {
+		if condition(s) {
+			ss2 = append(ss2, s)
+		}
+	}
+	return
+}
+
+// FilterNot works the same as Filter, with a negated condition. That is, it will
+// return a new slice only containing the elements that returned false from the
+// condition. The returned slice may contain zero elements (nil).
+func (ss Ints) FilterNot(condition func(int) bool) (ss2 Ints) {
+	for _, s := range ss {
+		if !condition(s) {
+			ss2 = append(ss2, s)
+		}
+	}
+
+	return
+}
+
 // First returns the first element, or zero. Also see FirstOr().
 func (ss Ints) First() int {
 	return ss.FirstOr(0)
@@ -158,6 +184,41 @@ func (ss Ints) FirstOr(defaultValue int) int {
 	}
 
 	return ss[0]
+}
+
+// Intersect returns items that exist in all lists.
+//
+// It returns slice without any duplicates.
+// If zero slice arguments are provided, then nil is returned.
+func (ss Ints) Intersect(slices ...Ints) (ss2 Ints) {
+	if slices == nil {
+		return nil
+	}
+
+	var uniqs = make([]map[int]struct{}, len(slices))
+	for i := 0; i < len(slices); i++ {
+		m := make(map[int]struct{})
+		for _, el := range slices[i] {
+			m[el] = struct{}{}
+		}
+		uniqs[i] = m
+	}
+
+	var containsInAll = false
+	for _, el := range ss.Unique() {
+		for _, u := range uniqs {
+			if _, exists := u[el]; !exists {
+				containsInAll = false
+				break
+			}
+			containsInAll = true
+		}
+		if containsInAll {
+			ss2 = append(ss2, el)
+		}
+	}
+
+	return
 }
 
 // JSONString returns the JSON encoded array as a string.
@@ -192,6 +253,25 @@ func (ss Ints) LastOr(defaultValue int) int {
 // Len returns the number of elements.
 func (ss Ints) Len() int {
 	return len(ss)
+}
+
+// Map will return a new slice where each element has been mapped (transformed).
+// The number of elements returned will always be the same as the input.
+//
+// Be careful when using this with slices of pointers. If you modify the input
+// value it will affect the original slice. Be sure to return a new allocated
+// object or deep copy the existing one.
+func (ss Ints) Map(fn func(int) int) (ss2 Ints) {
+	if ss == nil {
+		return nil
+	}
+
+	ss2 = make([]int, len(ss))
+	for i, s := range ss {
+		ss2[i] = fn(s)
+	}
+
+	return
 }
 
 // Max is the maximum value, or zero.
@@ -250,6 +330,19 @@ func (ss Ints) Min() (min int) {
 	return
 }
 
+// Product is the product of all of the elements.
+func (ss Ints) Product() (product int) {
+	if len(ss) == 0 {
+		return
+	}
+	product = ss[0]
+	for _, s := range ss[1:] {
+		product *= s
+	}
+
+	return
+}
+
 // Random returns a random element by your rand.Source, or zero
 func (ss Ints) Random(source rand.Source) int {
 	n := len(ss)
@@ -303,20 +396,6 @@ func (ss Ints) Send(ctx context.Context, ch chan<- int) Ints {
 	}
 
 	return ss
-}
-
-// Select will return a new slice containing only the elements that return
-// true from the condition. The returned slice may contain zero elements (nil).
-//
-// Unselect works in the opposite way as Select.
-func (ss Ints) Select(condition func(int) bool) (ss2 Ints) {
-	for _, s := range ss {
-		if condition(s) {
-			ss2 = append(ss2, s)
-		}
-	}
-
-	return
 }
 
 // Sort works similar to sort.Ints(). However, unlike sort.Ints the
@@ -401,25 +480,6 @@ func (ss Ints) ToStrings(transform func(int) string) Strings {
 	return result
 }
 
-// Transform will return a new slice where each element has been transformed.
-// The number of element returned will always be the same as the input.
-//
-// Be careful when using this with slices of pointers. If you modify the input
-// value it will affect the original slice. Be sure to return a new allocated
-// object or deep copy the existing one.
-func (ss Ints) Transform(fn func(int) int) (ss2 Ints) {
-	if ss == nil {
-		return nil
-	}
-
-	ss2 = make([]int, len(ss))
-	for i, s := range ss {
-		ss2[i] = fn(s)
-	}
-
-	return
-}
-
 // Unique returns a new slice with all of the unique values.
 //
 // The items will be returned in a randomized order, even with the same input.
@@ -449,17 +509,4 @@ func (ss Ints) Unique() Ints {
 	}
 
 	return uniqueValues
-}
-
-// Unselect works the same as Select, with a negated condition. That is, it will
-// return a new slice only containing the elements that returned false from the
-// condition. The returned slice may contain zero elements (nil).
-func (ss Ints) Unselect(condition func(int) bool) (ss2 Ints) {
-	for _, s := range ss {
-		if !condition(s) {
-			ss2 = append(ss2, s)
-		}
-	}
-
-	return
 }

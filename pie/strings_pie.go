@@ -125,6 +125,32 @@ func (ss Strings) Extend(slices ...Strings) (ss2 Strings) {
 	return ss2
 }
 
+// Filter will return a new slice containing only the elements that return
+// true from the condition. The returned slice may contain zero elements (nil).
+//
+// FilterNot works in the opposite way of Filter.
+func (ss Strings) Filter(condition func(string) bool) (ss2 Strings) {
+	for _, s := range ss {
+		if condition(s) {
+			ss2 = append(ss2, s)
+		}
+	}
+	return
+}
+
+// FilterNot works the same as Filter, with a negated condition. That is, it will
+// return a new slice only containing the elements that returned false from the
+// condition. The returned slice may contain zero elements (nil).
+func (ss Strings) FilterNot(condition func(string) bool) (ss2 Strings) {
+	for _, s := range ss {
+		if !condition(s) {
+			ss2 = append(ss2, s)
+		}
+	}
+
+	return
+}
+
 // First returns the first element, or zero. Also see FirstOr().
 func (ss Strings) First() string {
 	return ss.FirstOr("")
@@ -138,6 +164,41 @@ func (ss Strings) FirstOr(defaultValue string) string {
 	}
 
 	return ss[0]
+}
+
+// Intersect returns items that exist in all lists.
+//
+// It returns slice without any duplicates.
+// If zero slice arguments are provided, then nil is returned.
+func (ss Strings) Intersect(slices ...Strings) (ss2 Strings) {
+	if slices == nil {
+		return nil
+	}
+
+	var uniqs = make([]map[string]struct{}, len(slices))
+	for i := 0; i < len(slices); i++ {
+		m := make(map[string]struct{})
+		for _, el := range slices[i] {
+			m[el] = struct{}{}
+		}
+		uniqs[i] = m
+	}
+
+	var containsInAll = false
+	for _, el := range ss.Unique() {
+		for _, u := range uniqs {
+			if _, exists := u[el]; !exists {
+				containsInAll = false
+				break
+			}
+			containsInAll = true
+		}
+		if containsInAll {
+			ss2 = append(ss2, el)
+		}
+	}
+
+	return
 }
 
 // Join returns a string from joining each of the elements.
@@ -185,6 +246,25 @@ func (ss Strings) LastOr(defaultValue string) string {
 // Len returns the number of elements.
 func (ss Strings) Len() int {
 	return len(ss)
+}
+
+// Map will return a new slice where each element has been mapped (transformed).
+// The number of elements returned will always be the same as the input.
+//
+// Be careful when using this with slices of pointers. If you modify the input
+// value it will affect the original slice. Be sure to return a new allocated
+// object or deep copy the existing one.
+func (ss Strings) Map(fn func(string) string) (ss2 Strings) {
+	if ss == nil {
+		return nil
+	}
+
+	ss2 = make([]string, len(ss))
+	for i, s := range ss {
+		ss2[i] = fn(s)
+	}
+
+	return
 }
 
 // Max is the maximum value, or zero.
@@ -272,20 +352,6 @@ func (ss Strings) Send(ctx context.Context, ch chan<- string) Strings {
 	}
 
 	return ss
-}
-
-// Select will return a new slice containing only the elements that return
-// true from the condition. The returned slice may contain zero elements (nil).
-//
-// Unselect works in the opposite way as Select.
-func (ss Strings) Select(condition func(string) bool) (ss2 Strings) {
-	for _, s := range ss {
-		if condition(s) {
-			ss2 = append(ss2, s)
-		}
-	}
-
-	return
 }
 
 // Sort works similar to sort.Strings(). However, unlike sort.Strings the
@@ -397,25 +463,6 @@ func (ss Strings) ToStrings(transform func(string) string) Strings {
 	return result
 }
 
-// Transform will return a new slice where each element has been transformed.
-// The number of element returned will always be the same as the input.
-//
-// Be careful when using this with slices of pointers. If you modify the input
-// value it will affect the original slice. Be sure to return a new allocated
-// object or deep copy the existing one.
-func (ss Strings) Transform(fn func(string) string) (ss2 Strings) {
-	if ss == nil {
-		return nil
-	}
-
-	ss2 = make([]string, len(ss))
-	for i, s := range ss {
-		ss2[i] = fn(s)
-	}
-
-	return
-}
-
 // Unique returns a new slice with all of the unique values.
 //
 // The items will be returned in a randomized order, even with the same input.
@@ -445,17 +492,4 @@ func (ss Strings) Unique() Strings {
 	}
 
 	return uniqueValues
-}
-
-// Unselect works the same as Select, with a negated condition. That is, it will
-// return a new slice only containing the elements that returned false from the
-// condition. The returned slice may contain zero elements (nil).
-func (ss Strings) Unselect(condition func(string) bool) (ss2 Strings) {
-	for _, s := range ss {
-		if !condition(s) {
-			ss2 = append(ss2, s)
-		}
-	}
-
-	return
 }

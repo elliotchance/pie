@@ -44,12 +44,12 @@ func TestCarPointers_Contains(t *testing.T) {
 	}
 }
 
-var carPointersSelectTests = []struct {
+var carPointersFilterTests = []struct {
 	ss                carPointers
 	condition         func(*car) bool
-	expectedSelect    carPointers
-	expectedUnselect  carPointers
-	expectedTransform carPointers
+	expectedFilter    carPointers
+	expectedFilterNot carPointers
+	expectedMap       carPointers
 }{
 	{
 		nil,
@@ -71,29 +71,29 @@ var carPointersSelectTests = []struct {
 	},
 }
 
-func TestCarPointers_Select(t *testing.T) {
-	for _, test := range carPointersSelectTests {
+func TestCarPointers_Filter(t *testing.T) {
+	for _, test := range carPointersFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCarPointers(t, &test.ss)()
-			assert.Equal(t, test.expectedSelect, test.ss.Select(test.condition))
+			assert.Equal(t, test.expectedFilter, test.ss.Filter(test.condition))
 		})
 	}
 }
 
-func TestCarPointers_Unselect(t *testing.T) {
-	for _, test := range carPointersSelectTests {
+func TestCarPointers_FilterNot(t *testing.T) {
+	for _, test := range carPointersFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCarPointers(t, &test.ss)()
-			assert.Equal(t, test.expectedUnselect, test.ss.Unselect(test.condition))
+			assert.Equal(t, test.expectedFilterNot, test.ss.FilterNot(test.condition))
 		})
 	}
 }
 
-func TestCarPointers_Transform(t *testing.T) {
-	for _, test := range carPointersSelectTests {
+func TestCarPointers_Map(t *testing.T) {
+	for _, test := range carPointersFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCarPointers(t, &test.ss)()
-			assert.Equal(t, test.expectedTransform, test.ss.Transform(func(c *car) *car {
+			assert.Equal(t, test.expectedMap, test.ss.Map(func(c *car) *car {
 				return &car{
 					Name:  strings.ToUpper(c.Name),
 					Color: c.Color,
