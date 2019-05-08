@@ -888,3 +888,66 @@ func TestStrings_Intersect(t *testing.T) {
 		})
 	}
 }
+
+var stringsDiffTests = map[string]struct {
+	ss1     Strings
+	ss2     Strings
+	added   Strings
+	removed Strings
+}{
+	"BothEmpty": {
+		nil,
+		nil,
+		nil,
+		nil,
+	},
+	"OnlyRemovedUnique": {
+		Strings{"foo", "bar"},
+		nil,
+		nil,
+		Strings{"foo", "bar"},
+	},
+	"OnlyRemovedDuplicates": {
+		Strings{"foo", "baz", "foo"},
+		nil,
+		nil,
+		Strings{"foo", "baz", "foo"},
+	},
+	"OnlyAddedUnique": {
+		nil,
+		Strings{"bar", "baz"},
+		Strings{"bar", "baz"},
+		nil,
+	},
+	"OnlyAddedDuplicates": {
+		nil,
+		Strings{"bar", "baz", "baz", "bar"},
+		Strings{"bar", "baz", "baz", "bar"},
+		nil,
+	},
+	"AddedAndRemovedUnique": {
+		Strings{"foo", "bar", "baz", "qux"},
+		Strings{"baz", "qux", "quux", "corge"},
+		Strings{"quux", "corge"},
+		Strings{"foo", "bar"},
+	},
+	"AddedAndRemovedDuplicates": {
+		Strings{"foo", "bar", "baz", "baz", "qux"},
+		Strings{"baz", "qux", "quux", "qux", "corge"},
+		Strings{"quux", "qux", "corge"},
+		Strings{"foo", "bar", "baz"},
+	},
+}
+
+func TestStrings_Diff(t *testing.T) {
+	for testName, test := range stringsDiffTests {
+		t.Run(testName, func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss1)()
+			defer assertImmutableStrings(t, &test.ss2)()
+
+			added, removed := test.ss1.Diff(test.ss2)
+			assert.Equal(t, test.added, added)
+			assert.Equal(t, test.removed, removed)
+		})
+	}
+}
