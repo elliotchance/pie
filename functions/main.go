@@ -27,6 +27,7 @@ var Functions = []struct {
 	{"Average", "average.go", ForNumbers},
 	{"Bottom", "bottom.go", ForAll},
 	{"Contains", "contains.go", ForAll},
+	{"Diff", "diff.go", ForAll},
 	{"Each", "each.go", ForAll},
 	{"Extend", "extend.go", ForAll},
 	{"Filter", "filter.go", ForAll},

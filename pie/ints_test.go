@@ -866,3 +866,66 @@ func TestInts_Intersect(t *testing.T) {
 		})
 	}
 }
+
+var intsDiffTests = map[string]struct {
+	ss1     Ints
+	ss2     Ints
+	added   Ints
+	removed Ints
+}{
+	"BothEmpty": {
+		nil,
+		nil,
+		nil,
+		nil,
+	},
+	"OnlyRemovedUnique": {
+		Ints{1, 3},
+		nil,
+		nil,
+		Ints{1, 3},
+	},
+	"OnlyRemovedDuplicates": {
+		Ints{1, 3, 1},
+		nil,
+		nil,
+		Ints{1, 3, 1},
+	},
+	"OnlyAddedUnique": {
+		nil,
+		Ints{2, 3},
+		Ints{2, 3},
+		nil,
+	},
+	"OnlyAddedDuplicates": {
+		nil,
+		Ints{2, 3, 3, 2},
+		Ints{2, 3, 3, 2},
+		nil,
+	},
+	"AddedAndRemovedUnique": {
+		Ints{1, 2, 3, 4},
+		Ints{3, 4, 5, 6},
+		Ints{5, 6},
+		Ints{1, 2},
+	},
+	"AddedAndRemovedDuplicates": {
+		Ints{1, 2, 3, 3, 4},
+		Ints{3, 4, 5, 4, 6},
+		Ints{5, 4, 6},
+		Ints{1, 2, 3},
+	},
+}
+
+func TestInts_Diff(t *testing.T) {
+	for testName, test := range intsDiffTests {
+		t.Run(testName, func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss1)()
+			defer assertImmutableInts(t, &test.ss2)()
+
+			added, removed := test.ss1.Diff(test.ss2)
+			assert.Equal(t, test.added, added)
+			assert.Equal(t, test.removed, removed)
+		})
+	}
+}

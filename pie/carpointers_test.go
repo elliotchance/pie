@@ -13,6 +13,9 @@ import (
 var carPointerA = &car{"a", "green"}
 var carPointerB = &car{"b", "blue"}
 var carPointerC = &car{"c", "gray"}
+var carPointerD = &car{"d", "black"}
+var carPointerE = &car{"e", "red"}
+var carPointerF = &car{"f", "yellow"}
 var carPointerEmpty = &car{}
 
 var carPointersContainsTests = []struct {
@@ -747,6 +750,69 @@ func TestCarPointers_Send(t *testing.T) {
 
 			assert.Equal(t, test.expected, actualSended)
 			assert.Equal(t, test.expected, actual())
+		})
+	}
+}
+
+var carPointersDiffTests = map[string]struct {
+	ss1     carPointers
+	ss2     carPointers
+	added   carPointers
+	removed carPointers
+}{
+	"BothEmpty": {
+		nil,
+		nil,
+		nil,
+		nil,
+	},
+	"OnlyRemovedUnique": {
+		carPointers{carPointerA, carPointerB},
+		nil,
+		nil,
+		carPointers{carPointerA, carPointerB},
+	},
+	"OnlyRemovedDuplicates": {
+		carPointers{carPointerA, carPointerC, carPointerA},
+		nil,
+		nil,
+		carPointers{carPointerA, carPointerC, carPointerA},
+	},
+	"OnlyAddedUnique": {
+		nil,
+		carPointers{carPointerB, carPointerC},
+		carPointers{carPointerB, carPointerC},
+		nil,
+	},
+	"OnlyAddedDuplicates": {
+		nil,
+		carPointers{carPointerB, carPointerC, carPointerC, carPointerB},
+		carPointers{carPointerB, carPointerC, carPointerC, carPointerB},
+		nil,
+	},
+	"AddedAndRemovedUnique": {
+		carPointers{carPointerA, carPointerB, carPointerC, carPointerD},
+		carPointers{carPointerC, carPointerD, carPointerE, carPointerF},
+		carPointers{carPointerE, carPointerF},
+		carPointers{carPointerA, carPointerB},
+	},
+	"AddedAndRemovedDuplicates": {
+		carPointers{carPointerA, carPointerB, carPointerC, carPointerC, carPointerD},
+		carPointers{carPointerC, carPointerD, carPointerE, carPointerD, carPointerF},
+		carPointers{carPointerE, carPointerD, carPointerF},
+		carPointers{carPointerA, carPointerB, carPointerC},
+	},
+}
+
+func TestCarPointers_Diff(t *testing.T) {
+	for testName, test := range carPointersDiffTests {
+		t.Run(testName, func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss1)()
+			defer assertImmutableCarPointers(t, &test.ss2)()
+
+			added, removed := test.ss1.Diff(test.ss2)
+			assert.Equal(t, test.added, added)
+			assert.Equal(t, test.removed, removed)
 		})
 	}
 }

@@ -734,3 +734,66 @@ func TestCar_Send(t *testing.T) {
 		})
 	}
 }
+
+var carsDiffTests = map[string]struct {
+	ss1     cars
+	ss2     cars
+	added   cars
+	removed cars
+}{
+	"BothEmpty": {
+		nil,
+		nil,
+		nil,
+		nil,
+	},
+	"OnlyRemovedUnique": {
+		cars{car{"a", "green"}, car{"bar", "yellow"}},
+		nil,
+		nil,
+		cars{car{"a", "green"}, car{"bar", "yellow"}},
+	},
+	"OnlyRemovedDuplicates": {
+		cars{car{"a", "green"}, car{"Baz", "black"}, car{"a", "green"}},
+		nil,
+		nil,
+		cars{car{"a", "green"}, car{"Baz", "black"}, car{"a", "green"}},
+	},
+	"OnlyAddedUnique": {
+		nil,
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		nil,
+	},
+	"OnlyAddedDuplicates": {
+		nil,
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"Baz", "black"}, car{"bar", "yellow"}},
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"Baz", "black"}, car{"bar", "yellow"}},
+		nil,
+	},
+	"AddedAndRemovedUnique": {
+		cars{car{"a", "green"}, car{"bar", "yellow"}, car{"Baz", "black"}, car{"qux", "grey"}},
+		cars{car{"Baz", "black"}, car{"qux", "grey"}, car{"quux", "red"}, car{"Baz", "magenta"}},
+		cars{car{"quux", "red"}, car{"Baz", "magenta"}},
+		cars{car{"a", "green"}, car{"bar", "yellow"}},
+	},
+	"AddedAndRemovedDuplicates": {
+		cars{car{"a", "green"}, car{"bar", "yellow"}, car{"Baz", "black"}, car{"Baz", "black"}, car{"qux", "grey"}},
+		cars{car{"Baz", "black"}, car{"qux", "grey"}, car{"quux", "red"}, car{"qux", "grey"}, car{"Baz", "magenta"}},
+		cars{car{"quux", "red"}, car{"qux", "grey"}, car{"Baz", "magenta"}},
+		cars{car{"a", "green"}, car{"bar", "yellow"}, car{"Baz", "black"}},
+	},
+}
+
+func TestCars_Diff(t *testing.T) {
+	for testName, test := range carsDiffTests {
+		t.Run(testName, func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss1)()
+			defer assertImmutableCars(t, &test.ss2)()
+
+			added, removed := test.ss1.Diff(test.ss2)
+			assert.Equal(t, test.added, added)
+			assert.Equal(t, test.removed, removed)
+		})
+	}
+}
