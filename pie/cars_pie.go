@@ -36,13 +36,16 @@ func (ss cars) Any(fn func(value car) bool) bool {
 	return false
 }
 
-// Append will return a new slice with the elements appended to the end. It is a
-// wrapper for the internal append(). It is offered as a function so that it can
-// more easily chained.
+// Append will return a new slice with the elements appended to the end.
 //
 // It is acceptable to provide zero arguments.
 func (ss cars) Append(elements ...car) cars {
-	return append(ss, elements...)
+	// Copy ss, to make sure no memory is overlapping between input and
+	// output. See issue #97.
+	result := append(cars{}, ss...)
+
+	result = append(result, elements...)
+	return result
 }
 
 // Bottom will return n elements from bottom

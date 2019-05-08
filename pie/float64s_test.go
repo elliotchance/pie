@@ -452,8 +452,8 @@ func TestFloat64s_ToStrings(t *testing.T) {
 
 func TestFloat64s_Append(t *testing.T) {
 	assert.Equal(t,
-		Float64s{}.Append(),
-		Float64s{},
+		len(Float64s{}.Append()),
+		0,
 	)
 
 	assert.Equal(t,
