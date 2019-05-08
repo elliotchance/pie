@@ -130,6 +130,48 @@ func (ss SliceType) Contains(lookingFor ElementType) bool {
 	return false
 }
 `,
+	"Diff": `package functions
+
+// Diff returns the elements that needs to be added or removed from the first
+// slice to have the same elements in the second slice.
+//
+// The order of elements is not taken into consideration, so the slices are
+// treated sets that allow duplicate items.
+//
+// The added and removed returned may be blank respectively, or contain upto as
+// many elements that exists in the largest slice.
+func (ss SliceType) Diff(against SliceType) (added, removed SliceType) {
+	// This is probably not the best way to do it. We do an O(n^2) between the
+	// slices to see which items are missing in each direction.
+
+	diffOneWay := func(ss1, ss2raw SliceType) (result SliceType) {
+		ss2 := make(SliceType, len(ss2raw))
+		copy(ss2, ss2raw)
+
+		for _, s := range ss1 {
+			found := false
+
+			for i, element := range ss2 {
+				if element == s {
+					ss2 = append(ss2[:i], ss2[i+1:]...)
+					found = true
+				}
+			}
+
+			if !found {
+				result = append(result, s)
+			}
+		}
+
+		return
+	}
+
+	removed = diffOneWay(ss, against)
+	added = diffOneWay(against, ss)
+
+	return
+}
+`,
 	"Each": `package functions
 
 // Each is more condensed version of Transform that allows an action to happen
@@ -460,6 +502,24 @@ func (ss SliceType) Random(source rand.Source) ElementType {
 	return ss[i]
 }
 `,
+	"Reduce": `package functions
+
+// Reduce continually applies the provided function
+// over the slice. Reducing the elements to a single value.
+//
+// Returns a zero value of ElementType if there are no elements in the slice. It will panic if the reducer is nil and the slice has more than one element (required to invoke reduce).
+// Otherwise returns result of applying reducer from left to right.
+func (ss SliceType) Reduce(reducer func(ElementType, ElementType) ElementType) (el ElementType) {
+	if len(ss) == 0 {
+		return
+	}
+	el = ss[0]
+	for _, s := range ss[1:] {
+		el = reducer(el, s)
+	}
+	return
+}
+`,
 	"Reverse": `package functions
 
 // Reverse returns a new copy of the slice with the elements ordered in reverse.
@@ -555,10 +615,58 @@ func (ss SliceType) Sort() SliceType {
 		return ss
 	}
 
-	sorted := make([]ElementType, len(ss))
+	sorted := make(SliceType, len(ss))
 	copy(sorted, ss)
 	sort.Slice(sorted, func(i, j int) bool {
 		return sorted[i] < sorted[j]
+	})
+
+	return sorted
+}
+`,
+	"SortStableUsing": `package functions
+
+import (
+	"sort"
+)
+
+// SortStableUsing works similar to sort.SliceStable. However, unlike sort.SliceStable the
+// slice returned will be reallocated as to not modify the input slice.
+func (ss SliceType) SortStableUsing(less func(a, b ElementType) bool) SliceType {
+	// Avoid the allocation. If there is one element or less it is already
+	// sorted.
+	if len(ss) < 2 {
+		return ss
+	}
+
+	sorted := make(SliceType, len(ss))
+	copy(sorted, ss)
+	sort.SliceStable(sorted, func(i, j int) bool {
+		return less(sorted[i], sorted[j])
+	})
+
+	return sorted
+}
+`,
+	"SortUsing": `package functions
+
+import (
+	"sort"
+)
+
+// SortUsing works similar to sort.Slice. However, unlike sort.Slice the
+// slice returned will be reallocated as to not modify the input slice.
+func (ss SliceType) SortUsing(less func(a, b ElementType) bool) SliceType {
+	// Avoid the allocation. If there is one element or less it is already
+	// sorted.
+	if len(ss) < 2 {
+		return ss
+	}
+
+	sorted := make(SliceType, len(ss))
+	copy(sorted, ss)
+	sort.Slice(sorted, func(i, j int) bool {
+		return less(sorted[i], sorted[j])
 	})
 
 	return sorted

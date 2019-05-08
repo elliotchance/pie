@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/elliotchance/pie/pie/util"
 	"math/rand"
+	"sort"
 )
 
 // All will return true if all callbacks return true. It follows the same logic
@@ -74,6 +75,46 @@ func (ss cars) Contains(lookingFor car) bool {
 	}
 
 	return false
+}
+
+// Diff returns the elements that needs to be added or removed from the first
+// slice to have the same elements in the second slice.
+//
+// The order of elements is not taken into consideration, so the slices are
+// treated sets that allow duplicate items.
+//
+// The added and removed returned may be blank respectively, or contain upto as
+// many elements that exists in the largest slice.
+func (ss cars) Diff(against cars) (added, removed cars) {
+	// This is probably not the best way to do it. We do an O(n^2) between the
+	// slices to see which items are missing in each direction.
+
+	diffOneWay := func(ss1, ss2raw cars) (result cars) {
+		ss2 := make(cars, len(ss2raw))
+		copy(ss2, ss2raw)
+
+		for _, s := range ss1 {
+			found := false
+
+			for i, element := range ss2 {
+				if element == s {
+					ss2 = append(ss2[:i], ss2[i+1:]...)
+					found = true
+				}
+			}
+
+			if !found {
+				result = append(result, s)
+			}
+		}
+
+		return
+	}
+
+	removed = diffOneWay(ss, against)
+	added = diffOneWay(against, ss)
+
+	return
 }
 
 // Each is more condensed version of Transform that allows an action to happen
@@ -260,6 +301,42 @@ func (ss cars) Send(ctx context.Context, ch chan<- car) cars {
 	}
 
 	return ss
+}
+
+// SortUsing works similar to sort.Slice. However, unlike sort.Slice the
+// slice returned will be reallocated as to not modify the input slice.
+func (ss cars) SortUsing(less func(a, b car) bool) cars {
+	// Avoid the allocation. If there is one element or less it is already
+	// sorted.
+	if len(ss) < 2 {
+		return ss
+	}
+
+	sorted := make(cars, len(ss))
+	copy(sorted, ss)
+	sort.Slice(sorted, func(i, j int) bool {
+		return less(sorted[i], sorted[j])
+	})
+
+	return sorted
+}
+
+// SortStableUsing works similar to sort.SliceStable. However, unlike sort.SliceStable the
+// slice returned will be reallocated as to not modify the input slice.
+func (ss cars) SortStableUsing(less func(a, b car) bool) cars {
+	// Avoid the allocation. If there is one element or less it is already
+	// sorted.
+	if len(ss) < 2 {
+		return ss
+	}
+
+	sorted := make(cars, len(ss))
+	copy(sorted, ss)
+	sort.SliceStable(sorted, func(i, j int) bool {
+		return less(sorted[i], sorted[j])
+	})
+
+	return sorted
 }
 
 // Shuffle returns shuffled slice by your rand.Source

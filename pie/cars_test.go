@@ -288,6 +288,78 @@ func TestCars_Reverse(t *testing.T) {
 	}
 }
 
+var carsSortCustomTests = []struct {
+	ss                  cars
+	sortedStableByName  cars
+	sortedStableByColor cars
+}{
+	{
+		nil,
+		nil,
+		nil,
+	},
+	{
+		cars{},
+		cars{},
+		cars{},
+	},
+	{
+		cars{car{"foo", "red"}},
+		cars{car{"foo", "red"}},
+		cars{car{"foo", "red"}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"foo", "red"}},
+		cars{car{"Baz", "black"}, car{"bar", "yellow"}, car{"foo", "red"}},
+		cars{car{"Baz", "black"}, car{"foo", "red"}, car{"bar", "yellow"}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"qux", "cyan"}, car{"foo", "red"}},
+		cars{car{"Baz", "black"}, car{"bar", "yellow"}, car{"foo", "red"}, car{"qux", "cyan"}},
+		cars{car{"Baz", "black"}, car{"qux", "cyan"}, car{"foo", "red"}, car{"bar", "yellow"}},
+	},
+	{
+		cars{car{"aaa", "yellow"}, car{"aaa", "black"}, car{"bbb", "yellow"}, car{"bbb", "black"}},
+		cars{car{"aaa", "yellow"}, car{"aaa", "black"}, car{"bbb", "yellow"}, car{"bbb", "black"}},
+		cars{car{"aaa", "black"}, car{"bbb", "black"}, car{"aaa", "yellow"}, car{"bbb", "yellow"}},
+	},
+}
+
+func carNameLess(a, b car) bool {
+	return a.Name < b.Name
+}
+
+func carColorLess(a, b car) bool {
+	return a.Color < b.Color
+}
+
+func TestCars_SortUsing(t *testing.T) {
+	isSortedUsing := func(ss cars, less func(a, b car) bool) bool {
+		for i := 1; i < len(ss); i++ {
+			if less(ss[i], ss[i-1]) {
+				return false
+			}
+		}
+		return true
+	}
+
+	for _, test := range carsSortCustomTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss)()
+
+			sortedByName := test.ss.SortUsing(carNameLess)
+			assert.True(t, isSortedUsing(sortedByName, carNameLess))
+			sortedStableByName := test.ss.SortStableUsing(carNameLess)
+			assert.Equal(t, test.sortedStableByName, sortedStableByName)
+
+			sortedByColor := test.ss.SortUsing(carColorLess)
+			assert.True(t, isSortedUsing(sortedByColor, carColorLess))
+			sortedStableByColor := test.ss.SortStableUsing(carColorLess)
+			assert.Equal(t, test.sortedStableByColor, sortedStableByColor)
+		})
+	}
+}
+
 var carsToStringsTests = []struct {
 	ss        cars
 	transform func(car) string
@@ -659,6 +731,69 @@ func TestCar_Send(t *testing.T) {
 
 			assert.Equal(t, test.expected, actualSended)
 			assert.Equal(t, test.expected, actual())
+		})
+	}
+}
+
+var carsDiffTests = map[string]struct {
+	ss1     cars
+	ss2     cars
+	added   cars
+	removed cars
+}{
+	"BothEmpty": {
+		nil,
+		nil,
+		nil,
+		nil,
+	},
+	"OnlyRemovedUnique": {
+		cars{car{"a", "green"}, car{"bar", "yellow"}},
+		nil,
+		nil,
+		cars{car{"a", "green"}, car{"bar", "yellow"}},
+	},
+	"OnlyRemovedDuplicates": {
+		cars{car{"a", "green"}, car{"Baz", "black"}, car{"a", "green"}},
+		nil,
+		nil,
+		cars{car{"a", "green"}, car{"Baz", "black"}, car{"a", "green"}},
+	},
+	"OnlyAddedUnique": {
+		nil,
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		nil,
+	},
+	"OnlyAddedDuplicates": {
+		nil,
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"Baz", "black"}, car{"bar", "yellow"}},
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"Baz", "black"}, car{"bar", "yellow"}},
+		nil,
+	},
+	"AddedAndRemovedUnique": {
+		cars{car{"a", "green"}, car{"bar", "yellow"}, car{"Baz", "black"}, car{"qux", "grey"}},
+		cars{car{"Baz", "black"}, car{"qux", "grey"}, car{"quux", "red"}, car{"Baz", "magenta"}},
+		cars{car{"quux", "red"}, car{"Baz", "magenta"}},
+		cars{car{"a", "green"}, car{"bar", "yellow"}},
+	},
+	"AddedAndRemovedDuplicates": {
+		cars{car{"a", "green"}, car{"bar", "yellow"}, car{"Baz", "black"}, car{"Baz", "black"}, car{"qux", "grey"}},
+		cars{car{"Baz", "black"}, car{"qux", "grey"}, car{"quux", "red"}, car{"qux", "grey"}, car{"Baz", "magenta"}},
+		cars{car{"quux", "red"}, car{"qux", "grey"}, car{"Baz", "magenta"}},
+		cars{car{"a", "green"}, car{"bar", "yellow"}, car{"Baz", "black"}},
+	},
+}
+
+func TestCars_Diff(t *testing.T) {
+	for testName, test := range carsDiffTests {
+		t.Run(testName, func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss1)()
+			defer assertImmutableCars(t, &test.ss2)()
+
+			added, removed := test.ss1.Diff(test.ss2)
+			assert.Equal(t, test.added, added)
+			assert.Equal(t, test.removed, removed)
 		})
 	}
 }

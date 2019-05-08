@@ -320,6 +320,65 @@ func TestStrings_AreSorted(t *testing.T) {
 	}
 }
 
+func stringShorter(a, b string) bool {
+	return len(a) < len(b)
+}
+
+var stringsSortByLengthTests = []struct {
+	ss           Strings
+	sortedStable Strings
+}{
+	{
+		nil,
+		nil,
+	},
+	{
+		Strings{},
+		Strings{},
+	},
+	{
+		Strings{"foo"},
+		Strings{"foo"},
+	},
+	{
+		Strings{"aaa", "b", "cc"},
+		Strings{"b", "cc", "aaa"},
+	},
+	{
+		Strings{"zz", "aaa", "b", "cc"},
+		Strings{"b", "zz", "cc", "aaa"},
+	},
+}
+
+func TestStrings_SortUsing(t *testing.T) {
+	isSortedByLength := func(ss Strings) bool {
+		for i := 1; i < len(ss); i++ {
+			if stringShorter(ss[i], ss[i-1]) {
+				return false
+			}
+		}
+		return true
+	}
+	less := stringShorter
+	for _, test := range stringsSortByLengthTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			sortedCustom := test.ss.SortUsing(less)
+			assert.True(t, isSortedByLength(sortedCustom))
+		})
+	}
+}
+
+func TestStrings_SortStableUsing(t *testing.T) {
+	less := stringShorter
+	for _, test := range stringsSortByLengthTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.sortedStable, test.ss.SortStableUsing(less))
+		})
+	}
+}
+
 var stringsUniqueTests = []struct {
 	ss        Strings
 	unique    Strings
@@ -418,8 +477,8 @@ func TestStrings_Join(t *testing.T) {
 
 func TestStrings_Append(t *testing.T) {
 	assert.Equal(t,
-		len(Strings{}.Append()),
-		0,
+		Strings{}.Append(),
+		Strings{},
 	)
 
 	assert.Equal(t,
@@ -705,6 +764,36 @@ func TestStrings_Random(t *testing.T) {
 	}
 }
 
+var stringsReduceTests = []struct {
+	ss       Strings
+	expected string
+	reducer  func(a, b string) string
+}{
+	{
+		Strings{"Hello", " ", "World"},
+		"Hello World",
+		func(a, b string) string { return a + b },
+	},
+	{
+		Strings{},
+		"",
+		func(a, b string) string { return a + b },
+	},
+	{
+		Strings{"Hello"},
+		"Hello",
+		func(a, b string) string { return a + b },
+	},
+}
+
+func TestStrings_Reduce(t *testing.T) {
+	for _, test := range stringsReduceTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.expected, test.ss.Reduce(test.reducer))
+		})
+	}
+}
+
 var stringsSendTests = []struct {
 	ss            Strings
 	recieveDelay  time.Duration
@@ -796,6 +885,69 @@ func TestStrings_Intersect(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
 			assert.Equal(t, test.expected, test.ss.Intersect(test.params...))
+		})
+	}
+}
+
+var stringsDiffTests = map[string]struct {
+	ss1     Strings
+	ss2     Strings
+	added   Strings
+	removed Strings
+}{
+	"BothEmpty": {
+		nil,
+		nil,
+		nil,
+		nil,
+	},
+	"OnlyRemovedUnique": {
+		Strings{"foo", "bar"},
+		nil,
+		nil,
+		Strings{"foo", "bar"},
+	},
+	"OnlyRemovedDuplicates": {
+		Strings{"foo", "baz", "foo"},
+		nil,
+		nil,
+		Strings{"foo", "baz", "foo"},
+	},
+	"OnlyAddedUnique": {
+		nil,
+		Strings{"bar", "baz"},
+		Strings{"bar", "baz"},
+		nil,
+	},
+	"OnlyAddedDuplicates": {
+		nil,
+		Strings{"bar", "baz", "baz", "bar"},
+		Strings{"bar", "baz", "baz", "bar"},
+		nil,
+	},
+	"AddedAndRemovedUnique": {
+		Strings{"foo", "bar", "baz", "qux"},
+		Strings{"baz", "qux", "quux", "corge"},
+		Strings{"quux", "corge"},
+		Strings{"foo", "bar"},
+	},
+	"AddedAndRemovedDuplicates": {
+		Strings{"foo", "bar", "baz", "baz", "qux"},
+		Strings{"baz", "qux", "quux", "qux", "corge"},
+		Strings{"quux", "qux", "corge"},
+		Strings{"foo", "bar", "baz"},
+	},
+}
+
+func TestStrings_Diff(t *testing.T) {
+	for testName, test := range stringsDiffTests {
+		t.Run(testName, func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss1)()
+			defer assertImmutableStrings(t, &test.ss2)()
+
+			added, removed := test.ss1.Diff(test.ss2)
+			assert.Equal(t, test.added, added)
+			assert.Equal(t, test.removed, removed)
 		})
 	}
 }
