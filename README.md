@@ -156,6 +156,7 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Filter`.
 | `Reduce`          | ✓      | ✓      |        |      | n        | Continously apply a function to the slice (left to right), reducing it to a single value. |
 | `Reverse`         | ✓      | ✓      | ✓      |      | n        | Reverse elements. |
 | `Send`            | ✓      | ✓      | ✓      |      | n        | Send all element to channel. |
+| `Sequence`     | ✓      | ✓      |    |      | n        | Generates sequence of numbers. |
 | `Sort`            | ✓      | ✓      |        |      | n⋅log(n) | Return a new sorted slice. |
 | `SortUsing`       | ✓      |        | ✓      |      | n⋅log(n) | Return a new sorted slice, using custom comparator. |
 | `SortStableUsing` | ✓      |        | ✓      |      | n⋅log(n) | Return a new sorted slice, using custom comparator, keeping the original order of equal elements. |

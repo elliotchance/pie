@@ -929,3 +929,102 @@ func TestInts_Diff(t *testing.T) {
 		})
 	}
 }
+
+var intsSequenceTests = []struct {
+	ss       Ints
+	params   []int
+	expected Ints
+}{
+	// n
+	{
+		nil,
+		[]int{-1},
+		nil,
+	},
+	{
+		nil,
+		[]int{0},
+		nil,
+	},
+	{
+		nil,
+		[]int{3},
+		Ints{0, 1, 2},
+	},
+	{
+		Ints{},
+		[]int{3},
+		Ints{0, 1, 2},
+	},
+	// range
+	{
+		nil,
+		[]int{2, 2},
+		nil,
+	},
+	{
+		Ints{},
+		[]int{3, 2},
+		nil,
+	},
+	{
+		nil,
+		[]int{0, 3},
+		Ints{0, 1, 2},
+	},
+	{
+		Ints{},
+		[]int{3, 6},
+		Ints{3, 4, 5},
+	},
+	{
+		Ints{},
+		[]int{-5, 0},
+		Ints{-5, -4, -3, -2, -1},
+	},
+	{
+		Ints{},
+		[]int{-5, -10},
+		nil,
+	},
+	// range with step
+	{
+		nil,
+		[]int{3, 3, 1},
+		nil,
+	},
+	{
+		Ints{},
+		[]int{3, 6, 2},
+		Ints{3, 5},
+	},
+	{
+		Ints{},
+		[]int{3, 7, 2},
+		Ints{3, 5},
+	},
+	{
+		Ints{},
+		[]int{-10, -6, 1},
+		Ints{-10, -9, -8, -7},
+	},
+	{
+		Ints{},
+		[]int{-6, -10, -1},
+		Ints{-6, -7, -8, -9},
+	},
+	{
+		Ints{},
+		[]int{-6, -10, 1},
+		nil,
+	},
+}
+
+func TestInts_Sequence(t *testing.T) {
+	for _, test := range intsSequenceTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Sequence(test.params...))
+		})
+	}
+}

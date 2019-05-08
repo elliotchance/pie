@@ -964,3 +964,102 @@ func TestFloat64s_Diff(t *testing.T) {
 		})
 	}
 }
+
+var float64sSequenceTests = []struct {
+	ss       Float64s
+	params   []int
+	expected Float64s
+}{
+	// n
+	{
+		nil,
+		[]int{-1},
+		nil,
+	},
+	{
+		nil,
+		[]int{0},
+		nil,
+	},
+	{
+		nil,
+		[]int{3},
+		Float64s{0, 1, 2},
+	},
+	{
+		Float64s{},
+		[]int{3},
+		Float64s{0, 1, 2},
+	},
+	// range
+	{
+		nil,
+		[]int{2, 2},
+		nil,
+	},
+	{
+		Float64s{},
+		[]int{3, 2},
+		nil,
+	},
+	{
+		nil,
+		[]int{0, 3},
+		Float64s{0, 1, 2},
+	},
+	{
+		Float64s{},
+		[]int{3, 6},
+		Float64s{3, 4, 5},
+	},
+	{
+		Float64s{},
+		[]int{-5, 0},
+		Float64s{-5, -4, -3, -2, -1},
+	},
+	{
+		Float64s{},
+		[]int{-5, -10},
+		nil,
+	},
+	// range with step
+	{
+		nil,
+		[]int{3, 3, 1},
+		nil,
+	},
+	{
+		Float64s{},
+		[]int{3, 6, 2},
+		Float64s{3, 5},
+	},
+	{
+		Float64s{},
+		[]int{3, 7, 2},
+		Float64s{3, 5},
+	},
+	{
+		Float64s{},
+		[]int{-10, -6, 1},
+		Float64s{-10, -9, -8, -7},
+	},
+	{
+		Float64s{},
+		[]int{-6, -10, -1},
+		Float64s{-6, -7, -8, -9},
+	},
+	{
+		Float64s{},
+		[]int{-6, -10, 1},
+		nil,
+	},
+}
+
+func TestFloat64s_Sequence(t *testing.T) {
+	for _, test := range float64sSequenceTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Sequence(test.params...))
+		})
+	}
+}
