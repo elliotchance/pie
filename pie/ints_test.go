@@ -731,6 +731,41 @@ func TestInts_Random(t *testing.T) {
 	}
 }
 
+var intsReduceTests = []struct {
+	ss       Ints
+	expected int
+	reducer  func(a, b int) int
+}{
+	{
+		Ints{1, 2, 3},
+		6,
+		func(a, b int) int { return a + b },
+	},
+	{
+		Ints{1, 2, 3},
+		-4,
+		func(a, b int) int { return a - b },
+	},
+	{
+		Ints{},
+		0,
+		func(a, b int) int { return a - b },
+	},
+	{
+		Ints{1},
+		1,
+		func(a, b int) int { return a - b },
+	},
+}
+
+func TestInts_Reduce(t *testing.T) {
+	for _, test := range intsReduceTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.expected, test.ss.Reduce(test.reducer))
+		})
+	}
+}
+
 func TestInts_Abs(t *testing.T) {
 	assert.Equal(t, Ints{1, 5, 7}, Ints{-1, 5, -7}.Abs())
 	assert.Equal(t, Ints{689845, 688969, 220373, 89437, 308836}, Ints{-689845, -688969, -220373, -89437, 308836}.Abs())
@@ -828,6 +863,69 @@ func TestInts_Intersect(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableInts(t, &test.ss)()
 			assert.Equal(t, test.expected, test.ss.Intersect(test.params...))
+		})
+	}
+}
+
+var intsDiffTests = map[string]struct {
+	ss1     Ints
+	ss2     Ints
+	added   Ints
+	removed Ints
+}{
+	"BothEmpty": {
+		nil,
+		nil,
+		nil,
+		nil,
+	},
+	"OnlyRemovedUnique": {
+		Ints{1, 3},
+		nil,
+		nil,
+		Ints{1, 3},
+	},
+	"OnlyRemovedDuplicates": {
+		Ints{1, 3, 1},
+		nil,
+		nil,
+		Ints{1, 3, 1},
+	},
+	"OnlyAddedUnique": {
+		nil,
+		Ints{2, 3},
+		Ints{2, 3},
+		nil,
+	},
+	"OnlyAddedDuplicates": {
+		nil,
+		Ints{2, 3, 3, 2},
+		Ints{2, 3, 3, 2},
+		nil,
+	},
+	"AddedAndRemovedUnique": {
+		Ints{1, 2, 3, 4},
+		Ints{3, 4, 5, 6},
+		Ints{5, 6},
+		Ints{1, 2},
+	},
+	"AddedAndRemovedDuplicates": {
+		Ints{1, 2, 3, 3, 4},
+		Ints{3, 4, 5, 4, 6},
+		Ints{5, 4, 6},
+		Ints{1, 2, 3},
+	},
+}
+
+func TestInts_Diff(t *testing.T) {
+	for testName, test := range intsDiffTests {
+		t.Run(testName, func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss1)()
+			defer assertImmutableInts(t, &test.ss2)()
+
+			added, removed := test.ss1.Diff(test.ss2)
+			assert.Equal(t, test.added, added)
+			assert.Equal(t, test.removed, removed)
 		})
 	}
 }

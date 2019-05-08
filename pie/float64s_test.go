@@ -746,6 +746,41 @@ func TestFloat64s_Random(t *testing.T) {
 	}
 }
 
+var float64sReduceTests = []struct {
+	ss       Float64s
+	expected float64
+	reducer  func(a, b float64) float64
+}{
+	{
+		Float64s{1, 2, 3},
+		6,
+		func(a, b float64) float64 { return a + b },
+	},
+	{
+		Float64s{1, 2, 3},
+		-4,
+		func(a, b float64) float64 { return a - b },
+	},
+	{
+		Float64s{},
+		0,
+		func(a, b float64) float64 { return a - b },
+	},
+	{
+		Float64s{1},
+		1,
+		func(a, b float64) float64 { return a - b },
+	},
+}
+
+func TestFloat64s_Reduce(t *testing.T) {
+	for _, test := range float64sReduceTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.expected, test.ss.Reduce(test.reducer))
+		})
+	}
+}
+
 var float64sAbsTests = []struct {
 	ss  Float64s
 	abs Float64s
@@ -863,6 +898,69 @@ func TestFloat64s_Intersect(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableFloat64s(t, &test.ss)()
 			assert.Equal(t, test.expected, test.ss.Intersect(test.params...))
+		})
+	}
+}
+
+var float64sDiffTests = map[string]struct {
+	ss1     Float64s
+	ss2     Float64s
+	added   Float64s
+	removed Float64s
+}{
+	"BothEmpty": {
+		nil,
+		nil,
+		nil,
+		nil,
+	},
+	"OnlyRemovedUnique": {
+		Float64s{4334.5435, 879.123},
+		nil,
+		nil,
+		Float64s{4334.5435, 879.123},
+	},
+	"OnlyRemovedDuplicates": {
+		Float64s{4334.5435, 92.384, 4334.5435},
+		nil,
+		nil,
+		Float64s{4334.5435, 92.384, 4334.5435},
+	},
+	"OnlyAddedUnique": {
+		nil,
+		Float64s{879.123, 92.384},
+		Float64s{879.123, 92.384},
+		nil,
+	},
+	"OnlyAddedDuplicates": {
+		nil,
+		Float64s{879.123, 92.384, 92.384, 879.123},
+		Float64s{879.123, 92.384, 92.384, 879.123},
+		nil,
+	},
+	"AddedAndRemovedUnique": {
+		Float64s{4334.5435, 879.123, 92.384, 823.324},
+		Float64s{92.384, 823.324, 453, 3.345},
+		Float64s{453, 3.345},
+		Float64s{4334.5435, 879.123},
+	},
+	"AddedAndRemovedDuplicates": {
+		Float64s{4334.5435, 879.123, 92.384, 92.384, 823.324},
+		Float64s{92.384, 823.324, 453, 823.324, 3.345},
+		Float64s{453, 823.324, 3.345},
+		Float64s{4334.5435, 879.123, 92.384},
+	},
+}
+
+func TestFloat64s_Diff(t *testing.T) {
+	for testName, test := range float64sDiffTests {
+		t.Run(testName, func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss1)()
+			defer assertImmutableFloat64s(t, &test.ss2)()
+
+			added, removed := test.ss1.Diff(test.ss2)
+			assert.Equal(t, test.added, added)
+			assert.Equal(t, test.removed, removed)
 		})
 	}
 }
