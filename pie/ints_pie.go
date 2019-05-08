@@ -3,10 +3,11 @@ package pie
 import (
 	"context"
 	"encoding/json"
-	"github.com/elliotchance/pie/pie/util"
 	"math"
 	"math/rand"
 	"sort"
+
+	"github.com/elliotchance/pie/pie/util"
 )
 
 // Abs is a function which returns the absolute value of all the
@@ -368,6 +369,16 @@ func (ss Ints) Min() (min int) {
 	}
 
 	return
+}
+
+//Pop wil return a new slice and with poped value which element at the end of slice or return nil and 0 (or "" if Strings) if slice empty
+func (ss Ints) Pop() (Ints, int) {
+	if len(ss) == 0 {
+		return nil, 0
+	}
+	popValue := ss[len(ss)-1]
+	ss = ss[:len(ss)-1]
+	return ss, popValue
 }
 
 // Product is the product of all of the elements.

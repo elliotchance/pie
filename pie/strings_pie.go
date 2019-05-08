@@ -3,9 +3,10 @@ package pie
 import (
 	"context"
 	"encoding/json"
-	"github.com/elliotchance/pie/pie/util"
 	"math/rand"
 	"sort"
+
+	"github.com/elliotchance/pie/pie/util"
 )
 
 // All will return true if all callbacks return true. It follows the same logic
@@ -337,6 +338,16 @@ func (ss Strings) Min() (min string) {
 	}
 
 	return
+}
+
+//Pop wil return a new slice and with poped value which element at the end of slice or return nil and 0 (or "" if Strings) if slice empty
+func (ss Strings) Pop() (Strings, string) {
+	if len(ss) == 0 {
+		return nil, ""
+	}
+	popValue := ss[len(ss)-1]
+	ss = ss[:len(ss)-1]
+	return ss, popValue
 }
 
 // Random returns a random element by your rand.Source, or zero

@@ -1,4 +1,5 @@
 # 🍕 `github.com/elliotchance/pie`
+
 [![GoDoc](https://godoc.org/github.com/elliotchance/pie?status.svg)](https://godoc.org/github.com/elliotchance/pie)
 [![Build Status](https://travis-ci.org/elliotchance/pie.svg?branch=master)](https://travis-ci.org/elliotchance/pie)
 [![codecov](https://codecov.io/gh/elliotchance/pie/branch/master/graph/badge.svg)](https://codecov.io/gh/elliotchance/pie)
@@ -7,16 +8,16 @@
 focuses on type safety, performance and immutability.
 
 - [Quick Start](#quick-start)
-  * [Install/Update](#install-update)
-  * [Built-in Types](#built-in-types)
-  * [Custom Types](#custom-types)
-  * [Limiting Functions Generated](#limiting-functions-generated)
+  - [Install/Update](#install-update)
+  - [Built-in Types](#built-in-types)
+  - [Custom Types](#custom-types)
+  - [Limiting Functions Generated](#limiting-functions-generated)
 - [Functions](#functions)
 - [FAQ](#faq)
-  * [What are the requirements?](#what-are-the-requirements-)
-  * [What are the goals of `pie`?](#what-are-the-goals-of--pie--)
-  * [How do I contribute a function?](#how-do-i-contribute-a-function-)
-  * [Why is the emoji a slice of pizza instead of a pie?](#why-is-the-emoji-a-slice-of-pizza-instead-of-a-pie-)
+  - [What are the requirements?](#what-are-the-requirements-)
+  - [What are the goals of `pie`?](#what-are-the-goals-of--pie--)
+  - [How do I contribute a function?](#how-do-i-contribute-a-function-)
+  - [Why is the emoji a slice of pizza instead of a pie?](#why-is-the-emoji-a-slice-of-pizza-instead-of-a-pie-)
 
 # Quick Start
 
@@ -122,49 +123,50 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Filter`.
 
 # Functions
 
-| Function          | String | Number | Struct | Maps | Big-O    | Description |
-| ----------------- | :----: | :----: | :----: | :--: | :------: | ----------- |
-| `Abs`             |        | ✓      |        |      | n        | Abs will return the absolute value of all values in the slice.
-| `All`             | ✓      | ✓      | ✓      |      | n        | All will return true if all callbacks return true. If the list is empty then true is always returned. |
-| `Any`             | ✓      | ✓      | ✓      |      | n        | Any will return true if any callbacks return true. If the list is empty then false is always returned. |
-| `Append`          | ✓      | ✓      | ✓      |      | n        | A new slice with the elements appended to the end. |
-| `AreSorted`       | ✓      | ✓      |        |      | n        | Check if the slice is already sorted. |
-| `AreUnique`       | ✓      | ✓      |        |      | n        | Check if the slice contains only unique elements. |
-| `Average`         |        | ✓      |        |      | n        | The average (mean) value, or a zeroed value. |
-| `Bottom`          | ✓      | ✓      | ✓      |      | n        | Gets n elements from bottom. |
-| `Contains`        | ✓      | ✓      | ✓      |      | n        | Check if the value exists in the slice. |
-| `Diff`            | ✓      | ✓      | ✓      |      | n²       | Diff returns the elements that needs to be added or removed from the first slice to have the same elements in the second slice. |
-| `Extend`          | ✓      | ✓      | ✓      |      | n        | A new slice with the elements from each slice appended to the end. |
-| `Each`            | ✓      | ✓      | ✓      |      | n        | Perform an action on each element. |
-| `Filter`          | ✓      | ✓      | ✓      |      | n        | A new slice containing only the elements that returned true from the condition. |
-| `FilterNot`       | ✓      | ✓      | ✓      |      | n        | A new slice containing only the elements that returned false from the condition. |
-| `First`           | ✓      | ✓      | ✓      |      | 1        | The first element, or a zeroed value. |
-| `FirstOr`         | ✓      | ✓      | ✓      |      | 1        | The first element, or a default value. |
-| `Intersect`       | ✓      | ✓      |        |      | n        | Intersect returns elements which exists in all slices. |
-| `Join`            | ✓      |        |        |      | n        | A string from joining each of the elements. |
-| `JSONString`      | ✓      | ✓      | ✓      |      | n        | The JSON encoded string. |
-| `Keys`            |        |        |        | ✓    | n        | Returns all keys in the map (in random order). |
-| `Last`            | ✓      | ✓      | ✓      |      | 1        | The last element, or a zeroed value. |
-| `LastOr`          | ✓      | ✓      | ✓      |      | 1        | The last element, or a default value. |
-| `Len`             | ✓      | ✓      | ✓      |      | 1        | Number of elements. |
-| `Map`	            | ✓      | ✓      | ✓      |      | n        | A new slice where each element has been mapped (transformed). |
-| `Max`             | ✓      | ✓      |        |      | n        | The maximum value, or a zeroes value. |
-| `Median`          |        | ✓      |        |      | n⋅log(n) | Median returns the value separating the higher half from the lower half of a data sample. |
-| `Min`             | ✓      | ✓      |        |      | n        | The minimum value, or a zeroed value. |
-| `Product`         |        | ✓      |        |      | n        | Product of all elements. |
-| `Random`          | ✓      | ✓      | ✓      |      | 1        | Select a random element, or a zeroed value if empty. |
-| `Reduce`          | ✓      | ✓      |        |      | n        | Continously apply a function to the slice (left to right), reducing it to a single value. |
-| `Reverse`         | ✓      | ✓      | ✓      |      | n        | Reverse elements. |
-| `Send`            | ✓      | ✓      | ✓      |      | n        | Send all element to channel. |
-| `Sort`            | ✓      | ✓      |        |      | n⋅log(n) | Return a new sorted slice. |
-| `SortUsing`       | ✓      |        | ✓      |      | n⋅log(n) | Return a new sorted slice, using custom comparator. |
-| `SortStableUsing` | ✓      |        | ✓      |      | n⋅log(n) | Return a new sorted slice, using custom comparator, keeping the original order of equal elements. |
-| `Sum`             |        | ✓      |        |      | n        | Sum (total) of all elements. |
-| `Shuffle`         | ✓      | ✓      | ✓      |      | n        | Returns a new shuffled slice. |
-| `Top`             | ✓      | ✓      | ✓      |      | n        | Gets several elements from top(head of slice).|
-| `ToStrings`       | ✓      | ✓      | ✓      |      | n        | Transforms each element to a string. |
-| `Unique`          | ✓      | ✓      |        |      | n        | Return a new slice with only unique elements. |
-| `Values`          |        |        |        | ✓    | n        | Returns all values in the map (in random order). |
+| Function          | String | Number | Struct | Maps |  Big-O   | Description                                                                                                                             |
+| ----------------- | :----: | :----: | :----: | :--: | :------: | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `Abs`             |        |   ✓    |        |      |    n     | Abs will return the absolute value of all values in the slice.                                                                          |
+| `All`             |   ✓    |   ✓    |   ✓    |      |    n     | All will return true if all callbacks return true. If the list is empty then true is always returned.                                   |
+| `Any`             |   ✓    |   ✓    |   ✓    |      |    n     | Any will return true if any callbacks return true. If the list is empty then false is always returned.                                  |
+| `Append`          |   ✓    |   ✓    |   ✓    |      |    n     | A new slice with the elements appended to the end.                                                                                      |
+| `AreSorted`       |   ✓    |   ✓    |        |      |    n     | Check if the slice is already sorted.                                                                                                   |
+| `AreUnique`       |   ✓    |   ✓    |        |      |    n     | Check if the slice contains only unique elements.                                                                                       |
+| `Average`         |        |   ✓    |        |      |    n     | The average (mean) value, or a zeroed value.                                                                                            |
+| `Bottom`          |   ✓    |   ✓    |   ✓    |      |    n     | Gets n elements from bottom.                                                                                                            |
+| `Contains`        |   ✓    |   ✓    |   ✓    |      |    n     | Check if the value exists in the slice.                                                                                                 |
+| `Diff`            |   ✓    |   ✓    |   ✓    |      |    n²    | Diff returns the elements that needs to be added or removed from the first slice to have the same elements in the second slice.         |
+| `Extend`          |   ✓    |   ✓    |   ✓    |      |    n     | A new slice with the elements from each slice appended to the end.                                                                      |
+| `Each`            |   ✓    |   ✓    |   ✓    |      |    n     | Perform an action on each element.                                                                                                      |
+| `Filter`          |   ✓    |   ✓    |   ✓    |      |    n     | A new slice containing only the elements that returned true from the condition.                                                         |
+| `FilterNot`       |   ✓    |   ✓    |   ✓    |      |    n     | A new slice containing only the elements that returned false from the condition.                                                        |
+| `First`           |   ✓    |   ✓    |   ✓    |      |    1     | The first element, or a zeroed value.                                                                                                   |
+| `FirstOr`         |   ✓    |   ✓    |   ✓    |      |    1     | The first element, or a default value.                                                                                                  |
+| `Intersect`       |   ✓    |   ✓    |        |      |    n     | Intersect returns elements which exists in all slices.                                                                                  |
+| `Join`            |   ✓    |        |        |      |    n     | A string from joining each of the elements.                                                                                             |
+| `JSONString`      |   ✓    |   ✓    |   ✓    |      |    n     | The JSON encoded string.                                                                                                                |
+| `Keys`            |        |        |        |  ✓   |    n     | Returns all keys in the map (in random order).                                                                                          |
+| `Last`            |   ✓    |   ✓    |   ✓    |      |    1     | The last element, or a zeroed value.                                                                                                    |
+| `LastOr`          |   ✓    |   ✓    |   ✓    |      |    1     | The last element, or a default value.                                                                                                   |
+| `Len`             |   ✓    |   ✓    |   ✓    |      |    1     | Number of elements.                                                                                                                     |
+| `Map`             |   ✓    |   ✓    |   ✓    |      |    n     | A new slice where each element has been mapped (transformed).                                                                           |
+| `Max`             |   ✓    |   ✓    |        |      |    n     | The maximum value, or a zeroes value.                                                                                                   |
+| `Median`          |        |   ✓    |        |      | n⋅log(n) | Median returns the value separating the higher half from the lower half of a data sample.                                               |
+| `Min`             |   ✓    |   ✓    |        |      |    n     | The minimum value, or a zeroed value.                                                                                                   |
+| `Pop`             |   ✓    |   ✓    |        |      |    1     | Pop wil return a new slice and with poped value which element at the end of slice or return nil and 0 (or "" if Strings) if slice empty |
+| `Product`         |        |   ✓    |        |      |    n     | Product of all elements.                                                                                                                |
+| `Random`          |   ✓    |   ✓    |   ✓    |      |    1     | Select a random element, or a zeroed value if empty.                                                                                    |
+| `Reduce`          |   ✓    |   ✓    |        |      |    n     | Continously apply a function to the slice (left to right), reducing it to a single value.                                               |
+| `Reverse`         |   ✓    |   ✓    |   ✓    |      |    n     | Reverse elements.                                                                                                                       |
+| `Send`            |   ✓    |   ✓    |   ✓    |      |    n     | Send all element to channel.                                                                                                            |
+| `Sort`            |   ✓    |   ✓    |        |      | n⋅log(n) | Return a new sorted slice.                                                                                                              |
+| `SortUsing`       |   ✓    |        |   ✓    |      | n⋅log(n) | Return a new sorted slice, using custom comparator.                                                                                     |
+| `SortStableUsing` |   ✓    |        |   ✓    |      | n⋅log(n) | Return a new sorted slice, using custom comparator, keeping the original order of equal elements.                                       |
+| `Sum`             |        |   ✓    |        |      |    n     | Sum (total) of all elements.                                                                                                            |
+| `Shuffle`         |   ✓    |   ✓    |   ✓    |      |    n     | Returns a new shuffled slice.                                                                                                           |
+| `Top`             |   ✓    |   ✓    |   ✓    |      |    n     | Gets several elements from top(head of slice).                                                                                          |
+| `ToStrings`       |   ✓    |   ✓    |   ✓    |      |    n     | Transforms each element to a string.                                                                                                    |
+| `Unique`          |   ✓    |   ✓    |        |      |    n     | Return a new slice with only unique elements.                                                                                           |
+| `Values`          |        |        |        |  ✓   |    n     | Returns all values in the map (in random order).                                                                                        |
 
 # FAQ
 
@@ -175,16 +177,16 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Filter`.
 ## What are the goals of `pie`?
 
 1. **Type safety.** I never want to hit runtime bugs because I could pass in the
-wrong type, or perform an invalid type case out the other end.
+   wrong type, or perform an invalid type case out the other end.
 
 2. **Performance.** The functions need to be as fast as native Go
-implementations otherwise there's no point in this library existing.
+   implementations otherwise there's no point in this library existing.
 
 3. **Nil-safe.** All of the functions will happily accept nil and treat them as
-empty slices. Apart from less possible panics, it makes it easier to chain.
+   empty slices. Apart from less possible panics, it makes it easier to chain.
 
 4. **Immutable.** Functions never modify inputs, unlike some built-ins such as
-`sort.Strings`.
+   `sort.Strings`.
 
 ## How do I contribute a function?
 
@@ -193,26 +195,26 @@ Pull requests are always welcome.
 Here is a comprehensive list of steps to follow to add a new function:
 
 1. Create a new file in the `functions/` directory. The file should be named the
-same as the function. You must include documentation for your function.
+   same as the function. You must include documentation for your function.
 
 2. Update `functions/main.go` to register the new function by adding an entry to
-`Functions`. Make sure you choose the correct `For` value that is appropriate
-for your function.
+   `Functions`. Make sure you choose the correct `For` value that is appropriate
+   for your function.
 
 3. Run `go generate ./... && go install && go generate ./...`. The first
-`generate` is to create the pie templates, `install` will update your binary for
-the annotations and the second `generate` will use the newly created templates
-to update the generated code for the internal types. If you encounter errors
-with your code you can safely rerun the command above.
+   `generate` is to create the pie templates, `install` will update your binary for
+   the annotations and the second `generate` will use the newly created templates
+   to update the generated code for the internal types. If you encounter errors
+   with your code you can safely rerun the command above.
 
 4. If you chose `ForAll` or `ForStructs`, then you must add unit tests to
-`pie/carpointers_test.go` and `pie/cars_test.go`.
+   `pie/carpointers_test.go` and `pie/cars_test.go`.
 
 5. If you chose `ForAll`, `ForNumbersAndStrings` or `ForNumbers`, then you must
-add unit tests to `pie/float64s_test.go` and `pie/ints_test.go`.
+   add unit tests to `pie/float64s_test.go` and `pie/ints_test.go`.
 
 6. If you chose `ForAll` or `ForStrings`, then you must add unit tests to
-`pie/strings_test.go`.
+   `pie/strings_test.go`.
 
 7. If you chose `ForMaps`, then you must add unit tests to `pie/currencies.go`.
 

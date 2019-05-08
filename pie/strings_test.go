@@ -951,3 +951,40 @@ func TestStrings_Diff(t *testing.T) {
 		})
 	}
 }
+
+var stringsPopTest = []struct {
+	ss       Strings
+	newSS    Strings
+	popValue string
+}{
+	{
+		nil,
+		nil,
+		"",
+	},
+	{
+		Strings{"foo", "bar"},
+		Strings{"foo"},
+		"bar",
+	},
+	{
+		Strings{},
+		nil,
+		"",
+	},
+	{
+		Strings{"foo", "bar", "text", "tick", "took", "best"},
+		Strings{"foo", "bar", "text", "tick", "took"},
+		"best",
+	},
+}
+
+func TestStrings_Pop(t *testing.T) {
+	for _, test := range intsPopTest {
+		t.Run("", func(t *testing.T) {
+			ss, popValue := test.ss.Pop()
+			assert.Equal(t, test.newSS, ss)
+			assert.Equal(t, test.popValue, popValue)
+		})
+	}
+}

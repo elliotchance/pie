@@ -929,3 +929,40 @@ func TestInts_Diff(t *testing.T) {
 		})
 	}
 }
+
+var intsPopTest = []struct {
+	ss       Ints
+	newSS    Ints
+	popValue int
+}{
+	{
+		nil,
+		nil,
+		0,
+	},
+	{
+		Ints{1, 2},
+		Ints{1},
+		2,
+	},
+	{
+		Ints{},
+		nil,
+		0,
+	},
+	{
+		Ints{2, 3, 4, 5, 6, 7},
+		Ints{2, 3, 4, 5, 6},
+		7,
+	},
+}
+
+func TestInts_Pop(t *testing.T) {
+	for _, test := range intsPopTest {
+		t.Run("", func(t *testing.T) {
+			ss, popValue := test.ss.Pop()
+			assert.Equal(t, test.newSS, ss)
+			assert.Equal(t, test.popValue, popValue)
+		})
+	}
+}

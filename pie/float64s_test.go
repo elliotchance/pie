@@ -964,3 +964,40 @@ func TestFloat64s_Diff(t *testing.T) {
 		})
 	}
 }
+
+var float64sPopTest = []struct {
+	ss       Ints
+	newSS    Ints
+	popValue int
+}{
+	{
+		nil,
+		nil,
+		0,
+	},
+	{
+		Ints{1.0, 2.0},
+		Ints{1.0},
+		2.0,
+	},
+	{
+		Ints{},
+		nil,
+		0,
+	},
+	{
+		Ints{2.0, 3.0, 4.0, 5.0, 6.0, 7.0},
+		Ints{2.0, 3.0, 4.0, 5.0, 6.0},
+		7.0,
+	},
+}
+
+func TestFloats64s_Pop(t *testing.T) {
+	for _, test := range intsPopTest {
+		t.Run("", func(t *testing.T) {
+			ss, popValue := test.ss.Pop()
+			assert.Equal(t, test.newSS, ss)
+			assert.Equal(t, test.popValue, popValue)
+		})
+	}
+}
