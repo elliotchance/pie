@@ -66,7 +66,7 @@ func (ss carPointers) Bottom(n int) (top carPointers) {
 // When using slices of pointers it will only compare by address, not value.
 func (ss carPointers) Contains(lookingFor *car) bool {
 	for _, s := range ss {
-		if s == lookingFor {
+		if lookingFor.Equals(s) {
 			return true
 		}
 	}
@@ -94,7 +94,7 @@ func (ss carPointers) Diff(against carPointers) (added, removed carPointers) {
 			found := false
 
 			for i, element := range ss2 {
-				if element == s {
+				if s.Equals(element) {
 					ss2 = append(ss2[:i], ss2[i+1:]...)
 					found = true
 				}

@@ -66,7 +66,7 @@ func (ss cars) Bottom(n int) (top cars) {
 // When using slices of pointers it will only compare by address, not value.
 func (ss cars) Contains(lookingFor car) bool {
 	for _, s := range ss {
-		if s == lookingFor {
+		if lookingFor == s {
 			return true
 		}
 	}
@@ -94,7 +94,7 @@ func (ss cars) Diff(against cars) (added, removed cars) {
 			found := false
 
 			for i, element := range ss2 {
-				if element == s {
+				if s == element {
 					ss2 = append(ss2[:i], ss2[i+1:]...)
 					found = true
 				}

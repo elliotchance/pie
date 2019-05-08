@@ -100,7 +100,7 @@ func (ss Float64s) Bottom(n int) (top Float64s) {
 // When using slices of pointers it will only compare by address, not value.
 func (ss Float64s) Contains(lookingFor float64) bool {
 	for _, s := range ss {
-		if s == lookingFor {
+		if lookingFor == s {
 			return true
 		}
 	}
@@ -128,7 +128,7 @@ func (ss Float64s) Diff(against Float64s) (added, removed Float64s) {
 			found := false
 
 			for i, element := range ss2 {
-				if element == s {
+				if s == element {
 					ss2 = append(ss2[:i], ss2[i+1:]...)
 					found = true
 				}

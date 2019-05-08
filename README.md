@@ -10,6 +10,7 @@ focuses on type safety, performance and immutability.
   * [Install/Update](#install-update)
   * [Built-in Types](#built-in-types)
   * [Custom Types](#custom-types)
+  * [Custom Equality](#custom-equality)
   * [Limiting Functions Generated](#limiting-functions-generated)
 - [Functions](#functions)
 - [FAQ](#faq)
@@ -108,6 +109,33 @@ cars.FilterNot(func (car Car) {
 // Car{"SALLY", "green"}
 ```
 
+## Custom Equality
+
+Some functions that compare elements, such as Contains will use the following
+method if it is available on the element type:
+
+```go
+func (a ElementType) Equals(b ElementType) bool
+```
+
+The `ElementType` must be the same for the receiver and argument and it must
+return a bool. Be careful to create the function on the pointer or non-pointer
+type that is used by the slice.
+
+Here is a minimal example:
+
+```go
+type Car struct {
+	Name, Color string
+}
+
+type Cars []*Car // ElementType is *Car
+
+func (c *Car) Equals(c2 *Car) bool {
+	return c.Name == c2.Name
+}
+```
+
 ## Limiting Functions Generated
 
 The `.*` can be used to generate all functions. This is easy to get going but
@@ -122,6 +150,11 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Filter`.
 
 # Functions
 
+Below is a summary of the available functions.
+
+The "(E)" after the function name indicates that the function will use the
+`Equals` method if it is available. See *Custom Equality*.
+
 | Function          | String | Number | Struct | Maps | Big-O    | Description |
 | ----------------- | :----: | :----: | :----: | :--: | :------: | ----------- |
 | `Abs`             |        | ✓      |        |      | n        | Abs will return the absolute value of all values in the slice.
@@ -132,8 +165,8 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Filter`.
 | `AreUnique`       | ✓      | ✓      |        |      | n        | Check if the slice contains only unique elements. |
 | `Average`         |        | ✓      |        |      | n        | The average (mean) value, or a zeroed value. |
 | `Bottom`          | ✓      | ✓      | ✓      |      | n        | Gets n elements from bottom. |
-| `Contains`        | ✓      | ✓      | ✓      |      | n        | Check if the value exists in the slice. |
-| `Diff`            | ✓      | ✓      | ✓      |      | n²       | Diff returns the elements that needs to be added or removed from the first slice to have the same elements in the second slice. |
+| `Contains` (E)    | ✓      | ✓      | ✓      |      | n        | Check if the value exists in the slice. |
+| `Diff` (E)        | ✓      | ✓      | ✓      |      | n²       | Diff returns the elements that needs to be added or removed from the first slice to have the same elements in the second slice. |
 | `Extend`          | ✓      | ✓      | ✓      |      | n        | A new slice with the elements from each slice appended to the end. |
 | `Each`            | ✓      | ✓      | ✓      |      | n        | Perform an action on each element. |
 | `Filter`          | ✓      | ✓      | ✓      |      | n        | A new slice containing only the elements that returned true from the condition. |
