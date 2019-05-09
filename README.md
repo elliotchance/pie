@@ -207,7 +207,8 @@ The letters in brackets indicate:
 | `Reduce`          | ✓      | ✓      |        |      | n        | Continously apply a function to the slice (left to right), reducing it to a single value. |
 | `Reverse`         | ✓      | ✓      | ✓      |      | n        | Reverse elements. |
 | `Send`            | ✓      | ✓      | ✓      |      | n        | Send all element to channel. |
-| `Sequence`        | ✓      | ✓      |        |      | n        | Generates sequence of numbers. |
+| `Sequence`        |      | ✓      |        |      | n        | Generates sequence of numbers. |
+| `SequenceUsing`        | ✓      | ✓      | ✓       |      | n        | Generates new sequence of elements in range using function which will be creator. |
 | `Shuffle`         | ✓      | ✓      | ✓      |      | n        | Returns a new shuffled slice. |
 | `Sort`            | ✓      | ✓      |        |      | n⋅log(n) | Return a new sorted slice. |
 | `SortStableUsing` | ✓      |        | ✓      |      | n⋅log(n) | Return a new sorted slice, using custom comparator, keeping the original order of equal elements. |
