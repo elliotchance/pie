@@ -55,6 +55,7 @@ var Functions = []struct {
 	{"Reverse", "reverse.go", ForAll},
 	{"Send", "send.go", ForAll},
 	{"Sequence", "sequence.go", ForNumbers},
+	{"SequenceUsing", "sequence_using.go", ForAll},
 	{"Shuffle", "shuffle.go", ForAll},
 	{"Sort", "sort.go", ForNumbersAndStrings},
 	{"SortStableUsing", "sort_stable_using.go", ForStrings | ForStructs},
