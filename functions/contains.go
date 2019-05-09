@@ -5,7 +5,7 @@ package functions
 // When using slices of pointers it will only compare by address, not value.
 func (ss SliceType) Contains(lookingFor ElementType) bool {
 	for _, s := range ss {
-		if s == lookingFor {
+		if lookingFor.Equals(s) {
 			return true
 		}
 	}

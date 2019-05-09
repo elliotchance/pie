@@ -20,7 +20,7 @@ func (ss SliceType) Diff(against SliceType) (added, removed SliceType) {
 			found := false
 
 			for i, element := range ss2 {
-				if element == s {
+				if s.Equals(element) {
 					ss2 = append(ss2[:i], ss2[i+1:]...)
 					found = true
 				}

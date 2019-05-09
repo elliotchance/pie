@@ -10,6 +10,7 @@ import (
 	"go/token"
 	"io/ioutil"
 	"os"
+	"regexp"
 	"sort"
 	"strings"
 )
@@ -33,27 +34,35 @@ func getIdentName(e ast.Expr) string {
 	}
 }
 
-func getKeyAndElementType(pkgName, name string, typeSpec *ast.TypeSpec) (string, string, string) {
+func getKeyAndElementType(pkg *ast.Package, name string, typeSpec *ast.TypeSpec) (string, string, string, bool) {
+	pkgName := pkg.Name
+
 	if t, ok := typeSpec.Type.(*ast.ArrayType); ok {
-		return pkgName, "", getIdentName(t.Elt)
+		explorer := NewTypeExplorer(pkg, getIdentName(t.Elt))
+		hasEquals := explorer.HasEquals()
+
+		return pkgName, "", getIdentName(t.Elt), hasEquals
 	}
 
 	if t, ok := typeSpec.Type.(*ast.MapType); ok {
-		return pkgName, getIdentName(t.Key), getIdentName(t.Value)
+		explorer := NewTypeExplorer(pkg, getIdentName(t.Value))
+		hasEquals := explorer.HasEquals()
+
+		return pkgName, getIdentName(t.Key), getIdentName(t.Value), hasEquals
 	}
 
 	panic(fmt.Sprintf("type %s must be a slice or map", name))
 }
 
-func findType(pkgs map[string]*ast.Package, name string) (packageName, keyType, elementType string) {
-	for pkgName, pkg := range pkgs {
+func findType(pkgs map[string]*ast.Package, name string) (packageName, keyType, elementType string, hasEquals bool) {
+	for _, pkg := range pkgs {
 		for _, file := range pkg.Files {
 			for _, decl := range file.Decls {
 				if genDecl, ok := decl.(*ast.GenDecl); ok {
 					for _, spec := range genDecl.Specs {
 						if typeSpec, ok := spec.(*ast.TypeSpec); ok {
 							if typeSpec.Name.String() == name {
-								return getKeyAndElementType(pkgName, name, typeSpec)
+								return getKeyAndElementType(pkg, name, typeSpec)
 							}
 						}
 					}
@@ -135,7 +144,7 @@ func main() {
 
 	for _, arg := range os.Args[1:] {
 		mapOrSliceType, fns := getFunctionsFromArg(arg)
-		packageName, keyType, elementType := findType(pkgs, mapOrSliceType)
+		packageName, keyType, elementType, hasEquals := findType(pkgs, mapOrSliceType)
 		kind := getType(keyType, elementType)
 
 		var templates []string
@@ -173,6 +182,13 @@ func main() {
 		t = strings.Replace(t, "KeyType", elementType, -1)
 		t = strings.Replace(t, "KeySliceType", "[]"+keyType, -1)
 		t = strings.Replace(t, "SliceType", mapOrSliceType, -1)
+
+		if !hasEquals {
+			re := regexp.MustCompile(`([\w_]+)\.Equals\(([^)]+)\)`)
+			t = ReplaceAllStringSubmatchFunc(re, t, func(groups []string) string {
+				return fmt.Sprintf("%s == %s", groups[1], groups[2])
+			})
+		}
 
 		switch kind {
 		case functions.ForNumbers:
@@ -227,4 +243,22 @@ func stringSliceContains(haystack []string, needle string) bool {
 		}
 	}
 	return false
+}
+
+// http://elliot.land/post/go-replace-string-with-regular-expression-callback
+func ReplaceAllStringSubmatchFunc(re *regexp.Regexp, str string, repl func([]string) string) string {
+	result := ""
+	lastIndex := 0
+
+	for _, v := range re.FindAllSubmatchIndex([]byte(str), -1) {
+		groups := []string{}
+		for i := 0; i < len(v); i += 2 {
+			groups = append(groups, str[v[i]:v[i+1]])
+		}
+
+		result += str[lastIndex:v[0]] + repl(groups)
+		lastIndex = v[1]
+	}
+
+	return result + str[lastIndex:]
 }

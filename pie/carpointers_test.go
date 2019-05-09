@@ -29,7 +29,7 @@ var carPointersContainsTests = []struct {
 	{carPointers{carPointerA, carPointerB, carPointerC}, carPointerA, true},
 	{carPointers{carPointerA, carPointerB, carPointerC}, carPointerB, true},
 	{carPointers{carPointerA, carPointerB, carPointerC}, carPointerC, true},
-	{carPointers{carPointerA, carPointerB, carPointerC}, &car{"a", "green"}, false},
+	{carPointers{carPointerA, carPointerB, carPointerC}, &car{"a", "green"}, true},
 	{carPointers{carPointerA, carPointerB, carPointerC}, &car{"A", ""}, false},
 	{carPointers{carPointerA, carPointerB, carPointerC}, &car{}, false},
 	{carPointers{carPointerA, carPointerB, carPointerC}, &car{"d", ""}, false},

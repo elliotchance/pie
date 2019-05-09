@@ -71,3 +71,7 @@ type KeySliceType []KeyType
 type MapType map[KeyType]ElementType
 
 var ElementZeroValue ElementType
+
+func (a ElementType) Equals(b ElementType) bool {
+	return a == b
+}

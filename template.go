@@ -122,7 +122,7 @@ func (ss SliceType) Bottom(n int) (top SliceType) {
 // When using slices of pointers it will only compare by address, not value.
 func (ss SliceType) Contains(lookingFor ElementType) bool {
 	for _, s := range ss {
-		if s == lookingFor {
+		if lookingFor.Equals(s) {
 			return true
 		}
 	}
@@ -152,7 +152,7 @@ func (ss SliceType) Diff(against SliceType) (added, removed SliceType) {
 			found := false
 
 			for i, element := range ss2 {
-				if element == s {
+				if s.Equals(element) {
 					ss2 = append(ss2[:i], ss2[i+1:]...)
 					found = true
 				}

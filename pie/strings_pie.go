@@ -83,7 +83,7 @@ func (ss Strings) Bottom(n int) (top Strings) {
 // When using slices of pointers it will only compare by address, not value.
 func (ss Strings) Contains(lookingFor string) bool {
 	for _, s := range ss {
-		if s == lookingFor {
+		if lookingFor == s {
 			return true
 		}
 	}
@@ -111,7 +111,7 @@ func (ss Strings) Diff(against Strings) (added, removed Strings) {
 			found := false
 
 			for i, element := range ss2 {
-				if element == s {
+				if s == element {
 					ss2 = append(ss2[:i], ss2[i+1:]...)
 					found = true
 				}
