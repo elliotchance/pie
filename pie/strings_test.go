@@ -3,6 +3,7 @@ package pie
 import (
 	"fmt"
 	"math/rand"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -1001,4 +1002,90 @@ func TestStrings_Float64s(t *testing.T) {
 	assert.Equal(t,
 		Float64s{92.384, 0, 453},
 		Strings{"92.384", "foo", "453"}.Float64s())
+}
+
+var stringsSequenceTests = []struct {
+	ss       Strings
+	creator  func(int) string
+	params   []int
+	expected Strings
+}{
+	// n
+	{
+		nil,
+		nil,
+		[]int{0},
+		nil,
+	},
+	{
+		nil,
+		nil,
+		[]int{-1},
+		nil,
+	},
+	{
+		nil,
+		func(i int) string { return "p_" + strconv.Itoa(i) },
+		[]int{3},
+		Strings{"p_0", "p_1", "p_2"},
+	},
+	// range
+	{
+		nil,
+		func(i int) string { return "p_" + strconv.Itoa(i) },
+		[]int{6, 6},
+		nil,
+	},
+	{
+		nil,
+		func(i int) string { return "p_" + strconv.Itoa(i) },
+		[]int{8, 6},
+		nil,
+	},
+	{
+		nil,
+		func(i int) string { return "p_" + strconv.Itoa(i) },
+		[]int{3, 6},
+		Strings{"p_3", "p_4", "p_5"},
+	},
+	{
+		nil,
+		func(i int) string { return "p_" + strconv.Itoa(i) },
+		[]int{-6, -3},
+		Strings{"p_-6", "p_-5", "p_-4"},
+	},
+	{
+		nil,
+		func(i int) string { return "p_" + strconv.Itoa(i) },
+		[]int{-3, -6},
+		nil,
+	},
+	// range with step
+	{
+		nil,
+		func(i int) string { return "p_" + strconv.Itoa(i) },
+		[]int{3, 7, 2},
+		Strings{"p_3", "p_5"},
+	},
+	{
+		nil,
+		func(i int) string { return "p_" + strconv.Itoa(i) },
+		[]int{-3, -6, -2},
+		Strings{"p_-3", "p_-5"},
+	},
+	{
+		nil,
+		func(i int) string { return "p_" + strconv.Itoa(i) },
+		[]int{3, 7, 10},
+		nil,
+	},
+}
+
+func TestStrings_SequenceUsing(t *testing.T) {
+	for _, test := range stringsSequenceTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.SequenceUsing(test.creator, test.params...))
+		})
+	}
 }

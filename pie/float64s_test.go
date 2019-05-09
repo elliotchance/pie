@@ -965,7 +965,7 @@ func TestFloat64s_Diff(t *testing.T) {
 	}
 }
 
-var float64sSequenceTests = []struct {
+var float64sSequenceAndSequenceUsingTests = []struct {
 	ss       Float64s
 	params   []int
 	expected Float64s
@@ -1056,10 +1056,19 @@ var float64sSequenceTests = []struct {
 }
 
 func TestFloat64s_Sequence(t *testing.T) {
-	for _, test := range float64sSequenceTests {
+	for _, test := range float64sSequenceAndSequenceUsingTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableFloat64s(t, &test.ss)()
 			assert.Equal(t, test.expected, test.ss.Sequence(test.params...))
+		})
+	}
+}
+
+func TestFloat64s_SequenceUsing(t *testing.T) {
+	for _, test := range float64sSequenceAndSequenceUsingTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.SequenceUsing(func(i int) float64 { return float64(i) }, test.params...))
 		})
 	}
 }

@@ -930,7 +930,7 @@ func TestInts_Diff(t *testing.T) {
 	}
 }
 
-var intsSequenceTests = []struct {
+var intsSequenceAndSequenceUsingTests = []struct {
 	ss       Ints
 	params   []int
 	expected Ints
@@ -1021,10 +1021,19 @@ var intsSequenceTests = []struct {
 }
 
 func TestInts_Sequence(t *testing.T) {
-	for _, test := range intsSequenceTests {
+	for _, test := range intsSequenceAndSequenceUsingTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableInts(t, &test.ss)()
 			assert.Equal(t, test.expected, test.ss.Sequence(test.params...))
+		})
+	}
+}
+
+func TestInts_SequenceUsing(t *testing.T) {
+	for _, test := range intsSequenceAndSequenceUsingTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.SequenceUsing(func(i int) int { return i }, test.params...))
 		})
 	}
 }
