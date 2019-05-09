@@ -978,3 +978,11 @@ func TestAppendNonDestructive(t *testing.T) {
 		t.Errorf("Expected %q, got %q", expected, x)
 	}
 }
+
+func TestStrings_Strings(t *testing.T) {
+	assert.Equal(t, Strings(nil), Strings{}.Strings())
+
+	assert.Equal(t,
+		Strings{"foo", "bar", "BAZ"},
+		Strings{"foo", "bar", "BAZ"}.Strings())
+}

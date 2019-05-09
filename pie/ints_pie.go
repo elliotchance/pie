@@ -3,6 +3,7 @@ package pie
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/elliotchance/pie/pie/util"
 	"math"
 	"math/rand"
@@ -496,35 +497,6 @@ func (ss Ints) Sequence(params ...int) Ints {
 	}
 }
 
-// Sort works similar to sort.Ints(). However, unlike sort.Ints the
-// slice returned will be reallocated as to not modify the input slice.
-//
-// See Reverse() and AreSorted().
-func (ss Ints) Sort() Ints {
-	// Avoid the allocation. If there is one element or less it is already
-	// sorted.
-	if len(ss) < 2 {
-		return ss
-	}
-
-	sorted := make(Ints, len(ss))
-	copy(sorted, ss)
-	sort.Slice(sorted, func(i, j int) bool {
-		return sorted[i] < sorted[j]
-	})
-
-	return sorted
-}
-
-// Sum is the sum of all of the elements.
-func (ss Ints) Sum() (sum int) {
-	for _, s := range ss {
-		sum += s
-	}
-
-	return
-}
-
 // Shuffle returns shuffled slice by your rand.Source
 func (ss Ints) Shuffle(source rand.Source) Ints {
 	n := len(ss)
@@ -547,6 +519,59 @@ func (ss Ints) Shuffle(source rand.Source) Ints {
 	})
 
 	return shuffled
+}
+
+// Sort works similar to sort.Ints(). However, unlike sort.Ints the
+// slice returned will be reallocated as to not modify the input slice.
+//
+// See Reverse() and AreSorted().
+func (ss Ints) Sort() Ints {
+	// Avoid the allocation. If there is one element or less it is already
+	// sorted.
+	if len(ss) < 2 {
+		return ss
+	}
+
+	sorted := make(Ints, len(ss))
+	copy(sorted, ss)
+	sort.Slice(sorted, func(i, j int) bool {
+		return sorted[i] < sorted[j]
+	})
+
+	return sorted
+}
+
+// Strings transforms each element to a string.
+//
+// If the element type implements fmt.Stringer it will be used. Otherwise it
+// will fallback to the result of:
+//
+//   fmt.Sprintf("%v")
+//
+func (ss Ints) Strings() Strings {
+	l := len(ss)
+
+	// Avoid the allocation.
+	if l == 0 {
+		return nil
+	}
+
+	result := make(Strings, l)
+	for i := 0; i < l; i++ {
+		mightBeString := ss[i]
+		result[i] = fmt.Sprintf("%v", mightBeString)
+	}
+
+	return result
+}
+
+// Sum is the sum of all of the elements.
+func (ss Ints) Sum() (sum int) {
+	for _, s := range ss {
+		sum += s
+	}
+
+	return
 }
 
 // Top will return n elements from head of the slice

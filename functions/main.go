@@ -1,5 +1,7 @@
 package functions
 
+import "fmt"
+
 const (
 	ForNumbers = 1 << iota
 	ForStrings
@@ -51,11 +53,12 @@ var Functions = []struct {
 	{"Reverse", "reverse.go", ForAll},
 	{"Send", "send.go", ForAll},
 	{"Sequence", "sequence.go", ForNumbers},
-	{"Sort", "sort.go", ForNumbersAndStrings},
-	{"SortUsing", "sort_using.go", ForStrings | ForStructs},
-	{"SortStableUsing", "sort_stable_using.go", ForStrings | ForStructs},
-	{"Sum", "sum.go", ForNumbers},
 	{"Shuffle", "shuffle.go", ForAll},
+	{"Sort", "sort.go", ForNumbersAndStrings},
+	{"SortStableUsing", "sort_stable_using.go", ForStrings | ForStructs},
+	{"SortUsing", "sort_using.go", ForStrings | ForStructs},
+	{"Strings", "strings.go", ForAll},
+	{"Sum", "sum.go", ForNumbers},
 	{"Top", "top.go", ForAll},
 	{"ToStrings", "to_strings.go", ForAll},
 	{"Unique", "unique.go", ForNumbersAndStrings},
@@ -74,4 +77,8 @@ var ElementZeroValue ElementType
 
 func (a ElementType) Equals(b ElementType) bool {
 	return a == b
+}
+
+func (a ElementType) String() string {
+	return fmt.Sprintf("%f", a)
 }

@@ -3,6 +3,7 @@ package pie
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/elliotchance/pie/pie/util"
 	"math/rand"
 	"sort"
@@ -413,6 +414,30 @@ func (ss Strings) Send(ctx context.Context, ch chan<- string) Strings {
 	return ss
 }
 
+// Shuffle returns shuffled slice by your rand.Source
+func (ss Strings) Shuffle(source rand.Source) Strings {
+	n := len(ss)
+
+	// Avoid the extra allocation.
+	if n < 2 {
+		return ss
+	}
+
+	// go 1.10+ provides rnd.Shuffle. However, to support older versions we copy
+	// the algorithm directly from the go source: src/math/rand/rand.go below,
+	// with some adjustments:
+	shuffled := make([]string, n)
+	copy(shuffled, ss)
+
+	rnd := rand.New(source)
+
+	util.Shuffle(rnd, n, func(i, j int) {
+		shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
+	})
+
+	return shuffled
+}
+
 // Sort works similar to sort.Strings(). However, unlike sort.Strings the
 // slice returned will be reallocated as to not modify the input slice.
 //
@@ -428,24 +453,6 @@ func (ss Strings) Sort() Strings {
 	copy(sorted, ss)
 	sort.Slice(sorted, func(i, j int) bool {
 		return sorted[i] < sorted[j]
-	})
-
-	return sorted
-}
-
-// SortUsing works similar to sort.Slice. However, unlike sort.Slice the
-// slice returned will be reallocated as to not modify the input slice.
-func (ss Strings) SortUsing(less func(a, b string) bool) Strings {
-	// Avoid the allocation. If there is one element or less it is already
-	// sorted.
-	if len(ss) < 2 {
-		return ss
-	}
-
-	sorted := make(Strings, len(ss))
-	copy(sorted, ss)
-	sort.Slice(sorted, func(i, j int) bool {
-		return less(sorted[i], sorted[j])
 	})
 
 	return sorted
@@ -469,28 +476,46 @@ func (ss Strings) SortStableUsing(less func(a, b string) bool) Strings {
 	return sorted
 }
 
-// Shuffle returns shuffled slice by your rand.Source
-func (ss Strings) Shuffle(source rand.Source) Strings {
-	n := len(ss)
-
-	// Avoid the extra allocation.
-	if n < 2 {
+// SortUsing works similar to sort.Slice. However, unlike sort.Slice the
+// slice returned will be reallocated as to not modify the input slice.
+func (ss Strings) SortUsing(less func(a, b string) bool) Strings {
+	// Avoid the allocation. If there is one element or less it is already
+	// sorted.
+	if len(ss) < 2 {
 		return ss
 	}
 
-	// go 1.10+ provides rnd.Shuffle. However, to support older versions we copy
-	// the algorithm directly from the go source: src/math/rand/rand.go below,
-	// with some adjustments:
-	shuffled := make([]string, n)
-	copy(shuffled, ss)
-
-	rnd := rand.New(source)
-
-	util.Shuffle(rnd, n, func(i, j int) {
-		shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
+	sorted := make(Strings, len(ss))
+	copy(sorted, ss)
+	sort.Slice(sorted, func(i, j int) bool {
+		return less(sorted[i], sorted[j])
 	})
 
-	return shuffled
+	return sorted
+}
+
+// Strings transforms each element to a string.
+//
+// If the element type implements fmt.Stringer it will be used. Otherwise it
+// will fallback to the result of:
+//
+//   fmt.Sprintf("%v")
+//
+func (ss Strings) Strings() Strings {
+	l := len(ss)
+
+	// Avoid the allocation.
+	if l == 0 {
+		return nil
+	}
+
+	result := make(Strings, l)
+	for i := 0; i < l; i++ {
+		mightBeString := ss[i]
+		result[i] = fmt.Sprintf("%v", mightBeString)
+	}
+
+	return result
 }
 
 // Top will return n elements from head of the slice

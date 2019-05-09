@@ -1,5 +1,7 @@
 package pie
 
+import "fmt"
+
 //go:generate pie cars.* carPointers.*
 type cars []car
 type carPointers []*car
@@ -18,4 +20,8 @@ func (c *car) Equals(c2 *car) bool {
 	}
 
 	return c.Name == c2.Name
+}
+
+func (c *car) String() string {
+	return fmt.Sprintf("%s is %s", c.Name, c.Color)
 }

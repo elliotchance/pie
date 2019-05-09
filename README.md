@@ -11,6 +11,7 @@ focuses on type safety, performance and immutability.
   * [Built-in Types](#built-in-types)
   * [Custom Types](#custom-types)
   * [Custom Equality](#custom-equality)
+  * [Custom Stringer](#custom-stringer)
   * [Limiting Functions Generated](#limiting-functions-generated)
 - [Functions](#functions)
 - [FAQ](#faq)
@@ -136,6 +137,16 @@ func (c *Car) Equals(c2 *Car) bool {
 }
 ```
 
+## Custom Stringer
+
+Some functions that need elements to be represented as strings, such as
+`Strings()` will try to use the `fmt.Stringer` interface. If it's not available
+then it will fallback to:
+
+```go
+fmt.Sprintf("%v", element)
+```
+
 ## Limiting Functions Generated
 
 The `.*` can be used to generate all functions. This is easy to get going but
@@ -152,8 +163,13 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Filter`.
 
 Below is a summary of the available functions.
 
-The "(E)" after the function name indicates that the function will use the
-`Equals` method if it is available. See *Custom Equality*.
+The letters in brackets indicate:
+
+- **E**: The function will use the `Equals` method if it is available. See
+*Custom Equality*.
+
+- **S**: The function will use the `String` method if it is available. See
+*Custom Stringer*.
 
 | Function          | String | Number | Struct | Maps | Big-O    | Description |
 | ----------------- | :----: | :----: | :----: | :--: | :------: | ----------- |
@@ -167,8 +183,8 @@ The "(E)" after the function name indicates that the function will use the
 | `Bottom`          | ✓      | ✓      | ✓      |      | n        | Gets n elements from bottom. |
 | `Contains` (E)    | ✓      | ✓      | ✓      |      | n        | Check if the value exists in the slice. |
 | `Diff` (E)        | ✓      | ✓      | ✓      |      | n²       | Diff returns the elements that needs to be added or removed from the first slice to have the same elements in the second slice. |
-| `Extend`          | ✓      | ✓      | ✓      |      | n        | A new slice with the elements from each slice appended to the end. |
 | `Each`            | ✓      | ✓      | ✓      |      | n        | Perform an action on each element. |
+| `Extend`          | ✓      | ✓      | ✓      |      | n        | A new slice with the elements from each slice appended to the end. |
 | `Filter`          | ✓      | ✓      | ✓      |      | n        | A new slice containing only the elements that returned true from the condition. |
 | `FilterNot`       | ✓      | ✓      | ✓      |      | n        | A new slice containing only the elements that returned false from the condition. |
 | `First`           | ✓      | ✓      | ✓      |      | 1        | The first element, or a zeroed value. |
@@ -189,12 +205,13 @@ The "(E)" after the function name indicates that the function will use the
 | `Reduce`          | ✓      | ✓      |        |      | n        | Continously apply a function to the slice (left to right), reducing it to a single value. |
 | `Reverse`         | ✓      | ✓      | ✓      |      | n        | Reverse elements. |
 | `Send`            | ✓      | ✓      | ✓      |      | n        | Send all element to channel. |
-| `Sequence`     | ✓      | ✓      |    |      | n        | Generates sequence of numbers. |
-| `Sort`            | ✓      | ✓      |        |      | n⋅log(n) | Return a new sorted slice. |
-| `SortUsing`       | ✓      |        | ✓      |      | n⋅log(n) | Return a new sorted slice, using custom comparator. |
-| `SortStableUsing` | ✓      |        | ✓      |      | n⋅log(n) | Return a new sorted slice, using custom comparator, keeping the original order of equal elements. |
-| `Sum`             |        | ✓      |        |      | n        | Sum (total) of all elements. |
+| `Sequence`        | ✓      | ✓      |        |      | n        | Generates sequence of numbers. |
 | `Shuffle`         | ✓      | ✓      | ✓      |      | n        | Returns a new shuffled slice. |
+| `Sort`            | ✓      | ✓      |        |      | n⋅log(n) | Return a new sorted slice. |
+| `SortStableUsing` | ✓      |        | ✓      |      | n⋅log(n) | Return a new sorted slice, using custom comparator, keeping the original order of equal elements. |
+| `SortUsing`       | ✓      |        | ✓      |      | n⋅log(n) | Return a new sorted slice, using custom comparator. |
+| `Strings` (S)     | ✓      | ✓      | ✓      |      | n        | Transforms each element into a string. |
+| `Sum`             |        | ✓      |        |      | n        | Sum (total) of all elements. |
 | `Top`             | ✓      | ✓      | ✓      |      | n        | Gets several elements from top(head of slice).|
 | `ToStrings`       | ✓      | ✓      | ✓      |      | n        | Transforms each element to a string. |
 | `Unique`          | ✓      | ✓      |        |      | n        | Return a new slice with only unique elements. |

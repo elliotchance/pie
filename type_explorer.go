@@ -33,7 +33,14 @@ func (explorer *TypeExplorer) Visit(node ast.Node) ast.Visitor {
 }
 
 func (explorer *TypeExplorer) HasEquals() bool {
-	lookingFor := fmt.Sprintf("Equals(%s)", explorer.TypeName)
+	return explorer.HasMethod(fmt.Sprintf("Equals(%s)", explorer.TypeName))
+}
+
+func (explorer *TypeExplorer) HasString() bool {
+	return explorer.HasMethod("String()")
+}
+
+func (explorer *TypeExplorer) HasMethod(lookingFor string) bool {
 	for _, method := range explorer.Methods {
 		if method == lookingFor {
 			return true

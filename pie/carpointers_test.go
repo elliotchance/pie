@@ -816,3 +816,13 @@ func TestCarPointers_Diff(t *testing.T) {
 		})
 	}
 }
+
+func TestCarPointers_Strings(t *testing.T) {
+	assert.Equal(t, Strings(nil), carPointers(nil).Strings())
+
+	assert.Equal(t, Strings(nil), carPointers{}.Strings())
+
+	assert.Equal(t,
+		Strings{"a is green", "b is blue", "c is gray"},
+		carPointers{carPointerA, carPointerB, carPointerC}.Strings())
+}
