@@ -217,6 +217,8 @@ func main() {
 
 		if isSelfPackage(packageName) {
 			t = strings.Replace(t, "pie.Strings", "Strings", -1)
+			t = strings.Replace(t, "pie.Ints", "Ints", -1)
+			t = strings.Replace(t, "pie.Float64s", "Float64s", -1)
 		}
 
 		// The TrimRight is important to remove an extra new line that conflicts

@@ -7,6 +7,7 @@ import (
 	"github.com/elliotchance/pie/pie/util"
 	"math/rand"
 	"sort"
+	"strconv"
 )
 
 // All will return true if all callbacks return true. It follows the same logic
@@ -210,6 +211,24 @@ func (ss Strings) FirstOr(defaultValue string) string {
 	return ss[0]
 }
 
+// Float64s transforms each element to a float64.
+func (ss Strings) Float64s() Float64s {
+	l := len(ss)
+
+	// Avoid the allocation.
+	if l == 0 {
+		return nil
+	}
+
+	result := make(Float64s, l)
+	for i := 0; i < l; i++ {
+		mightBeString := ss[i]
+		result[i], _ = strconv.ParseFloat(fmt.Sprintf("%v", mightBeString), 64)
+	}
+
+	return result
+}
+
 // Intersect returns items that exist in all lists.
 //
 // It returns slice without any duplicates.
@@ -243,6 +262,25 @@ func (ss Strings) Intersect(slices ...Strings) (ss2 Strings) {
 	}
 
 	return
+}
+
+// Ints transforms each element to an integer.
+func (ss Strings) Ints() Ints {
+	l := len(ss)
+
+	// Avoid the allocation.
+	if l == 0 {
+		return nil
+	}
+
+	result := make(Ints, l)
+	for i := 0; i < l; i++ {
+		mightBeString := ss[i]
+		f, _ := strconv.ParseFloat(fmt.Sprintf("%v", mightBeString), 64)
+		result[i] = int(f)
+	}
+
+	return result
 }
 
 // Join returns a string from joining each of the elements.
