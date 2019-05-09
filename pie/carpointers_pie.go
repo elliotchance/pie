@@ -3,9 +3,10 @@ package pie
 import (
 	"context"
 	"encoding/json"
-	"github.com/elliotchance/pie/pie/util"
 	"math/rand"
 	"sort"
+
+	"github.com/elliotchance/pie/pie/util"
 )
 
 // All will return true if all callbacks return true. It follows the same logic
@@ -243,6 +244,16 @@ func (ss carPointers) Map(fn func(*car) *car) (ss2 carPointers) {
 	}
 
 	return
+}
+
+//Pop wil return a new slice and with poped value which element at the end of slice or return nil and empty element if slice empty
+func (ss carPointers) Pop() (carPointers, *car) {
+	if len(ss) == 0 {
+		return nil, &car{}
+	}
+	popValue := ss[len(ss)-1]
+	ss = ss[:len(ss)-1]
+	return ss, popValue
 }
 
 // Random returns a random element by your rand.Source, or zero

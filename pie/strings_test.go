@@ -980,8 +980,9 @@ var stringsPopTest = []struct {
 }
 
 func TestStrings_Pop(t *testing.T) {
-	for _, test := range intsPopTest {
+	for _, test := range stringsPopTest {
 		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
 			ss, popValue := test.ss.Pop()
 			assert.Equal(t, test.newSS, ss)
 			assert.Equal(t, test.popValue, popValue)

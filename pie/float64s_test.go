@@ -966,9 +966,9 @@ func TestFloat64s_Diff(t *testing.T) {
 }
 
 var float64sPopTest = []struct {
-	ss       Ints
-	newSS    Ints
-	popValue int
+	ss       Float64s
+	newSS    Float64s
+	popValue float64
 }{
 	{
 		nil,
@@ -976,25 +976,26 @@ var float64sPopTest = []struct {
 		0,
 	},
 	{
-		Ints{1.0, 2.0},
-		Ints{1.0},
+		Float64s{1.0, 2.0},
+		Float64s{1.0},
 		2.0,
 	},
 	{
-		Ints{},
+		Float64s{},
 		nil,
 		0,
 	},
 	{
-		Ints{2.0, 3.0, 4.0, 5.0, 6.0, 7.0},
-		Ints{2.0, 3.0, 4.0, 5.0, 6.0},
+		Float64s{2.0, 3.0, 4.0, 5.0, 6.0, 7.0},
+		Float64s{2.0, 3.0, 4.0, 5.0, 6.0},
 		7.0,
 	},
 }
 
 func TestFloats64s_Pop(t *testing.T) {
-	for _, test := range intsPopTest {
+	for _, test := range float64sPopTest {
 		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
 			ss, popValue := test.ss.Pop()
 			assert.Equal(t, test.newSS, ss)
 			assert.Equal(t, test.popValue, popValue)

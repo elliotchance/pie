@@ -152,7 +152,7 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Filter`.
 | `Max`             |   ✓    |   ✓    |        |      |    n     | The maximum value, or a zeroes value.                                                                                                   |
 | `Median`          |        |   ✓    |        |      | n⋅log(n) | Median returns the value separating the higher half from the lower half of a data sample.                                               |
 | `Min`             |   ✓    |   ✓    |        |      |    n     | The minimum value, or a zeroed value.                                                                                                   |
-| `Pop`             |   ✓    |   ✓    |        |      |    1     | Pop wil return a new slice and with poped value which element at the end of slice or return nil and 0 (or "" if Strings) if slice empty |
+| `Pop`             |   ✓    |   ✓    |   ✓    |      |    1     | Pop wil return a new slice and with poped value which element at the end of slice or return nil and 0 (or "" if Strings) if slice empty |
 | `Product`         |        |   ✓    |        |      |    n     | Product of all elements.                                                                                                                |
 | `Random`          |   ✓    |   ✓    |   ✓    |      |    1     | Select a random element, or a zeroed value if empty.                                                                                    |
 | `Reduce`          |   ✓    |   ✓    |        |      |    n     | Continously apply a function to the slice (left to right), reducing it to a single value.                                               |

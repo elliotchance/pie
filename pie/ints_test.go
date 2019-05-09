@@ -960,6 +960,7 @@ var intsPopTest = []struct {
 func TestInts_Pop(t *testing.T) {
 	for _, test := range intsPopTest {
 		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
 			ss, popValue := test.ss.Pop()
 			assert.Equal(t, test.newSS, ss)
 			assert.Equal(t, test.popValue, popValue)

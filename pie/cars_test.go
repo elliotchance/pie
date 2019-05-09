@@ -797,3 +797,41 @@ func TestCars_Diff(t *testing.T) {
 		})
 	}
 }
+
+var carsPopTests = []struct {
+	ss       cars
+	newSS    cars
+	popValue car
+}{
+	{
+		cars{car{"a", "green"}, car{"b", "blue"}, car{"c", "gray"}},
+		cars{car{"a", "green"}, car{"b", "blue"}},
+		car{"c", "gray"},
+	},
+	{
+		nil,
+		nil,
+		car{},
+	},
+	{
+		cars{},
+		nil,
+		car{},
+	},
+	{
+		cars{car{"a", "green"}, car{"b", "blue"}},
+		cars{car{"a", "green"}},
+		car{"b", "blue"},
+	},
+}
+
+func TestCars_Pop(t *testing.T) {
+	for _, test := range carsPopTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss)()
+			ss, popValue := test.ss.Pop()
+			assert.Equal(t, test.newSS, ss)
+			assert.Equal(t, test.popValue, popValue)
+		})
+	}
+}

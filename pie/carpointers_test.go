@@ -816,3 +816,26 @@ func TestCarPointers_Diff(t *testing.T) {
 		})
 	}
 }
+
+var carPointersPopTests = []struct {
+	ss       carPointers
+	newSS    carPointers
+	popValue *car
+}{
+	{carPointers{carPointerA, carPointerB, carPointerC}, carPointers{carPointerA, carPointerB}, carPointerC},
+
+	{nil, nil, carPointerEmpty},
+
+	{carPointers{carPointerA, carPointerB}, carPointers{carPointerA}, carPointerB},
+}
+
+func TestCarPointers_Pop(t *testing.T) {
+	for _, test := range carPointersPopTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			ss, popValue := test.ss.Pop()
+			assert.Equal(t, test.newSS, ss)
+			assert.Equal(t, test.popValue, popValue)
+		})
+	}
+}
