@@ -3,6 +3,7 @@ package pie
 import (
 	"fmt"
 	"math/rand"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -845,4 +846,90 @@ func TestCarPointers_Float64s(t *testing.T) {
 	assert.Equal(t,
 		Float64s{0, 0, 0},
 		carPointers{carPointerA, carPointerB, carPointerC}.Float64s())
+}
+
+var carPointersSequenceTests = []struct {
+	ss       carPointers
+	creator  func(int) *car
+	params   []int
+	expected carPointers
+}{
+	// n
+	{
+		nil,
+		nil,
+		[]int{0},
+		nil,
+	},
+	{
+		nil,
+		nil,
+		[]int{-1},
+		nil,
+	},
+	{
+		nil,
+		func(i int) *car { return &car{Name: strconv.Itoa(i)} },
+		[]int{3},
+		carPointers{{Name: "0"}, {Name: "1"}, {Name: "2"}},
+	},
+	// range
+	{
+		nil,
+		func(i int) *car { return &car{Name: strconv.Itoa(i)} },
+		[]int{6, 6},
+		nil,
+	},
+	{
+		nil,
+		func(i int) *car { return &car{Name: strconv.Itoa(i)} },
+		[]int{8, 6},
+		nil,
+	},
+	{
+		nil,
+		func(i int) *car { return &car{Name: strconv.Itoa(i)} },
+		[]int{3, 6},
+		carPointers{{Name: "3"}, {Name: "4"}, {Name: "5"}},
+	},
+	{
+		nil,
+		func(i int) *car { return &car{Name: strconv.Itoa(i)} },
+		[]int{-6, -3},
+		carPointers{{Name: "-6"}, {Name: "-5"}, {Name: "-4"}},
+	},
+	{
+		nil,
+		func(i int) *car { return &car{Name: strconv.Itoa(i)} },
+		[]int{-3, -6},
+		nil,
+	},
+	// range with step
+	{
+		nil,
+		func(i int) *car { return &car{Name: strconv.Itoa(i)} },
+		[]int{3, 7, 2},
+		carPointers{{Name: "3"}, {Name: "5"}},
+	},
+	{
+		nil,
+		func(i int) *car { return &car{Name: strconv.Itoa(i)} },
+		[]int{-3, -6, -2},
+		carPointers{{Name: "-3"}, {Name: "-5"}},
+	},
+	{
+		nil,
+		func(i int) *car { return &car{Name: strconv.Itoa(i)} },
+		[]int{3, 7, 10},
+		nil,
+	},
+}
+
+func TestCarPointers_SequenceUsing(t *testing.T) {
+	for _, test := range carPointersSequenceTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.SequenceUsing(test.creator, test.params...))
+		})
+	}
 }
