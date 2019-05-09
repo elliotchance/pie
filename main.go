@@ -34,27 +34,25 @@ func getIdentName(e ast.Expr) string {
 	}
 }
 
-func getKeyAndElementType(pkg *ast.Package, name string, typeSpec *ast.TypeSpec) (string, string, string, bool) {
+func getKeyAndElementType(pkg *ast.Package, name string, typeSpec *ast.TypeSpec) (string, string, string, *TypeExplorer) {
 	pkgName := pkg.Name
 
 	if t, ok := typeSpec.Type.(*ast.ArrayType); ok {
 		explorer := NewTypeExplorer(pkg, getIdentName(t.Elt))
-		hasEquals := explorer.HasEquals()
 
-		return pkgName, "", getIdentName(t.Elt), hasEquals
+		return pkgName, "", getIdentName(t.Elt), explorer
 	}
 
 	if t, ok := typeSpec.Type.(*ast.MapType); ok {
 		explorer := NewTypeExplorer(pkg, getIdentName(t.Value))
-		hasEquals := explorer.HasEquals()
 
-		return pkgName, getIdentName(t.Key), getIdentName(t.Value), hasEquals
+		return pkgName, getIdentName(t.Key), getIdentName(t.Value), explorer
 	}
 
 	panic(fmt.Sprintf("type %s must be a slice or map", name))
 }
 
-func findType(pkgs map[string]*ast.Package, name string) (packageName, keyType, elementType string, hasEquals bool) {
+func findType(pkgs map[string]*ast.Package, name string) (packageName, keyType, elementType string, explorer *TypeExplorer) {
 	for _, pkg := range pkgs {
 		for _, file := range pkg.Files {
 			for _, decl := range file.Decls {
@@ -113,10 +111,14 @@ func getImports(packageName, s string) (imports []string) {
 	return
 }
 
-func getAllImports(packageName string, files []string) (imports []string) {
+func getAllImports(packageName string, files []string, explorer *TypeExplorer) (imports []string) {
 	mapImports := map[string]struct{}{}
 
 	for _, file := range files {
+		if !explorer.HasString() && strings.Contains(file, "mightBeString") {
+			mapImports[`"fmt"`] = struct{}{}
+		}
+
 		for _, imp := range getImports(packageName, file) {
 			mapImports[imp] = struct{}{}
 		}
@@ -144,7 +146,7 @@ func main() {
 
 	for _, arg := range os.Args[1:] {
 		mapOrSliceType, fns := getFunctionsFromArg(arg)
-		packageName, keyType, elementType, hasEquals := findType(pkgs, mapOrSliceType)
+		packageName, keyType, elementType, explorer := findType(pkgs, mapOrSliceType)
 		kind := getType(keyType, elementType)
 
 		var templates []string
@@ -161,7 +163,7 @@ func main() {
 		// Aggregate imports.
 		t := fmt.Sprintf("package %s\n\n", packageName)
 
-		imports := getAllImports(packageName, templates)
+		imports := getAllImports(packageName, templates, explorer)
 		if len(imports) > 0 {
 			t += fmt.Sprintf("import (")
 			for _, imp := range imports {
@@ -183,11 +185,15 @@ func main() {
 		t = strings.Replace(t, "KeySliceType", "[]"+keyType, -1)
 		t = strings.Replace(t, "SliceType", mapOrSliceType, -1)
 
-		if !hasEquals {
+		if !explorer.HasEquals() {
 			re := regexp.MustCompile(`([\w_]+)\.Equals\(([^)]+)\)`)
 			t = ReplaceAllStringSubmatchFunc(re, t, func(groups []string) string {
 				return fmt.Sprintf("%s == %s", groups[1], groups[2])
 			})
+		}
+
+		if !explorer.HasString() {
+			t = strings.Replace(t, "mightBeString.String()", `fmt.Sprintf("%v", mightBeString)`, -1)
 		}
 
 		switch kind {

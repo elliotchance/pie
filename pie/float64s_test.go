@@ -1063,3 +1063,11 @@ func TestFloat64s_Sequence(t *testing.T) {
 		})
 	}
 }
+
+func TestFloat64s_Strings(t *testing.T) {
+	assert.Equal(t, Strings(nil), Float64s{}.Strings())
+
+	assert.Equal(t,
+		Strings{"92.384", "823.324", "453"},
+		Float64s{92.384, 823.324, 453}.Strings())
+}

@@ -1028,3 +1028,11 @@ func TestInts_Sequence(t *testing.T) {
 		})
 	}
 }
+
+func TestInts_Strings(t *testing.T) {
+	assert.Equal(t, Strings(nil), Ints{}.Strings())
+
+	assert.Equal(t,
+		Strings{"92", "823", "453"},
+		Ints{92, 823, 453}.Strings())
+}

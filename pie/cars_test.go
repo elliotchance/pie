@@ -797,3 +797,11 @@ func TestCars_Diff(t *testing.T) {
 		})
 	}
 }
+
+func TestCars_Strings(t *testing.T) {
+	assert.Equal(t, Strings(nil), cars{}.Strings())
+
+	assert.Equal(t,
+		Strings{"{a green}", "{bar yellow}", "{Baz black}"},
+		cars{car{"a", "green"}, car{"bar", "yellow"}, car{"Baz", "black"}}.Strings())
+}
