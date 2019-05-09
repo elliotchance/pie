@@ -805,3 +805,19 @@ func TestCars_Strings(t *testing.T) {
 		Strings{"{a green}", "{bar yellow}", "{Baz black}"},
 		cars{car{"a", "green"}, car{"bar", "yellow"}, car{"Baz", "black"}}.Strings())
 }
+
+func TestCars_Ints(t *testing.T) {
+	assert.Equal(t, Ints(nil), cars{}.Ints())
+
+	assert.Equal(t,
+		Ints{0, 0, 0},
+		cars{car{"a", "green"}, car{"bar", "yellow"}, car{"Baz", "black"}}.Ints())
+}
+
+func TestCars_Float64s(t *testing.T) {
+	assert.Equal(t, Float64s(nil), cars{}.Float64s())
+
+	assert.Equal(t,
+		Float64s{0, 0, 0},
+		cars{car{"a", "green"}, car{"bar", "yellow"}, car{"Baz", "black"}}.Float64s())
+}

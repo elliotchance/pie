@@ -7,6 +7,7 @@ import (
 	"github.com/elliotchance/pie/pie/util"
 	"math/rand"
 	"sort"
+	"strconv"
 )
 
 // All will return true if all callbacks return true. It follows the same logic
@@ -194,6 +195,43 @@ func (ss carPointers) FirstOr(defaultValue *car) *car {
 	}
 
 	return ss[0]
+}
+
+// Float64s transforms each element to a float64.
+func (ss carPointers) Float64s() Float64s {
+	l := len(ss)
+
+	// Avoid the allocation.
+	if l == 0 {
+		return nil
+	}
+
+	result := make(Float64s, l)
+	for i := 0; i < l; i++ {
+		mightBeString := ss[i]
+		result[i], _ = strconv.ParseFloat(fmt.Sprintf("%v", mightBeString), 64)
+	}
+
+	return result
+}
+
+// Ints transforms each element to an integer.
+func (ss carPointers) Ints() Ints {
+	l := len(ss)
+
+	// Avoid the allocation.
+	if l == 0 {
+		return nil
+	}
+
+	result := make(Ints, l)
+	for i := 0; i < l; i++ {
+		mightBeString := ss[i]
+		f, _ := strconv.ParseFloat(fmt.Sprintf("%v", mightBeString), 64)
+		result[i] = int(f)
+	}
+
+	return result
 }
 
 // JSONString returns the JSON encoded array as a string.

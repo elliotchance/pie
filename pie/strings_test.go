@@ -986,3 +986,19 @@ func TestStrings_Strings(t *testing.T) {
 		Strings{"foo", "bar", "BAZ"},
 		Strings{"foo", "bar", "BAZ"}.Strings())
 }
+
+func TestStrings_Ints(t *testing.T) {
+	assert.Equal(t, Ints(nil), Strings{}.Ints())
+
+	assert.Equal(t,
+		Ints{92, 0, 453},
+		Strings{"92.384", "foo", "453"}.Ints())
+}
+
+func TestStrings_Float64s(t *testing.T) {
+	assert.Equal(t, Float64s(nil), Strings{}.Float64s())
+
+	assert.Equal(t,
+		Float64s{92.384, 0, 453},
+		Strings{"92.384", "foo", "453"}.Float64s())
+}

@@ -826,3 +826,23 @@ func TestCarPointers_Strings(t *testing.T) {
 		Strings{"a is green", "b is blue", "c is gray"},
 		carPointers{carPointerA, carPointerB, carPointerC}.Strings())
 }
+
+func TestCarPointers_Ints(t *testing.T) {
+	assert.Equal(t, Ints(nil), carPointers(nil).Ints())
+
+	assert.Equal(t, Ints(nil), carPointers{}.Ints())
+
+	assert.Equal(t,
+		Ints{0, 0, 0},
+		carPointers{carPointerA, carPointerB, carPointerC}.Ints())
+}
+
+func TestCarPointers_Float64s(t *testing.T) {
+	assert.Equal(t, Float64s(nil), carPointers(nil).Float64s())
+
+	assert.Equal(t, Float64s(nil), carPointers{}.Float64s())
+
+	assert.Equal(t,
+		Float64s{0, 0, 0},
+		carPointers{carPointerA, carPointerB, carPointerC}.Float64s())
+}

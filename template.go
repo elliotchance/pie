@@ -262,6 +262,31 @@ func (ss SliceType) FirstOr(defaultValue ElementType) ElementType {
 	return ss[0]
 }
 `,
+	"Float64s": `package functions
+
+import (
+	"github.com/elliotchance/pie/pie"
+	"strconv"
+)
+
+// Float64s transforms each element to a float64.
+func (ss SliceType) Float64s() pie.Float64s {
+	l := len(ss)
+
+	// Avoid the allocation.
+	if l == 0 {
+		return nil
+	}
+
+	result := make(pie.Float64s, l)
+	for i := 0; i < l; i++ {
+		mightBeString := ss[i]
+		result[i], _ = strconv.ParseFloat(mightBeString.String(), 64)
+	}
+
+	return result
+}
+`,
 	"Intersect": `package functions
 
 // Intersect returns items that exist in all lists.
@@ -297,6 +322,32 @@ func (ss SliceType) Intersect(slices ...SliceType) (ss2 SliceType) {
 	}
 
 	return
+}
+`,
+	"Ints": `package functions
+
+import (
+	"github.com/elliotchance/pie/pie"
+	"strconv"
+)
+
+// Ints transforms each element to an integer.
+func (ss SliceType) Ints() pie.Ints {
+	l := len(ss)
+
+	// Avoid the allocation.
+	if l == 0 {
+		return nil
+	}
+
+	result := make(pie.Ints, l)
+	for i := 0; i < l; i++ {
+		mightBeString := ss[i]
+		f, _ := strconv.ParseFloat(mightBeString.String(), 64)
+		result[i] = int(f)
+	}
+
+	return result
 }
 `,
 	"JSONString": `package functions

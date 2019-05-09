@@ -8,6 +8,7 @@ import (
 	"math"
 	"math/rand"
 	"sort"
+	"strconv"
 )
 
 // Abs is a function which returns the absolute value of all the
@@ -230,6 +231,24 @@ func (ss Float64s) FirstOr(defaultValue float64) float64 {
 	return ss[0]
 }
 
+// Float64s transforms each element to a float64.
+func (ss Float64s) Float64s() Float64s {
+	l := len(ss)
+
+	// Avoid the allocation.
+	if l == 0 {
+		return nil
+	}
+
+	result := make(Float64s, l)
+	for i := 0; i < l; i++ {
+		mightBeString := ss[i]
+		result[i], _ = strconv.ParseFloat(fmt.Sprintf("%v", mightBeString), 64)
+	}
+
+	return result
+}
+
 // Intersect returns items that exist in all lists.
 //
 // It returns slice without any duplicates.
@@ -263,6 +282,25 @@ func (ss Float64s) Intersect(slices ...Float64s) (ss2 Float64s) {
 	}
 
 	return
+}
+
+// Ints transforms each element to an integer.
+func (ss Float64s) Ints() Ints {
+	l := len(ss)
+
+	// Avoid the allocation.
+	if l == 0 {
+		return nil
+	}
+
+	result := make(Ints, l)
+	for i := 0; i < l; i++ {
+		mightBeString := ss[i]
+		f, _ := strconv.ParseFloat(fmt.Sprintf("%v", mightBeString), 64)
+		result[i] = int(f)
+	}
+
+	return result
 }
 
 // JSONString returns the JSON encoded array as a string.
