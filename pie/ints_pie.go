@@ -396,15 +396,15 @@ func (ss Ints) MedianOld() int {
 	return (sorted[l/2-1] + sorted[l/2]) / 2
 }
 
-func (ss Ints) Median() int {
-	med := ss.median()
+func (ss Ints) medianCheck() int {
+	med := ss.Median()
 	if med != ss.MedianOld() {
 		panic(fmt.Sprintf("Expected %v, got %v for %v", ss.MedianOld(), med, ss))
 	}
 	return med
 }
 
-func (ss Ints) median() int {
+func (ss Ints) Median() int {
 	n := len(ss)
 	if n == 0 {
 		return 0
@@ -420,7 +420,11 @@ func (ss Ints) median() int {
 	work := make(Ints, len(ss))
 	copy(work, ss)
 
-	limit1, limit2 := n/2-1, n/2
+	limit1, limit2 := n/2, n/2+1
+	if n%2 == 0 {
+		limit1, limit2 = n/2-1, n/2+1
+	}
+
 	var rec func(a, b int)
 	rec = func(a, b int) {
 		if a > b {
@@ -444,11 +448,14 @@ func (ss Ints) median() int {
 				k--
 			}
 		}
-		// 2 or 1 or 0 recursive calls
-		if j >= limit1 {
+		if j > limit1 && j+1 < limit2 {
+			panic("Inconsistency: won't recurse on both left and right")
+		}
+		// 1 or 0 recursive calls
+		if j > limit1 {
 			rec(a, j)
 		}
-		if j+1 <= limit2 {
+		if j+1 < limit2 {
 			rec(j+1, b)
 		}
 	}

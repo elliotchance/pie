@@ -26,15 +26,15 @@ func (ss SliceType) MedianOld() ElementType {
 	return (sorted[l/2-1] + sorted[l/2]) / 2
 }
 
-func (ss SliceType) Median() ElementType {
-	med := ss.median()
+func (ss SliceType) medianCheck() ElementType {
+	med := ss.Median()
 	if med != ss.MedianOld() {
 		panic(fmt.Sprintf("Expected %v, got %v for %v", ss.MedianOld(), med, ss))
 	}
 	return med
 }
 
-func (ss SliceType) median() ElementType {
+func (ss SliceType) Median() ElementType {
 	n := len(ss)
 	if n == 0 {
 		return ElementZeroValue
@@ -50,7 +50,11 @@ func (ss SliceType) median() ElementType {
 	work := make(SliceType, len(ss))
 	copy(work, ss)
 
-	limit1, limit2 := n/2-1, n/2
+	limit1, limit2 := n/2, n/2+1
+	if n%2 == 0 {
+		limit1, limit2 = n/2-1, n/2+1
+	}
+
 	var rec func(a, b int)
 	rec = func(a, b int) {
 		if a > b {
@@ -74,11 +78,14 @@ func (ss SliceType) median() ElementType {
 				k--
 			}
 		}
-		// 2 or 1 or 0 recursive calls
-		if j >= limit1 {
+		if j > limit1 && j+1 < limit2 {
+			panic("Inconsistency: won't recurse on both left and right")
+		}
+		// 1 or 0 recursive calls
+		if j > limit1 {
 			rec(a, j)
 		}
-		if j+1 <= limit2 {
+		if j+1 < limit2 {
 			rec(j+1, b)
 		}
 	}
