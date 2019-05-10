@@ -938,6 +938,11 @@ var intsSequenceAndSequenceUsingTests = []struct {
 	// n
 	{
 		nil,
+		nil,
+		nil,
+	},
+	{
+		nil,
 		[]int{-1},
 		nil,
 	},

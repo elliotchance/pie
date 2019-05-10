@@ -374,10 +374,12 @@ func (ss carPointers) SequenceUsing(creator func(int) *car, params ...int) carPo
 
 	if len(params) > 2 {
 		return seq(params[0], params[1], params[2])
-	} else if len(params) > 1 {
+	} else if len(params) == 2 {
 		return seq(params[0], params[1], 1)
-	} else {
+	} else if len(params) == 1 {
 		return seq(0, params[0], 1)
+	} else {
+		return nil
 	}
 }
 
