@@ -19,13 +19,5 @@ func (ss SliceType) Sequence(params ...int) SliceType {
 		return ElementType(i)
 	}
 
-	if len(params) > 2 {
-		return ss.SequenceUsing(creator, params[0], params[1], params[2])
-	} else if len(params) == 2 {
-		return ss.SequenceUsing(creator, params[0], params[1])
-	} else if len(params) == 1 {
-		return ss.SequenceUsing(creator, params[0])
-	} else {
-		return nil
-	}
+	return ss.SequenceUsing(creator, params...)
 }
