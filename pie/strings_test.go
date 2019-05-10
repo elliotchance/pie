@@ -1014,6 +1014,12 @@ var stringsSequenceTests = []struct {
 	{
 		nil,
 		nil,
+		nil,
+		nil,
+	},
+	{
+		nil,
+		nil,
 		[]int{0},
 		nil,
 	},

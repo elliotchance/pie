@@ -620,8 +620,6 @@ func (ss SliceType) Send(ctx context.Context, ch chan<- ElementType) SliceType {
 `,
 	"Sequence": `package functions
 
-import "github.com/elliotchance/pie/pie/util"
-
 // Sequence generates all numbers in range or returns nil if params invalid
 //
 // There are 3 variations to generate:
@@ -637,28 +635,11 @@ import "github.com/elliotchance/pie/pie/util"
 // where min is the first param, max is the second, step is the third one, [min, max) with step,
 // others params will be ignored
 func (ss SliceType) Sequence(params ...int) SliceType {
-	var seq = func(min, max, step int) (seq SliceType) {
-		lenght := int(util.Round(float64(max-min) / float64(step)))
-		if lenght < 1 {
-			return
-		}
-
-		seq = make(SliceType, lenght)
-		for i := 0; i < lenght; min += step {
-			seq[i] = ElementType(min)
-			i++
-		}
-
-		return seq
+	var creator = func(i int) ElementType {
+		return ElementType(i)
 	}
 
-	if len(params) > 2 {
-		return seq(params[0], params[1], params[2])
-	} else if len(params) > 1 {
-		return seq(params[0], params[1], 1)
-	} else {
-		return seq(0, params[0], 1)
-	}
+	return ss.SequenceUsing(creator, params...)
 }
 `,
 	"SequenceUsing": `package functions
@@ -697,10 +678,12 @@ func (ss SliceType) SequenceUsing(creator func(int) ElementType, params ...int) 
 
 	if len(params) > 2 {
 		return seq(params[0], params[1], params[2])
-	} else if len(params) > 1 {
+	} else if len(params) == 2 {
 		return seq(params[0], params[1], 1)
-	} else {
+	} else if len(params) == 1 {
 		return seq(0, params[0], 1)
+	} else {
+		return nil
 	}
 }
 `,

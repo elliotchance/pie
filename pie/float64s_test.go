@@ -973,6 +973,11 @@ var float64sSequenceAndSequenceUsingTests = []struct {
 	// n
 	{
 		nil,
+		nil,
+		nil,
+	},
+	{
+		nil,
 		[]int{-1},
 		nil,
 	},
