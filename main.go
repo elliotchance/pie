@@ -1,4 +1,4 @@
-//go:generate go run generate_template.go
+//go:generate go run generate.go
 
 package main
 
