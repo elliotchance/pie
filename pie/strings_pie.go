@@ -151,7 +151,6 @@ func (ss Strings) Drop(n int) (drop Strings) {
 	return
 }
 
-
 // Each is more condensed version of Transform that allows an action to happen
 // on each elements and pass the original slice on.
 //

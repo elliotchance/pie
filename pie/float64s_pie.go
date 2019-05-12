@@ -171,7 +171,6 @@ func (ss Float64s) Drop(n int) (drop Float64s) {
 	return
 }
 
-
 // Each is more condensed version of Transform that allows an action to happen
 // on each elements and pass the original slice on.
 //

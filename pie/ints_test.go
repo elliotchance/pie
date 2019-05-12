@@ -1068,9 +1068,9 @@ func TestInts_Float64s(t *testing.T) {
 }
 
 var intsDropTests = []struct {
-	ss     Ints
-	n      int
-	drop    Ints
+	ss   Ints
+	n    int
+	drop Ints
 }{
 	{
 		nil,

@@ -941,9 +941,9 @@ func TestCarPointers_SequenceUsing(t *testing.T) {
 }
 
 var carPointersDropTests = []struct {
-	ss     carPointers
-	n      int
-	drop    carPointers
+	ss   carPointers
+	n    int
+	drop carPointers
 }{
 	{
 		nil,

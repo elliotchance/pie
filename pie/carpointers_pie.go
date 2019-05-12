@@ -137,7 +137,6 @@ func (ss carPointers) Drop(n int) (drop carPointers) {
 	return
 }
 
-
 // Each is more condensed version of Transform that allows an action to happen
 // on each elements and pass the original slice on.
 //

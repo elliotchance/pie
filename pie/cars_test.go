@@ -916,9 +916,9 @@ func TestCars_SequenceUsing(t *testing.T) {
 }
 
 var carsDropTests = []struct {
-	ss     cars
-	n      int
-	drop    cars
+	ss   cars
+	n    int
+	drop cars
 }{
 	{
 		nil,

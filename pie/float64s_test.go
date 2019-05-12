@@ -1103,9 +1103,9 @@ func TestFloat64s_Float64s(t *testing.T) {
 }
 
 var float64sDropTests = []struct {
-	ss     Float64s
-	n      int
-	drop    Float64s
+	ss   Float64s
+	n    int
+	drop Float64s
 }{
 	{
 		nil,

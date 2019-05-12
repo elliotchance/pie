@@ -1097,9 +1097,9 @@ func TestStrings_SequenceUsing(t *testing.T) {
 }
 
 var stringsDropTests = []struct {
-	ss     Strings
-	n      int
-	drop    Strings
+	ss   Strings
+	n    int
+	drop Strings
 }{
 	{
 		nil,
