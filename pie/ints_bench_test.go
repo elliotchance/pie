@@ -24,8 +24,6 @@ func benchmarkIntMedian(b *testing.B, size int) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		// m := a.MedianOld()
-		// m := a.medianCheck()
 		m := a.Median()
 		sinkInts += m
 	}

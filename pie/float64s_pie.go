@@ -376,34 +376,9 @@ func (ss Float64s) Max() (max float64) {
 // data sample.
 //
 // Zero is returned if there are no elements in the slice.
-func (ss Float64s) MedianOld() float64 {
-	l := len(ss)
-
-	switch {
-	case l == 0:
-		return 0
-
-	case l == 1:
-		return ss[0]
-	}
-
-	sorted := ss.Sort()
-
-	if l%2 != 0 {
-		return sorted[l/2]
-	}
-
-	return (sorted[l/2-1] + sorted[l/2]) / 2
-}
-
-func (ss Float64s) medianCheck() float64 {
-	med := ss.Median()
-	if med != ss.MedianOld() {
-		panic(fmt.Sprintf("Expected %v, got %v for %v", ss.MedianOld(), med, ss))
-	}
-	return med
-}
-
+//
+// If the number of elements is even, then the float64 mean of the two "median values"
+// is returned.
 func (ss Float64s) Median() float64 {
 	n := len(ss)
 	if n == 0 {
@@ -414,8 +389,8 @@ func (ss Float64s) Median() float64 {
 	}
 
 	// This implementation aims at linear time O(n) on average.
-	// It uses the same idea as QuickSort, but makes most of
-	// the time only 1 recursive call instead of 2.
+	// It uses the same idea as QuickSort, but makes only 1 recursive
+	// call instead of 2. See also Quickselect.
 
 	work := make(Float64s, len(ss))
 	copy(work, ss)

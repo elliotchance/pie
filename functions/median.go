@@ -1,39 +1,12 @@
 package functions
 
-import "fmt"
-
 // Median returns the value separating the higher half from the lower half of a
 // data sample.
 //
 // Zero is returned if there are no elements in the slice.
-func (ss SliceType) MedianOld() ElementType {
-	l := len(ss)
-
-	switch {
-	case l == 0:
-		return ElementZeroValue
-
-	case l == 1:
-		return ss[0]
-	}
-
-	sorted := ss.Sort()
-
-	if l%2 != 0 {
-		return sorted[l/2]
-	}
-
-	return (sorted[l/2-1] + sorted[l/2]) / 2
-}
-
-func (ss SliceType) medianCheck() ElementType {
-	med := ss.Median()
-	if med != ss.MedianOld() {
-		panic(fmt.Sprintf("Expected %v, got %v for %v", ss.MedianOld(), med, ss))
-	}
-	return med
-}
-
+//
+// If the number of elements is even, then the ElementType mean of the two "median values"
+// is returned.
 func (ss SliceType) Median() ElementType {
 	n := len(ss)
 	if n == 0 {
@@ -44,8 +17,8 @@ func (ss SliceType) Median() ElementType {
 	}
 
 	// This implementation aims at linear time O(n) on average.
-	// It uses the same idea as QuickSort, but makes most of
-	// the time only 1 recursive call instead of 2.
+	// It uses the same idea as QuickSort, but makes only 1 recursive
+	// call instead of 2. See also Quickselect.
 
 	work := make(SliceType, len(ss))
 	copy(work, ss)

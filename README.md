@@ -200,7 +200,7 @@ The letters in brackets indicate:
 | `Len`             | ✓      | ✓      | ✓      |      | 1        | Number of elements. |
 | `Map`	            | ✓      | ✓      | ✓      |      | n        | A new slice where each element has been mapped (transformed). |
 | `Max`             | ✓      | ✓      |        |      | n        | The maximum value, or a zeroes value. |
-| `Median`          |        | ✓      |        |      | n⋅log(n) | Median returns the value separating the higher half from the lower half of a data sample. |
+| `Median`          |        | ✓      |        |      | n        | Median returns the value separating the higher half from the lower half of a data sample. |
 | `Min`             | ✓      | ✓      |        |      | n        | The minimum value, or a zeroed value. |
 | `Product`         |        | ✓      |        |      | n        | Product of all elements. |
 | `Random`          | ✓      | ✓      | ✓      |      | 1        | Select a random element, or a zeroed value if empty. |
