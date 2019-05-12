@@ -68,13 +68,12 @@ func (ss SliceType) Median() ElementType {
 		work[a], work[ipivot] = work[ipivot], work[a]
 		j := a
 		k := b
-		for i := a + 1; i < k; {
-			if work[i] < pivot {
-				work[i], work[j] = work[j], work[i]
+		for j+1 < k {
+			if work[j+1] < pivot {
+				work[j+1], work[j] = work[j], work[j+1]
 				j++
-				i++
 			} else {
-				work[i], work[k-1] = work[k-1], work[i]
+				work[j+1], work[k-1] = work[k-1], work[j+1]
 				k--
 			}
 		}
