@@ -772,6 +772,22 @@ func TestInts_Abs(t *testing.T) {
 	assert.Equal(t, Ints{1, 2}, Ints{1, 2}.Abs())
 }
 
+func TestInts_AbsLarge(t *testing.T) {
+	// int64: prevent compile error (constant overflow) on 32-bit architectures.
+	a64 := []int64{3, -4, 1234567890123456789, -987654321098765432}
+	var a Ints
+	for _, v := range a64 {
+		a = a.Append(int(v))
+	}
+	b := a.Abs()
+	for i := range a {
+		v, absv := a[i], b[i]
+		if absv != v && absv != -v {
+			t.Errorf("Incorrect result for Abs(%d): %d", v, absv)
+		}
+	}
+}
+
 var intsSendTests = []struct {
 	ss            Ints
 	recieveDelay  time.Duration
