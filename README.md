@@ -183,6 +183,7 @@ The letters in brackets indicate:
 | `Bottom`          | ✓      | ✓      | ✓      |      | n        | Gets n elements from bottom. |
 | `Contains` (E)    | ✓      | ✓      | ✓      |      | n        | Check if the value exists in the slice. |
 | `Diff` (E)        | ✓      | ✓      | ✓      |      | n²       | Diff returns the elements that needs to be added or removed from the first slice to have the same elements in the second slice. |
+| `Drop`            | ✓      | ✓      | ✓      |      | n        | A new slice after dropping the first n elements. |
 | `Each`            | ✓      | ✓      | ✓      |      | n        | Perform an action on each element. |
 | `Extend`          | ✓      | ✓      | ✓      |      | n        | A new slice with the elements from each slice appended to the end. |
 | `Filter`          | ✓      | ✓      | ✓      |      | n        | A new slice containing only the elements that returned true from the condition. |

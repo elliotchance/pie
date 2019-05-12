@@ -133,6 +133,25 @@ func (ss Strings) Diff(against Strings) (added, removed Strings) {
 	return
 }
 
+// Drop will return the rest slice after dropping the first n elements
+// if the slice has less elements then n that'll return empty slice
+// if n <= 0 it'll return all copied elements.
+func (ss Strings) Drop(n int) (drop Strings) {
+	if n <= 0 {
+		drop = make(Strings, len(ss))
+		copy(drop, ss)
+		return
+	}
+
+	for i := n; i < len(ss) && n > 0; i++ {
+		drop = append(drop, ss[i])
+		n--
+	}
+
+	return
+}
+
+
 // Each is more condensed version of Transform that allows an action to happen
 // on each elements and pass the original slice on.
 //

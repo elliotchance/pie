@@ -1095,3 +1095,54 @@ func TestStrings_SequenceUsing(t *testing.T) {
 		})
 	}
 }
+
+var stringsDropTests = []struct {
+	ss     Strings
+	n      int
+	drop    Strings
+}{
+	{
+		nil,
+		1,
+		nil,
+	},
+	{
+		Strings{},
+		1,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		1,
+		Strings{"bar"},
+	},
+	{
+		Strings{"foo", "bar"},
+		2,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		3,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		0,
+		Strings{"foo", "bar"},
+	},
+	{
+		Strings{"foo", "bar"},
+		-1,
+		Strings{"foo", "bar"},
+	},
+}
+
+func TestStrings_Drop(t *testing.T) {
+	for _, test := range stringsDropTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.drop, test.ss.Drop(test.n))
+		})
+	}
+}

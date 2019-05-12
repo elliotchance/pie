@@ -119,6 +119,25 @@ func (ss cars) Diff(against cars) (added, removed cars) {
 	return
 }
 
+// Drop will return the rest slice after dropping the first n elements
+// if the slice has less elements then n that'll return empty slice
+// if n <= 0 it'll return all copied elements.
+func (ss cars) Drop(n int) (drop cars) {
+	if n <= 0 {
+		drop = make(cars, len(ss))
+		copy(drop, ss)
+		return
+	}
+
+	for i := n; i < len(ss) && n > 0; i++ {
+		drop = append(drop, ss[i])
+		n--
+	}
+
+	return
+}
+
+
 // Each is more condensed version of Transform that allows an action to happen
 // on each elements and pass the original slice on.
 //

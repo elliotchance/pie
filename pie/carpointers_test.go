@@ -939,3 +939,54 @@ func TestCarPointers_SequenceUsing(t *testing.T) {
 		})
 	}
 }
+
+var carPointersDropTests = []struct {
+	ss     carPointers
+	n      int
+	drop    carPointers
+}{
+	{
+		nil,
+		1,
+		nil,
+	},
+	{
+		carPointers{},
+		1,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		1,
+		carPointers{carPointerB},
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		2,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		3,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		0,
+		carPointers{carPointerA, carPointerB},
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		-1,
+		carPointers{carPointerA, carPointerB},
+	},
+}
+
+func TestCarPointers_Drop(t *testing.T) {
+	for _, test := range carPointersDropTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			assert.Equal(t, test.drop, test.ss.Drop(test.n))
+		})
+	}
+}

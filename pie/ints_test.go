@@ -1066,3 +1066,54 @@ func TestInts_Float64s(t *testing.T) {
 		Float64s{92, 823, 453},
 		Ints{92, 823, 453}.Float64s())
 }
+
+var intsDropTests = []struct {
+	ss     Ints
+	n      int
+	drop    Ints
+}{
+	{
+		nil,
+		1,
+		nil,
+	},
+	{
+		Ints{},
+		1,
+		nil,
+	},
+	{
+		Ints{1, 2},
+		1,
+		Ints{2},
+	},
+	{
+		Ints{1, 2},
+		2,
+		nil,
+	},
+	{
+		Ints{1, 2},
+		3,
+		nil,
+	},
+	{
+		Ints{1, 2},
+		0,
+		Ints{1, 2},
+	},
+	{
+		Ints{1, 2},
+		-1,
+		Ints{1, 2},
+	},
+}
+
+func TestInts_Drop(t *testing.T) {
+	for _, test := range intsDropTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.drop, test.ss.Drop(test.n))
+		})
+	}
+}
