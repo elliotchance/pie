@@ -261,6 +261,15 @@ func TestInts_JSONString(t *testing.T) {
 	}
 }
 
+func TestInts_JSONBytes(t *testing.T) {
+	for _, test := range intsJSONTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, []byte(test.jsonString), test.ss.JSONBytes())
+		})
+	}
+}
+
 var intsSortTests = []struct {
 	ss        Ints
 	sorted    Ints

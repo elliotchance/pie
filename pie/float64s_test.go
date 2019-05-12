@@ -266,6 +266,14 @@ var float64sJSONTests = []struct {
 	},
 }
 
+func TestFloat64s_JSONBytes(t *testing.T) {
+	for _, test := range float64sJSONTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, []byte(test.jsonString), test.ss.JSONBytes())
+		})
+	}
+}
 func TestFloat64s_JSONString(t *testing.T) {
 	for _, test := range float64sJSONTests {
 		t.Run("", func(t *testing.T) {

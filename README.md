@@ -138,6 +138,7 @@ This will only generate `myInts.Average`, `myInts.Sum` and `myStrings.Select`.
 | `First`      | ✓      | ✓      | ✓     |      | 1        | The first element, or a zeroed value. |
 | `FirstOr`    | ✓      | ✓      | ✓     |      | 1        | The first element, or a default value. |
 | `Join`       | ✓      |        |       |      | n        | A string from joining each of the elements. |
+| `JSONBytes`  | ✓      | ✓      | ✓     |      | n        | The JSON encoded bytes. |
 | `JSONString` | ✓      | ✓      | ✓     |      | n        | The JSON encoded string. |
 | `Keys`       |        |        |       | ✓    | n        | Returns all keys in the map (in random order). |
 | `Last`       | ✓      | ✓      | ✓     |      | 1        | The last element, or a zeroed value. |
