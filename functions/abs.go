@@ -7,8 +7,9 @@ import (
 // Abs is a function which returns the absolute value of all the
 // elements in the slice.
 func (ss SliceType) Abs() SliceType {
+	result := make(SliceType, len(ss))
 	for i, val := range ss {
-		ss[i] = ElementType(math.Abs(float64(val)))
+		result[i] = ElementType(math.Abs(float64(val)))
 	}
-	return ss
+	return result
 }

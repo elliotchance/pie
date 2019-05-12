@@ -14,10 +14,11 @@ import (
 // Abs is a function which returns the absolute value of all the
 // elements in the slice.
 func (ss Ints) Abs() Ints {
+	result := make(Ints, len(ss))
 	for i, val := range ss {
-		ss[i] = int(math.Abs(float64(val)))
+		result[i] = int(math.Abs(float64(val)))
 	}
-	return ss
+	return result
 }
 
 // All will return true if all callbacks return true. It follows the same logic
