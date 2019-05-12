@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/elliotchance/pie/pie/util"
-	"math"
 	"math/rand"
 	"sort"
 	"strconv"
@@ -16,7 +15,11 @@ import (
 func (ss Ints) Abs() Ints {
 	result := make(Ints, len(ss))
 	for i, val := range ss {
-		result[i] = int(math.Abs(float64(val)))
+		if val < 0 {
+			result[i] = -val
+		} else {
+			result[i] = val
+		}
 	}
 	return result
 }
