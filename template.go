@@ -191,7 +191,6 @@ func (ss SliceType) Drop(n int) (drop SliceType) {
 
 	return
 }
-
 `,
 	"Each": `package functions
 
