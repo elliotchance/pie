@@ -1096,10 +1096,10 @@ func TestStrings_SequenceUsing(t *testing.T) {
 	}
 }
 
-var stringsDropTests = []struct {
-	ss   Strings
-	n    int
-	drop Strings
+var stringsDropTopTests = []struct {
+	ss      Strings
+	n       int
+	dropTop Strings
 }{
 	{
 		nil,
@@ -1111,6 +1111,17 @@ var stringsDropTests = []struct {
 		1,
 		nil,
 	},
+	{
+		Strings{"foo", "bar"},
+		-1,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		0,
+		Strings{"foo", "bar"},
+	},
+
 	{
 		Strings{"foo", "bar"},
 		1,
@@ -1126,23 +1137,13 @@ var stringsDropTests = []struct {
 		3,
 		nil,
 	},
-	{
-		Strings{"foo", "bar"},
-		0,
-		Strings{"foo", "bar"},
-	},
-	{
-		Strings{"foo", "bar"},
-		-1,
-		Strings{"foo", "bar"},
-	},
 }
 
-func TestStrings_Drop(t *testing.T) {
-	for _, test := range stringsDropTests {
+func TestStrings_DropTop(t *testing.T) {
+	for _, test := range stringsDropTopTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
-			assert.Equal(t, test.drop, test.ss.Drop(test.n))
+			assert.Equal(t, test.dropTop, test.ss.DropTop(test.n))
 		})
 	}
 }

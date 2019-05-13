@@ -153,19 +153,16 @@ func (ss Ints) Diff(against Ints) (added, removed Ints) {
 	return
 }
 
-// Drop will return the rest slice after dropping the first n elements
+// DropTop will return the rest slice after dropping the top n elements
 // if the slice has less elements then n that'll return empty slice
-// if n <= 0 it'll return all copied elements.
-func (ss Ints) Drop(n int) (drop Ints) {
-	if n <= 0 {
-		drop = make(Ints, len(ss))
-		copy(drop, ss)
+// if n < 0 it'll return empty slice.
+func (ss Ints) DropTop(n int) (drop Ints) {
+	if n < 0 {
 		return
 	}
 
-	for i := n; i < len(ss) && n > 0; i++ {
+	for i := n; i < len(ss); i++ {
 		drop = append(drop, ss[i])
-		n--
 	}
 
 	return

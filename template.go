@@ -172,21 +172,18 @@ func (ss SliceType) Diff(against SliceType) (added, removed SliceType) {
 	return
 }
 `,
-	"Drop": `package functions
+	"DropTop": `package functions
 
-// Drop will return the rest slice after dropping the first n elements
+// DropTop will return the rest slice after dropping the top n elements
 // if the slice has less elements then n that'll return empty slice
-// if n <= 0 it'll return all copied elements.
-func (ss SliceType) Drop(n int) (drop SliceType) {
-	if n <= 0 {
-		drop = make(SliceType, len(ss))
-		copy(drop, ss)
+// if n < 0 it'll return empty slice.
+func (ss SliceType) DropTop(n int) (drop SliceType) {
+	if n < 0 {
 		return
 	}
 
-	for i := n; i < len(ss) && n > 0; i++ {
+	for i := n; i < len(ss); i++ {
 		drop = append(drop, ss[i])
-		n--
 	}
 
 	return

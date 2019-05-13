@@ -1102,10 +1102,10 @@ func TestFloat64s_Float64s(t *testing.T) {
 		Float64s{92.384, 823.324, 453}.Float64s())
 }
 
-var float64sDropTests = []struct {
-	ss   Float64s
-	n    int
-	drop Float64s
+var float64sDropTopTests = []struct {
+	ss      Float64s
+	n       int
+	dropTop Float64s
 }{
 	{
 		nil,
@@ -1117,6 +1117,17 @@ var float64sDropTests = []struct {
 		1,
 		nil,
 	},
+	{
+		Float64s{1.23, 2.34},
+		-1,
+		nil,
+	},
+	{
+		Float64s{1.23, 2.34},
+		0,
+		Float64s{1.23, 2.34},
+	},
+
 	{
 		Float64s{1.23, 2.34},
 		1,
@@ -1132,23 +1143,13 @@ var float64sDropTests = []struct {
 		3,
 		nil,
 	},
-	{
-		Float64s{1.23, 2.34},
-		0,
-		Float64s{1.23, 2.34},
-	},
-	{
-		Float64s{1.23, 2.34},
-		-1,
-		Float64s{1.23, 2.34},
-	},
 }
 
-func TestFloat64s_Drop(t *testing.T) {
-	for _, test := range float64sDropTests {
+func TestFloat64s_DropTop(t *testing.T) {
+	for _, test := range float64sDropTopTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableFloat64s(t, &test.ss)()
-			assert.Equal(t, test.drop, test.ss.Drop(test.n))
+			assert.Equal(t, test.dropTop, test.ss.DropTop(test.n))
 		})
 	}
 }
