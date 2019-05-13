@@ -4,7 +4,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/elliotchance/pie/functions"
 	"go/ast"
 	"go/parser"
 	"go/token"
@@ -13,6 +12,8 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+
+	"github.com/elliotchance/pie/functions"
 )
 
 func check(err error) {
@@ -188,7 +189,7 @@ func main() {
 		if !explorer.HasEquals() {
 			re := regexp.MustCompile(`([\w_]+)\.Equals\(([^)]+)\)`)
 			t = ReplaceAllStringSubmatchFunc(re, t, func(groups []string) string {
-				return fmt.Sprintf("%s == %s", groups[1], groups[2])
+				return fmt.Sprintf("(%s == %s)", groups[1], groups[2])
 			})
 		}
 
