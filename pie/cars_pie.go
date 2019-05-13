@@ -123,13 +123,11 @@ func (ss cars) Diff(against cars) (added, removed cars) {
 // if the slice has less elements then n that'll return empty slice
 // if n < 0 it'll return empty slice.
 func (ss cars) DropTop(n int) (drop cars) {
-	if n < 0 {
+	if n < 0 || n >= len(ss) {
 		return
 	}
 
-	for i := n; i < len(ss); i++ {
-		drop = append(drop, ss[i])
-	}
+	drop = ss[n:]
 
 	return
 }

@@ -123,13 +123,11 @@ func (ss carPointers) Diff(against carPointers) (added, removed carPointers) {
 // if the slice has less elements then n that'll return empty slice
 // if n < 0 it'll return empty slice.
 func (ss carPointers) DropTop(n int) (drop carPointers) {
-	if n < 0 {
+	if n < 0 || n >= len(ss) {
 		return
 	}
 
-	for i := n; i < len(ss); i++ {
-		drop = append(drop, ss[i])
-	}
+	drop = ss[n:]
 
 	return
 }

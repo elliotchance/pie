@@ -137,13 +137,11 @@ func (ss Strings) Diff(against Strings) (added, removed Strings) {
 // if the slice has less elements then n that'll return empty slice
 // if n < 0 it'll return empty slice.
 func (ss Strings) DropTop(n int) (drop Strings) {
-	if n < 0 {
+	if n < 0 || n >= len(ss) {
 		return
 	}
 
-	for i := n; i < len(ss); i++ {
-		drop = append(drop, ss[i])
-	}
+	drop = ss[n:]
 
 	return
 }

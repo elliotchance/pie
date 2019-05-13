@@ -4,13 +4,11 @@ package functions
 // if the slice has less elements then n that'll return empty slice
 // if n < 0 it'll return empty slice.
 func (ss SliceType) DropTop(n int) (drop SliceType) {
-	if n < 0 {
+	if n < 0 || n >= len(ss) {
 		return
 	}
 
-	for i := n; i < len(ss); i++ {
-		drop = append(drop, ss[i])
-	}
+	drop = ss[n:]
 
 	return
 }
