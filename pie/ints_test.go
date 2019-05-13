@@ -1052,3 +1052,48 @@ func TestInts_Float64s(t *testing.T) {
 		Float64s{92, 823, 453},
 		Ints{92, 823, 453}.Float64s())
 }
+
+var intsFindFirstTests = []struct {
+	ss         Ints
+	expression func(value int) bool
+	expected   int
+}{
+	{
+		nil,
+		func(value int) bool { return value == 10 },
+		-1,
+	},
+	{
+		Ints{},
+		func(value int) bool { return value == 150 },
+		-1,
+	},
+	{
+		Ints{10, 15},
+		func(value int) bool { return value == 150 },
+		-1,
+	},
+	{
+		Ints{100},
+		func(value int) bool { return value == 100 },
+		0,
+	},
+	{
+		Ints{1, 2},
+		func(value int) bool { return value == 2 },
+		1,
+	},
+	{
+		Ints{1, 2, 3},
+		func(value int) bool { return value == 3 },
+		2,
+	},
+}
+
+func TestInts_FindFirst(t *testing.T) {
+	for _, test := range intsFindFirstTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.expected, test.ss.FindFirst(test.expression))
+		})
+	}
+}

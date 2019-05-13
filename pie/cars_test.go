@@ -821,3 +821,43 @@ func TestCars_Float64s(t *testing.T) {
 		Float64s{0, 0, 0},
 		cars{car{"a", "green"}, car{"bar", "yellow"}, car{"Baz", "black"}}.Float64s())
 }
+
+var carsFindFirstTests = []struct {
+	ss         cars
+	expression func(value car) bool
+	expected   int
+}{
+	{
+		nil,
+		func(value car) bool { return value.Color == "red" },
+		-1,
+	},
+	{
+		cars{},
+		func(value car) bool { return value.Name == "ferrari" },
+		-1,
+	},
+	{
+		cars{car{Name: "volvo", Color: "brown"}},
+		func(value car) bool { return value.Name == "eclipse" },
+		-1,
+	},
+	{
+		cars{car{Name: "maverick", Color: "red"}, car{Name: "ferrari", Color: "red"}, car{Name: "polo", Color: "white"}},
+		func(value car) bool { return value.Name == "polo" && value.Color == "white" },
+		2,
+	},
+	{
+		cars{car{Name: "maverick", Color: "red"}, car{Name: "ferrari", Color: "red"}, car{Name: "polo", Color: "white"}},
+		func(value car) bool { return value.Name == "maverick" && value.Color == "white" },
+		-1,
+	},
+}
+
+func TestCars_FindFirst(t *testing.T) {
+	for _, test := range carsFindFirstTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.expected, test.ss.FindFirst(test.expression))
+		})
+	}
+}

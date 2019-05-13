@@ -1002,3 +1002,43 @@ func TestStrings_Float64s(t *testing.T) {
 		Float64s{92.384, 0, 453},
 		Strings{"92.384", "foo", "453"}.Float64s())
 }
+
+var stringsFindFirstTests = []struct {
+	ss         Strings
+	expression func(value string) bool
+	expected   int
+}{
+	{
+		nil,
+		func(value string) bool { return value == "potato" },
+		-1,
+	},
+	{
+		Strings{},
+		func(value string) bool { return value == "eggplant" },
+		-1,
+	},
+	{
+		Strings{"hamburger", "egg"},
+		func(value string) bool { return value == "onion" },
+		-1,
+	},
+	{
+		Strings{"hamburger", "lettuce", "egg"},
+		func(value string) bool { return value == "lettuce" },
+		1,
+	},
+	{
+		Strings{"hamburger", "egg", "zucchini"},
+		func(value string) bool { return value == "zucchini" },
+		2,
+	},
+}
+
+func TestStrings_FindFirst(t *testing.T) {
+	for _, test := range stringsFindFirstTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.expected, test.ss.FindFirst(test.expression))
+		})
+	}
+}
