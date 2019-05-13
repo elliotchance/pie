@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/elliotchance/pie/pie/util"
-	"math"
 	"math/rand"
 	"sort"
 	"strconv"
@@ -14,10 +13,15 @@ import (
 // Abs is a function which returns the absolute value of all the
 // elements in the slice.
 func (ss Float64s) Abs() Float64s {
+	result := make(Float64s, len(ss))
 	for i, val := range ss {
-		ss[i] = float64(math.Abs(float64(val)))
+		if val < 0 {
+			result[i] = -val
+		} else {
+			result[i] = val
+		}
 	}
-	return ss
+	return result
 }
 
 // All will return true if all callbacks return true. It follows the same logic
@@ -525,6 +529,28 @@ func (ss Float64s) Send(ctx context.Context, ch chan<- float64) Float64s {
 // where min is the first param, max is the second, step is the third one, [min, max) with step,
 // others params will be ignored
 func (ss Float64s) Sequence(params ...int) Float64s {
+	var creator = func(i int) float64 {
+		return float64(i)
+	}
+
+	return ss.SequenceUsing(creator, params...)
+}
+
+// SequenceUsing generates slice in range using creator function
+//
+// There are 3 variations to generate:
+// 		1. [0, n).
+//		2. [min, max).
+//		3. [min, max) with step.
+//
+// if len(params) == 1 considered that will be returned slice between 0 and n,
+// where n is the first param, [0, n).
+// if len(params) == 2 considered that will be returned slice between min and max,
+// where min is the first param, max is the second, [min, max).
+// if len(params) > 2 considered that will be returned slice between min and max with step,
+// where min is the first param, max is the second, step is the third one, [min, max) with step,
+// others params will be ignored
+func (ss Float64s) SequenceUsing(creator func(int) float64, params ...int) Float64s {
 	var seq = func(min, max, step int) (seq Float64s) {
 		lenght := int(util.Round(float64(max-min) / float64(step)))
 		if lenght < 1 {
@@ -533,7 +559,7 @@ func (ss Float64s) Sequence(params ...int) Float64s {
 
 		seq = make(Float64s, lenght)
 		for i := 0; i < lenght; min += step {
-			seq[i] = float64(min)
+			seq[i] = creator(min)
 			i++
 		}
 
@@ -542,10 +568,12 @@ func (ss Float64s) Sequence(params ...int) Float64s {
 
 	if len(params) > 2 {
 		return seq(params[0], params[1], params[2])
-	} else if len(params) > 1 {
+	} else if len(params) == 2 {
 		return seq(params[0], params[1], 1)
-	} else {
+	} else if len(params) == 1 {
 		return seq(0, params[0], 1)
+	} else {
+		return nil
 	}
 }
 

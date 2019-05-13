@@ -772,6 +772,22 @@ func TestInts_Abs(t *testing.T) {
 	assert.Equal(t, Ints{1, 2}, Ints{1, 2}.Abs())
 }
 
+func TestInts_AbsLarge(t *testing.T) {
+	// int64: prevent compile error (constant overflow) on 32-bit architectures.
+	a64 := []int64{3, -4, 1234567890123456789, -987654321098765432}
+	var a Ints
+	for _, v := range a64 {
+		a = a.Append(int(v))
+	}
+	b := a.Abs()
+	for i := range a {
+		v, absv := a[i], b[i]
+		if absv != v && absv != -v {
+			t.Errorf("Incorrect result for Abs(%d): %d", v, absv)
+		}
+	}
+}
+
 var intsSendTests = []struct {
 	ss            Ints
 	recieveDelay  time.Duration
@@ -930,12 +946,17 @@ func TestInts_Diff(t *testing.T) {
 	}
 }
 
-var intsSequenceTests = []struct {
+var intsSequenceAndSequenceUsingTests = []struct {
 	ss       Ints
 	params   []int
 	expected Ints
 }{
 	// n
+	{
+		nil,
+		nil,
+		nil,
+	},
 	{
 		nil,
 		[]int{-1},
@@ -1021,10 +1042,19 @@ var intsSequenceTests = []struct {
 }
 
 func TestInts_Sequence(t *testing.T) {
-	for _, test := range intsSequenceTests {
+	for _, test := range intsSequenceAndSequenceUsingTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableInts(t, &test.ss)()
 			assert.Equal(t, test.expected, test.ss.Sequence(test.params...))
+		})
+	}
+}
+
+func TestInts_SequenceUsing(t *testing.T) {
+	for _, test := range intsSequenceAndSequenceUsingTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.SequenceUsing(func(i int) int { return i }, test.params...))
 		})
 	}
 }
