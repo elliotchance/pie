@@ -133,6 +133,19 @@ func (ss Strings) Diff(against Strings) (added, removed Strings) {
 	return
 }
 
+// DropTop will return the rest slice after dropping the top n elements
+// if the slice has less elements then n that'll return empty slice
+// if n < 0 it'll return empty slice.
+func (ss Strings) DropTop(n int) (drop Strings) {
+	if n < 0 || n >= len(ss) {
+		return
+	}
+
+	drop = ss[n:]
+
+	return
+}
+
 // Each is more condensed version of Transform that allows an action to happen
 // on each elements and pass the original slice on.
 //

@@ -914,3 +914,54 @@ func TestCars_SequenceUsing(t *testing.T) {
 		})
 	}
 }
+
+var carsDropTopTests = []struct {
+	ss      cars
+	n       int
+	dropTop cars
+}{
+	{
+		nil,
+		1,
+		nil,
+	},
+	{
+		cars{},
+		1,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		-1,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		0,
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		1,
+		cars{car{"Baz", "black"}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		2,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		3,
+		nil,
+	},
+}
+
+func TestCars_DropTop(t *testing.T) {
+	for _, test := range carsDropTopTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss)()
+			assert.Equal(t, test.dropTop, test.ss.DropTop(test.n))
+		})
+	}
+}
