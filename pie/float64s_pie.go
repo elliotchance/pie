@@ -220,7 +220,7 @@ func (ss Float64s) FilterNot(condition func(float64) bool) (ss2 Float64s) {
 	return
 }
 
-// FindFirst will return the index of the first element when the callback returns true or -1 if no element is find.
+// FindFirst will return the index of the first element when the callback returns true or -1 if no element is found.
 // It follows the same logic as the findIndex() function in Javascript.
 //
 // If the list is empty then -1 is always returned.

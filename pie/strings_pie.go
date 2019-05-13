@@ -196,7 +196,7 @@ func (ss Strings) FilterNot(condition func(string) bool) (ss2 Strings) {
 	return
 }
 
-// FindFirst will return the index of the first element when the callback returns true or -1 if no element is find.
+// FindFirst will return the index of the first element when the callback returns true or -1 if no element is found.
 // It follows the same logic as the findIndex() function in Javascript.
 //
 // If the list is empty then -1 is always returned.

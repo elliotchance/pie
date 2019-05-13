@@ -976,6 +976,6 @@ func TestCarPointers_FindFirst(t *testing.T) {
 	for _, test := range carsPointerFindFirstTests {
 		t.Run("", func(t *testing.T) {
 			assert.Equal(t, test.expected, test.ss.FindFirst(test.expression))
-    })
-  }
+		})
+	}
 }
