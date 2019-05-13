@@ -187,6 +187,7 @@ The letters in brackets indicate:
 | `Extend`          | ✓      | ✓      | ✓      |      | n        | A new slice with the elements from each slice appended to the end. |
 | `Filter`          | ✓      | ✓      | ✓      |      | n        | A new slice containing only the elements that returned true from the condition. |
 | `FilterNot`       | ✓      | ✓      | ✓      |      | n        | A new slice containing only the elements that returned false from the condition. |
+| `FindFirst`       | ✓      | ✓      | ✓      |      | n        | The index of the first element when the callback returns true or -1 if the callback does not return true, meaning that it did not match any element in the slice. It also can return -1 if the slice is empty or if it is nil. |
 | `First`           | ✓      | ✓      | ✓      |      | 1        | The first element, or a zeroed value. |
 | `FirstOr`         | ✓      | ✓      | ✓      |      | 1        | The first element, or a default value. |
 | `Float64s` (S)    | ✓      | ✓      | ✓      |      | n        | Transforms each element into a float64. |
