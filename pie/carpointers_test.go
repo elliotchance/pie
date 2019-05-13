@@ -3,8 +3,10 @@ package pie
 import (
 	"fmt"
 	"math/rand"
+	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/elliotchance/testify-stats/assert"
 )
@@ -12,6 +14,9 @@ import (
 var carPointerA = &car{"a", "green"}
 var carPointerB = &car{"b", "blue"}
 var carPointerC = &car{"c", "gray"}
+var carPointerD = &car{"d", "black"}
+var carPointerE = &car{"e", "red"}
+var carPointerF = &car{"f", "yellow"}
 var carPointerEmpty = &car{}
 
 var carPointersContainsTests = []struct {
@@ -25,7 +30,7 @@ var carPointersContainsTests = []struct {
 	{carPointers{carPointerA, carPointerB, carPointerC}, carPointerA, true},
 	{carPointers{carPointerA, carPointerB, carPointerC}, carPointerB, true},
 	{carPointers{carPointerA, carPointerB, carPointerC}, carPointerC, true},
-	{carPointers{carPointerA, carPointerB, carPointerC}, &car{"a", "green"}, false},
+	{carPointers{carPointerA, carPointerB, carPointerC}, &car{"a", "green"}, true},
 	{carPointers{carPointerA, carPointerB, carPointerC}, &car{"A", ""}, false},
 	{carPointers{carPointerA, carPointerB, carPointerC}, &car{}, false},
 	{carPointers{carPointerA, carPointerB, carPointerC}, &car{"d", ""}, false},
@@ -43,12 +48,12 @@ func TestCarPointers_Contains(t *testing.T) {
 	}
 }
 
-var carPointersSelectTests = []struct {
+var carPointersFilterTests = []struct {
 	ss                carPointers
 	condition         func(*car) bool
-	expectedSelect    carPointers
-	expectedUnselect  carPointers
-	expectedTransform carPointers
+	expectedFilter    carPointers
+	expectedFilterNot carPointers
+	expectedMap       carPointers
 }{
 	{
 		nil,
@@ -70,29 +75,29 @@ var carPointersSelectTests = []struct {
 	},
 }
 
-func TestCarPointers_Select(t *testing.T) {
-	for _, test := range carPointersSelectTests {
+func TestCarPointers_Filter(t *testing.T) {
+	for _, test := range carPointersFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCarPointers(t, &test.ss)()
-			assert.Equal(t, test.expectedSelect, test.ss.Select(test.condition))
+			assert.Equal(t, test.expectedFilter, test.ss.Filter(test.condition))
 		})
 	}
 }
 
-func TestCarPointers_Unselect(t *testing.T) {
-	for _, test := range carPointersSelectTests {
+func TestCarPointers_FilterNot(t *testing.T) {
+	for _, test := range carPointersFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCarPointers(t, &test.ss)()
-			assert.Equal(t, test.expectedUnselect, test.ss.Unselect(test.condition))
+			assert.Equal(t, test.expectedFilterNot, test.ss.FilterNot(test.condition))
 		})
 	}
 }
 
-func TestCarPointers_Transform(t *testing.T) {
-	for _, test := range carPointersSelectTests {
+func TestCarPointers_Map(t *testing.T) {
+	for _, test := range carPointersFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCarPointers(t, &test.ss)()
-			assert.Equal(t, test.expectedTransform, test.ss.Transform(func(c *car) *car {
+			assert.Equal(t, test.expectedMap, test.ss.Map(func(c *car) *car {
 				return &car{
 					Name:  strings.ToUpper(c.Name),
 					Color: c.Color,
@@ -334,6 +339,78 @@ var stringsToStringsTests = []struct {
 	},
 }
 
+var carPointersSortCustomTests = []struct {
+	ss                  carPointers
+	sortedStableByName  carPointers
+	sortedStableByColor carPointers
+}{
+	{
+		nil,
+		nil,
+		nil,
+	},
+	{
+		carPointers{},
+		carPointers{},
+		carPointers{},
+	},
+	{
+		carPointers{&car{"foo", "red"}},
+		carPointers{&car{"foo", "red"}},
+		carPointers{&car{"foo", "red"}},
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}, &car{"foo", "red"}},
+		carPointers{&car{"Baz", "black"}, &car{"bar", "yellow"}, &car{"foo", "red"}},
+		carPointers{&car{"Baz", "black"}, &car{"foo", "red"}, &car{"bar", "yellow"}},
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}, &car{"qux", "cyan"}, &car{"foo", "red"}},
+		carPointers{&car{"Baz", "black"}, &car{"bar", "yellow"}, &car{"foo", "red"}, &car{"qux", "cyan"}},
+		carPointers{&car{"Baz", "black"}, &car{"qux", "cyan"}, &car{"foo", "red"}, &car{"bar", "yellow"}},
+	},
+	{
+		carPointers{&car{"aaa", "yellow"}, &car{"aaa", "black"}, &car{"bbb", "yellow"}, &car{"bbb", "black"}},
+		carPointers{&car{"aaa", "yellow"}, &car{"aaa", "black"}, &car{"bbb", "yellow"}, &car{"bbb", "black"}},
+		carPointers{&car{"aaa", "black"}, &car{"bbb", "black"}, &car{"aaa", "yellow"}, &car{"bbb", "yellow"}},
+	},
+}
+
+func carPointerNameLess(a, b *car) bool {
+	return a.Name < b.Name
+}
+
+func carPointerColorLess(a, b *car) bool {
+	return a.Color < b.Color
+}
+
+func TestCarPointers_SortUsing(t *testing.T) {
+	isSortedUsing := func(ss carPointers, less func(a, b *car) bool) bool {
+		for i := 1; i < len(ss); i++ {
+			if less(ss[i], ss[i-1]) {
+				return false
+			}
+		}
+		return true
+	}
+
+	for _, test := range carPointersSortCustomTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+
+			sortedByName := test.ss.SortUsing(carPointerNameLess)
+			assert.True(t, isSortedUsing(sortedByName, carPointerNameLess))
+			sortedStableByName := test.ss.SortStableUsing(carPointerNameLess)
+			assert.Equal(t, test.sortedStableByName, sortedStableByName)
+
+			sortedByColor := test.ss.SortUsing(carPointerColorLess)
+			assert.True(t, isSortedUsing(sortedByColor, carPointerColorLess))
+			sortedStableByColor := test.ss.SortStableUsing(carPointerColorLess)
+			assert.Equal(t, test.sortedStableByColor, sortedStableByColor)
+		})
+	}
+}
+
 func TestCarPointers_ToStrings(t *testing.T) {
 	for _, test := range stringsToStringsTests {
 		t.Run("", func(t *testing.T) {
@@ -345,8 +422,8 @@ func TestCarPointers_ToStrings(t *testing.T) {
 
 func TestCarPointers_Append(t *testing.T) {
 	assert.Equal(t,
-		(carPointers)(nil).Append(),
-		(carPointers)(nil),
+		len((carPointers)(nil).Append()),
+		0,
 	)
 
 	assert.Equal(t,
@@ -634,6 +711,240 @@ func TestCarPointers_Random(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCarPointers(t, &test.ss)()
 			assert.Equal(t, test.expected, test.ss.Random(test.source))
+		})
+	}
+}
+
+var carPointersSendTests = []struct {
+	ss            carPointers
+	recieveDelay  time.Duration
+	canceledDelay time.Duration
+	expected      carPointers
+}{
+	{
+		nil,
+		0,
+		0,
+		nil,
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+		0,
+		0,
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+		time.Millisecond * 30,
+		time.Millisecond * 10,
+		carPointers{&car{"bar", "yellow"}},
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+		time.Millisecond * 3,
+		time.Millisecond * 10,
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}},
+	},
+}
+
+func TestCarPointers_Send(t *testing.T) {
+	for _, test := range carPointersSendTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			ch := make(chan *car)
+			actual := getCarPointersFromChan(ch, test.recieveDelay)
+			ctx := createContextByDelay(test.canceledDelay)
+
+			actualSended := test.ss.Send(ctx, ch)
+			close(ch)
+
+			assert.Equal(t, test.expected, actualSended)
+			assert.Equal(t, test.expected, actual())
+		})
+	}
+}
+
+var carPointersDiffTests = map[string]struct {
+	ss1     carPointers
+	ss2     carPointers
+	added   carPointers
+	removed carPointers
+}{
+	"BothEmpty": {
+		nil,
+		nil,
+		nil,
+		nil,
+	},
+	"OnlyRemovedUnique": {
+		carPointers{carPointerA, carPointerB},
+		nil,
+		nil,
+		carPointers{carPointerA, carPointerB},
+	},
+	"OnlyRemovedDuplicates": {
+		carPointers{carPointerA, carPointerC, carPointerA},
+		nil,
+		nil,
+		carPointers{carPointerA, carPointerC, carPointerA},
+	},
+	"OnlyAddedUnique": {
+		nil,
+		carPointers{carPointerB, carPointerC},
+		carPointers{carPointerB, carPointerC},
+		nil,
+	},
+	"OnlyAddedDuplicates": {
+		nil,
+		carPointers{carPointerB, carPointerC, carPointerC, carPointerB},
+		carPointers{carPointerB, carPointerC, carPointerC, carPointerB},
+		nil,
+	},
+	"AddedAndRemovedUnique": {
+		carPointers{carPointerA, carPointerB, carPointerC, carPointerD},
+		carPointers{carPointerC, carPointerD, carPointerE, carPointerF},
+		carPointers{carPointerE, carPointerF},
+		carPointers{carPointerA, carPointerB},
+	},
+	"AddedAndRemovedDuplicates": {
+		carPointers{carPointerA, carPointerB, carPointerC, carPointerC, carPointerD},
+		carPointers{carPointerC, carPointerD, carPointerE, carPointerD, carPointerF},
+		carPointers{carPointerE, carPointerD, carPointerF},
+		carPointers{carPointerA, carPointerB, carPointerC},
+	},
+}
+
+func TestCarPointers_Diff(t *testing.T) {
+	for testName, test := range carPointersDiffTests {
+		t.Run(testName, func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss1)()
+			defer assertImmutableCarPointers(t, &test.ss2)()
+
+			added, removed := test.ss1.Diff(test.ss2)
+			assert.Equal(t, test.added, added)
+			assert.Equal(t, test.removed, removed)
+		})
+	}
+}
+
+func TestCarPointers_Strings(t *testing.T) {
+	assert.Equal(t, Strings(nil), carPointers(nil).Strings())
+
+	assert.Equal(t, Strings(nil), carPointers{}.Strings())
+
+	assert.Equal(t,
+		Strings{"a is green", "b is blue", "c is gray"},
+		carPointers{carPointerA, carPointerB, carPointerC}.Strings())
+}
+
+func TestCarPointers_Ints(t *testing.T) {
+	assert.Equal(t, Ints(nil), carPointers(nil).Ints())
+
+	assert.Equal(t, Ints(nil), carPointers{}.Ints())
+
+	assert.Equal(t,
+		Ints{0, 0, 0},
+		carPointers{carPointerA, carPointerB, carPointerC}.Ints())
+}
+
+func TestCarPointers_Float64s(t *testing.T) {
+	assert.Equal(t, Float64s(nil), carPointers(nil).Float64s())
+
+	assert.Equal(t, Float64s(nil), carPointers{}.Float64s())
+
+	assert.Equal(t,
+		Float64s{0, 0, 0},
+		carPointers{carPointerA, carPointerB, carPointerC}.Float64s())
+}
+
+var carPointersSequenceTests = []struct {
+	ss       carPointers
+	creator  func(int) *car
+	params   []int
+	expected carPointers
+}{
+	// n
+	{
+		nil,
+		nil,
+		nil,
+		nil,
+	},
+	{
+		nil,
+		nil,
+		[]int{0},
+		nil,
+	},
+	{
+		nil,
+		nil,
+		[]int{-1},
+		nil,
+	},
+	{
+		nil,
+		func(i int) *car { return &car{Name: strconv.Itoa(i)} },
+		[]int{3},
+		carPointers{{Name: "0"}, {Name: "1"}, {Name: "2"}},
+	},
+	// range
+	{
+		nil,
+		func(i int) *car { return &car{Name: strconv.Itoa(i)} },
+		[]int{6, 6},
+		nil,
+	},
+	{
+		nil,
+		func(i int) *car { return &car{Name: strconv.Itoa(i)} },
+		[]int{8, 6},
+		nil,
+	},
+	{
+		nil,
+		func(i int) *car { return &car{Name: strconv.Itoa(i)} },
+		[]int{3, 6},
+		carPointers{{Name: "3"}, {Name: "4"}, {Name: "5"}},
+	},
+	{
+		nil,
+		func(i int) *car { return &car{Name: strconv.Itoa(i)} },
+		[]int{-6, -3},
+		carPointers{{Name: "-6"}, {Name: "-5"}, {Name: "-4"}},
+	},
+	{
+		nil,
+		func(i int) *car { return &car{Name: strconv.Itoa(i)} },
+		[]int{-3, -6},
+		nil,
+	},
+	// range with step
+	{
+		nil,
+		func(i int) *car { return &car{Name: strconv.Itoa(i)} },
+		[]int{3, 7, 2},
+		carPointers{{Name: "3"}, {Name: "5"}},
+	},
+	{
+		nil,
+		func(i int) *car { return &car{Name: strconv.Itoa(i)} },
+		[]int{-3, -6, -2},
+		carPointers{{Name: "-3"}, {Name: "-5"}},
+	},
+	{
+		nil,
+		func(i int) *car { return &car{Name: strconv.Itoa(i)} },
+		[]int{3, 7, 10},
+		nil,
+	},
+}
+
+func TestCarPointers_SequenceUsing(t *testing.T) {
+	for _, test := range carPointersSequenceTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.SequenceUsing(test.creator, test.params...))
 		})
 	}
 }

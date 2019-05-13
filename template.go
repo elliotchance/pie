@@ -4,17 +4,18 @@ package main
 var pieTemplates = map[string]string{
 	"Abs": `package functions
 
-import (
-	"math"
-)
-
 // Abs is a function which returns the absolute value of all the
 // elements in the slice.
 func (ss SliceType) Abs() SliceType {
+	result := make(SliceType, len(ss))
 	for i, val := range ss {
-		ss[i] = ElementType(math.Abs(float64(val)))
+		if val < 0 {
+			result[i] = -val
+		} else {
+			result[i] = val
+		}
 	}
-	return ss
+	return result
 }
 `,
 	"All": `package functions
@@ -51,13 +52,16 @@ func (ss SliceType) Any(fn func(value ElementType) bool) bool {
 `,
 	"Append": `package functions
 
-// Append will return a new slice with the elements appended to the end. It is a
-// wrapper for the internal append(). It is offered as a function so that it can
-// more easily chained.
+// Append will return a new slice with the elements appended to the end.
 //
 // It is acceptable to provide zero arguments.
 func (ss SliceType) Append(elements ...ElementType) SliceType {
-	return append(ss, elements...)
+	// Copy ss, to make sure no memory is overlapping between input and
+	// output. See issue #97.
+	result := append(SliceType{}, ss...)
+
+	result = append(result, elements...)
+	return result
 }
 `,
 	"AreSorted": `package functions
@@ -119,12 +123,54 @@ func (ss SliceType) Bottom(n int) (top SliceType) {
 // When using slices of pointers it will only compare by address, not value.
 func (ss SliceType) Contains(lookingFor ElementType) bool {
 	for _, s := range ss {
-		if s == lookingFor {
+		if lookingFor.Equals(s) {
 			return true
 		}
 	}
 
 	return false
+}
+`,
+	"Diff": `package functions
+
+// Diff returns the elements that needs to be added or removed from the first
+// slice to have the same elements in the second slice.
+//
+// The order of elements is not taken into consideration, so the slices are
+// treated sets that allow duplicate items.
+//
+// The added and removed returned may be blank respectively, or contain upto as
+// many elements that exists in the largest slice.
+func (ss SliceType) Diff(against SliceType) (added, removed SliceType) {
+	// This is probably not the best way to do it. We do an O(n^2) between the
+	// slices to see which items are missing in each direction.
+
+	diffOneWay := func(ss1, ss2raw SliceType) (result SliceType) {
+		ss2 := make(SliceType, len(ss2raw))
+		copy(ss2, ss2raw)
+
+		for _, s := range ss1 {
+			found := false
+
+			for i, element := range ss2 {
+				if s.Equals(element) {
+					ss2 = append(ss2[:i], ss2[i+1:]...)
+					found = true
+				}
+			}
+
+			if !found {
+				result = append(result, s)
+			}
+		}
+
+		return
+	}
+
+	removed = diffOneWay(ss, against)
+	added = diffOneWay(against, ss)
+
+	return
 }
 `,
 	"Each": `package functions
@@ -168,6 +214,36 @@ func (ss SliceType) Extend(slices ...SliceType) (ss2 SliceType) {
 	return ss2
 }
 `,
+	"Filter": `package functions
+
+// Filter will return a new slice containing only the elements that return
+// true from the condition. The returned slice may contain zero elements (nil).
+//
+// FilterNot works in the opposite way of Filter.
+func (ss SliceType) Filter(condition func(ElementType) bool) (ss2 SliceType) {
+	for _, s := range ss {
+		if condition(s) {
+			ss2 = append(ss2, s)
+		}
+	}
+	return
+}
+`,
+	"FilterNot": `package functions
+
+// FilterNot works the same as Filter, with a negated condition. That is, it will
+// return a new slice only containing the elements that returned false from the
+// condition. The returned slice may contain zero elements (nil).
+func (ss SliceType) FilterNot(condition func(ElementType) bool) (ss2 SliceType) {
+	for _, s := range ss {
+		if !condition(s) {
+			ss2 = append(ss2, s)
+		}
+	}
+
+	return
+}
+`,
 	"First": `package functions
 
 // First returns the first element, or zero. Also see FirstOr().
@@ -185,6 +261,94 @@ func (ss SliceType) FirstOr(defaultValue ElementType) ElementType {
 	}
 
 	return ss[0]
+}
+`,
+	"Float64s": `package functions
+
+import (
+	"github.com/elliotchance/pie/pie"
+	"strconv"
+)
+
+// Float64s transforms each element to a float64.
+func (ss SliceType) Float64s() pie.Float64s {
+	l := len(ss)
+
+	// Avoid the allocation.
+	if l == 0 {
+		return nil
+	}
+
+	result := make(pie.Float64s, l)
+	for i := 0; i < l; i++ {
+		mightBeString := ss[i]
+		result[i], _ = strconv.ParseFloat(mightBeString.String(), 64)
+	}
+
+	return result
+}
+`,
+	"Intersect": `package functions
+
+// Intersect returns items that exist in all lists.
+//
+// It returns slice without any duplicates.
+// If zero slice arguments are provided, then nil is returned.
+func (ss SliceType) Intersect(slices ...SliceType) (ss2 SliceType) {
+	if slices == nil {
+		return nil
+	}
+
+	var uniqs = make([]map[ElementType]struct{}, len(slices))
+	for i := 0; i < len(slices); i++ {
+		m := make(map[ElementType]struct{})
+		for _, el := range slices[i] {
+			m[el] = struct{}{}
+		}
+		uniqs[i] = m
+	}
+
+	var containsInAll = false
+	for _, el := range ss.Unique() {
+		for _, u := range uniqs {
+			if _, exists := u[el]; !exists {
+				containsInAll = false
+				break
+			}
+			containsInAll = true
+		}
+		if containsInAll {
+			ss2 = append(ss2, el)
+		}
+	}
+
+	return
+}
+`,
+	"Ints": `package functions
+
+import (
+	"github.com/elliotchance/pie/pie"
+	"strconv"
+)
+
+// Ints transforms each element to an integer.
+func (ss SliceType) Ints() pie.Ints {
+	l := len(ss)
+
+	// Avoid the allocation.
+	if l == 0 {
+		return nil
+	}
+
+	result := make(pie.Ints, l)
+	for i := 0; i < l; i++ {
+		mightBeString := ss[i]
+		f, _ := strconv.ParseFloat(mightBeString.String(), 64)
+		result[i] = int(f)
+	}
+
+	return result
 }
 `,
 	"JSONBytes": `package functions
@@ -291,6 +455,27 @@ func (ss SliceType) Len() int {
 	return len(ss)
 }
 `,
+	"Map": `package functions
+
+// Map will return a new slice where each element has been mapped (transformed).
+// The number of elements returned will always be the same as the input.
+//
+// Be careful when using this with slices of pointers. If you modify the input
+// value it will affect the original slice. Be sure to return a new allocated
+// object or deep copy the existing one.
+func (ss SliceType) Map(fn func(ElementType) ElementType) (ss2 SliceType) {
+	if ss == nil {
+		return nil
+	}
+
+	ss2 = make([]ElementType, len(ss))
+	for i, s := range ss {
+		ss2[i] = fn(s)
+	}
+
+	return
+}
+`,
 	"Max": `package functions
 
 // Max is the maximum value, or zero.
@@ -353,6 +538,21 @@ func (ss SliceType) Min() (min ElementType) {
 	return
 }
 `,
+	"Product": `package functions
+
+// Product is the product of all of the elements.
+func (ss SliceType) Product() (product ElementType) {
+	if len(ss) == 0 {
+		return
+	}
+	product = ss[0]
+	for _, s := range ss[1:] {
+		product *= s
+	}
+
+	return
+}
+`,
 	"Random": `package functions
 
 import (
@@ -373,6 +573,24 @@ func (ss SliceType) Random(source rand.Source) ElementType {
 	rnd := rand.New(source)
 	i := rnd.Intn(n)
 	return ss[i]
+}
+`,
+	"Reduce": `package functions
+
+// Reduce continually applies the provided function
+// over the slice. Reducing the elements to a single value.
+//
+// Returns a zero value of ElementType if there are no elements in the slice. It will panic if the reducer is nil and the slice has more than one element (required to invoke reduce).
+// Otherwise returns result of applying reducer from left to right.
+func (ss SliceType) Reduce(reducer func(ElementType, ElementType) ElementType) (el ElementType) {
+	if len(ss) == 0 {
+		return
+	}
+	el = ss[0]
+	for _, s := range ss[1:] {
+		el = reducer(el, s)
+	}
+	return
 }
 `,
 	"Reverse": `package functions
@@ -397,20 +615,98 @@ func (ss SliceType) Reverse() SliceType {
 	return sorted
 }
 `,
-	"Select": `package functions
+	"Send": `package functions
 
-// Select will return a new slice containing only the elements that return
-// true from the condition. The returned slice may contain zero elements (nil).
+import (
+	"context"
+)
+
+// Send sends elements to channel
+// in normal act it sends all elements but if func canceled it can be less
 //
-// Unselect works in the opposite way as Select.
-func (ss SliceType) Select(condition func(ElementType) bool) (ss2 SliceType) {
-	for _, s := range ss {
-		if condition(s) {
-			ss2 = append(ss2, s)
+// it locks execution of gorutine
+// it doesn't close channel after work
+// returns sended elements if len(this) != len(old) considered func was canceled
+func (ss SliceType) Send(ctx context.Context, ch chan<- ElementType) SliceType {
+	for i, s := range ss {
+		select {
+		case <-ctx.Done():
+			return ss[:i]
+		default:
+			ch <- s
 		}
 	}
 
-	return
+	return ss
+}
+`,
+	"Sequence": `package functions
+
+// Sequence generates all numbers in range or returns nil if params invalid
+//
+// There are 3 variations to generate:
+// 		1. [0, n).
+//		2. [min, max).
+//		3. [min, max) with step.
+//
+// if len(params) == 1 considered that will be returned slice between 0 and n,
+// where n is the first param, [0, n).
+// if len(params) == 2 considered that will be returned slice between min and max,
+// where min is the first param, max is the second, [min, max).
+// if len(params) > 2 considered that will be returned slice between min and max with step,
+// where min is the first param, max is the second, step is the third one, [min, max) with step,
+// others params will be ignored
+func (ss SliceType) Sequence(params ...int) SliceType {
+	var creator = func(i int) ElementType {
+		return ElementType(i)
+	}
+
+	return ss.SequenceUsing(creator, params...)
+}
+`,
+	"SequenceUsing": `package functions
+
+import "github.com/elliotchance/pie/pie/util"
+
+// SequenceUsing generates slice in range using creator function
+//
+// There are 3 variations to generate:
+// 		1. [0, n).
+//		2. [min, max).
+//		3. [min, max) with step.
+//
+// if len(params) == 1 considered that will be returned slice between 0 and n,
+// where n is the first param, [0, n).
+// if len(params) == 2 considered that will be returned slice between min and max,
+// where min is the first param, max is the second, [min, max).
+// if len(params) > 2 considered that will be returned slice between min and max with step,
+// where min is the first param, max is the second, step is the third one, [min, max) with step,
+// others params will be ignored
+func (ss SliceType) SequenceUsing(creator func(int) ElementType, params ...int) SliceType {
+	var seq = func(min, max, step int) (seq SliceType) {
+		lenght := int(util.Round(float64(max-min) / float64(step)))
+		if lenght < 1 {
+			return
+		}
+
+		seq = make(SliceType, lenght)
+		for i := 0; i < lenght; min += step {
+			seq[i] = creator(min)
+			i++
+		}
+
+		return seq
+	}
+
+	if len(params) > 2 {
+		return seq(params[0], params[1], params[2])
+	} else if len(params) == 2 {
+		return seq(params[0], params[1], 1)
+	} else if len(params) == 1 {
+		return seq(0, params[0], 1)
+	} else {
+		return nil
+	}
 }
 `,
 	"Shuffle": `package functions
@@ -461,13 +757,91 @@ func (ss SliceType) Sort() SliceType {
 		return ss
 	}
 
-	sorted := make([]ElementType, len(ss))
+	sorted := make(SliceType, len(ss))
 	copy(sorted, ss)
 	sort.Slice(sorted, func(i, j int) bool {
 		return sorted[i] < sorted[j]
 	})
 
 	return sorted
+}
+`,
+	"SortStableUsing": `package functions
+
+import (
+	"sort"
+)
+
+// SortStableUsing works similar to sort.SliceStable. However, unlike sort.SliceStable the
+// slice returned will be reallocated as to not modify the input slice.
+func (ss SliceType) SortStableUsing(less func(a, b ElementType) bool) SliceType {
+	// Avoid the allocation. If there is one element or less it is already
+	// sorted.
+	if len(ss) < 2 {
+		return ss
+	}
+
+	sorted := make(SliceType, len(ss))
+	copy(sorted, ss)
+	sort.SliceStable(sorted, func(i, j int) bool {
+		return less(sorted[i], sorted[j])
+	})
+
+	return sorted
+}
+`,
+	"SortUsing": `package functions
+
+import (
+	"sort"
+)
+
+// SortUsing works similar to sort.Slice. However, unlike sort.Slice the
+// slice returned will be reallocated as to not modify the input slice.
+func (ss SliceType) SortUsing(less func(a, b ElementType) bool) SliceType {
+	// Avoid the allocation. If there is one element or less it is already
+	// sorted.
+	if len(ss) < 2 {
+		return ss
+	}
+
+	sorted := make(SliceType, len(ss))
+	copy(sorted, ss)
+	sort.Slice(sorted, func(i, j int) bool {
+		return less(sorted[i], sorted[j])
+	})
+
+	return sorted
+}
+`,
+	"Strings": `package functions
+
+import (
+	"github.com/elliotchance/pie/pie"
+)
+
+// Strings transforms each element to a string.
+//
+// If the element type implements fmt.Stringer it will be used. Otherwise it
+// will fallback to the result of:
+//
+//   fmt.Sprintf("%v")
+//
+func (ss SliceType) Strings() pie.Strings {
+	l := len(ss)
+
+	// Avoid the allocation.
+	if l == 0 {
+		return nil
+	}
+
+	result := make(pie.Strings, l)
+	for i := 0; i < l; i++ {
+		mightBeString := ss[i]
+		result[i] = mightBeString.String()
+	}
+
+	return result
 }
 `,
 	"Sum": `package functions
@@ -518,27 +892,6 @@ func (ss SliceType) Top(n int) (top SliceType) {
 	return
 }
 `,
-	"Transform": `package functions
-
-// Transform will return a new slice where each element has been transformed.
-// The number of element returned will always be the same as the input.
-//
-// Be careful when using this with slices of pointers. If you modify the input
-// value it will affect the original slice. Be sure to return a new allocated
-// object or deep copy the existing one.
-func (ss SliceType) Transform(fn func(ElementType) ElementType) (ss2 SliceType) {
-	if ss == nil {
-		return nil
-	}
-
-	ss2 = make([]ElementType, len(ss))
-	for i, s := range ss {
-		ss2[i] = fn(s)
-	}
-
-	return
-}
-`,
 	"Unique": `package functions
 
 // Unique returns a new slice with all of the unique values.
@@ -570,21 +923,6 @@ func (ss SliceType) Unique() SliceType {
 	}
 
 	return uniqueValues
-}
-`,
-	"Unselect": `package functions
-
-// Unselect works the same as Select, with a negated condition. That is, it will
-// return a new slice only containing the elements that returned false from the
-// condition. The returned slice may contain zero elements (nil).
-func (ss SliceType) Unselect(condition func(ElementType) bool) (ss2 SliceType) {
-	for _, s := range ss {
-		if !condition(s) {
-			ss2 = append(ss2, s)
-		}
-	}
-
-	return
 }
 `,
 	"Values": `package functions

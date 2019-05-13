@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"testing"
+	"time"
 
 	"github.com/elliotchance/testify-stats/assert"
 )
@@ -31,12 +32,12 @@ func TestInts_Contains(t *testing.T) {
 	}
 }
 
-var intsSelectTests = []struct {
+var intsFilterTests = []struct {
 	ss                Ints
 	condition         func(int) bool
-	expectedSelect    Ints
-	expectedUnselect  Ints
-	expectedTransform Ints
+	expectedFilter    Ints
+	expectedFilterNot Ints
+	expectedMap       Ints
 }{
 	{
 		nil,
@@ -58,26 +59,26 @@ var intsSelectTests = []struct {
 	},
 }
 
-func TestInts_Select(t *testing.T) {
-	for _, test := range intsSelectTests {
+func TestInts_Filter(t *testing.T) {
+	for _, test := range intsFilterTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expectedSelect, test.ss.Select(test.condition))
+			assert.Equal(t, test.expectedFilter, test.ss.Filter(test.condition))
 		})
 	}
 }
 
-func TestInts_Unselect(t *testing.T) {
-	for _, test := range intsSelectTests {
+func TestInts_FilterNot(t *testing.T) {
+	for _, test := range intsFilterTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expectedUnselect, test.ss.Unselect(test.condition))
+			assert.Equal(t, test.expectedFilterNot, test.ss.FilterNot(test.condition))
 		})
 	}
 }
 
-func TestInts_Transform(t *testing.T) {
-	for _, test := range intsSelectTests {
+func TestInts_Map(t *testing.T) {
+	for _, test := range intsFilterTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expectedTransform, test.ss.Transform(func(i int) int {
+			assert.Equal(t, test.expectedMap, test.ss.Map(func(i int) int {
 				return i + 5
 			}))
 		})
@@ -152,12 +153,13 @@ func TestInts_Last(t *testing.T) {
 }
 
 var intsStatsTests = []struct {
-	ss                 []int
-	min, max, sum, len int
-	average            float64
+	ss                          []int
+	min, max, sum, product, len int
+	average                     float64
 }{
 	{
 		nil,
+		0,
 		0,
 		0,
 		0,
@@ -171,9 +173,11 @@ var intsStatsTests = []struct {
 		0,
 		0,
 		0,
+		0,
 	},
 	{
 		[]int{1},
+		1,
 		1,
 		1,
 		1,
@@ -185,6 +189,7 @@ var intsStatsTests = []struct {
 		1,
 		5,
 		11,
+		30,
 		4,
 		2.75,
 	},
@@ -210,6 +215,14 @@ func TestInts_Sum(t *testing.T) {
 	for _, test := range intsStatsTests {
 		t.Run("", func(t *testing.T) {
 			assert.Equal(t, test.sum, Ints(test.ss).Sum())
+		})
+	}
+}
+
+func TestInts_Product(t *testing.T) {
+	for _, test := range intsStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.product, Ints(test.ss).Product())
 		})
 	}
 }
@@ -433,8 +446,8 @@ func TestInts_ToStrings(t *testing.T) {
 
 func TestInts_Append(t *testing.T) {
 	assert.Equal(t,
-		Ints{}.Append(),
-		Ints{},
+		len(Ints{}.Append()),
+		0,
 	)
 
 	assert.Equal(t,
@@ -727,8 +740,354 @@ func TestInts_Random(t *testing.T) {
 	}
 }
 
+var intsReduceTests = []struct {
+	ss       Ints
+	expected int
+	reducer  func(a, b int) int
+}{
+	{
+		Ints{1, 2, 3},
+		6,
+		func(a, b int) int { return a + b },
+	},
+	{
+		Ints{1, 2, 3},
+		-4,
+		func(a, b int) int { return a - b },
+	},
+	{
+		Ints{},
+		0,
+		func(a, b int) int { return a - b },
+	},
+	{
+		Ints{1},
+		1,
+		func(a, b int) int { return a - b },
+	},
+}
+
+func TestInts_Reduce(t *testing.T) {
+	for _, test := range intsReduceTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.expected, test.ss.Reduce(test.reducer))
+		})
+	}
+}
+
 func TestInts_Abs(t *testing.T) {
 	assert.Equal(t, Ints{1, 5, 7}, Ints{-1, 5, -7}.Abs())
 	assert.Equal(t, Ints{689845, 688969, 220373, 89437, 308836}, Ints{-689845, -688969, -220373, -89437, 308836}.Abs())
 	assert.Equal(t, Ints{1, 2}, Ints{1, 2}.Abs())
+}
+
+func TestInts_AbsLarge(t *testing.T) {
+	// int64: prevent compile error (constant overflow) on 32-bit architectures.
+	a64 := []int64{3, -4, 1234567890123456789, -987654321098765432}
+	var a Ints
+	for _, v := range a64 {
+		a = a.Append(int(v))
+	}
+	b := a.Abs()
+	for i := range a {
+		v, absv := a[i], b[i]
+		if absv != v && absv != -v {
+			t.Errorf("Incorrect result for Abs(%d): %d", v, absv)
+		}
+	}
+}
+
+var intsSendTests = []struct {
+	ss            Ints
+	recieveDelay  time.Duration
+	canceledDelay time.Duration
+	expected      Ints
+}{
+	{
+		nil,
+		0,
+		0,
+		nil,
+	},
+	{
+		Ints{1, 3},
+		0,
+		0,
+		Ints{1, 3},
+	},
+	{
+		Ints{1, 3},
+		time.Millisecond * 30,
+		time.Millisecond * 10,
+		Ints{1},
+	},
+	{
+		Ints{1, 3},
+		time.Millisecond * 3,
+		time.Millisecond * 10,
+		Ints{1, 3},
+	},
+}
+
+func TestInts_Send(t *testing.T) {
+	for _, test := range intsSendTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			ch := make(chan int)
+			actual := getIntsFromChan(ch, test.recieveDelay)
+			ctx := createContextByDelay(test.canceledDelay)
+
+			actualSended := test.ss.Send(ctx, ch)
+			close(ch)
+
+			assert.Equal(t, test.expected, actualSended)
+			assert.Equal(t, test.expected, actual())
+		})
+	}
+}
+
+var intsIntersectTests = []struct {
+	ss       Ints
+	params   []Ints
+	expected Ints
+}{
+	{
+		nil,
+		nil,
+		nil,
+	},
+	{
+		Ints{1, 3},
+		nil,
+		nil,
+	},
+	{
+		nil,
+		[]Ints{{1, 3, 5}, {5, 1}},
+		nil,
+	},
+	{
+		Ints{1, 3},
+		[]Ints{{1}, {3}},
+		nil,
+	},
+	{
+		Ints{1, 3},
+		[]Ints{{1}},
+		Ints{1},
+	},
+	{
+		Ints{1, 3},
+		[]Ints{{1, 3, 5}, {5, 1}},
+		Ints{1},
+	},
+}
+
+func TestInts_Intersect(t *testing.T) {
+	for _, test := range intsIntersectTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Intersect(test.params...))
+		})
+	}
+}
+
+var intsDiffTests = map[string]struct {
+	ss1     Ints
+	ss2     Ints
+	added   Ints
+	removed Ints
+}{
+	"BothEmpty": {
+		nil,
+		nil,
+		nil,
+		nil,
+	},
+	"OnlyRemovedUnique": {
+		Ints{1, 3},
+		nil,
+		nil,
+		Ints{1, 3},
+	},
+	"OnlyRemovedDuplicates": {
+		Ints{1, 3, 1},
+		nil,
+		nil,
+		Ints{1, 3, 1},
+	},
+	"OnlyAddedUnique": {
+		nil,
+		Ints{2, 3},
+		Ints{2, 3},
+		nil,
+	},
+	"OnlyAddedDuplicates": {
+		nil,
+		Ints{2, 3, 3, 2},
+		Ints{2, 3, 3, 2},
+		nil,
+	},
+	"AddedAndRemovedUnique": {
+		Ints{1, 2, 3, 4},
+		Ints{3, 4, 5, 6},
+		Ints{5, 6},
+		Ints{1, 2},
+	},
+	"AddedAndRemovedDuplicates": {
+		Ints{1, 2, 3, 3, 4},
+		Ints{3, 4, 5, 4, 6},
+		Ints{5, 4, 6},
+		Ints{1, 2, 3},
+	},
+}
+
+func TestInts_Diff(t *testing.T) {
+	for testName, test := range intsDiffTests {
+		t.Run(testName, func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss1)()
+			defer assertImmutableInts(t, &test.ss2)()
+
+			added, removed := test.ss1.Diff(test.ss2)
+			assert.Equal(t, test.added, added)
+			assert.Equal(t, test.removed, removed)
+		})
+	}
+}
+
+var intsSequenceAndSequenceUsingTests = []struct {
+	ss       Ints
+	params   []int
+	expected Ints
+}{
+	// n
+	{
+		nil,
+		nil,
+		nil,
+	},
+	{
+		nil,
+		[]int{-1},
+		nil,
+	},
+	{
+		nil,
+		[]int{0},
+		nil,
+	},
+	{
+		nil,
+		[]int{3},
+		Ints{0, 1, 2},
+	},
+	{
+		Ints{},
+		[]int{3},
+		Ints{0, 1, 2},
+	},
+	// range
+	{
+		nil,
+		[]int{2, 2},
+		nil,
+	},
+	{
+		Ints{},
+		[]int{3, 2},
+		nil,
+	},
+	{
+		nil,
+		[]int{0, 3},
+		Ints{0, 1, 2},
+	},
+	{
+		Ints{},
+		[]int{3, 6},
+		Ints{3, 4, 5},
+	},
+	{
+		Ints{},
+		[]int{-5, 0},
+		Ints{-5, -4, -3, -2, -1},
+	},
+	{
+		Ints{},
+		[]int{-5, -10},
+		nil,
+	},
+	// range with step
+	{
+		nil,
+		[]int{3, 3, 1},
+		nil,
+	},
+	{
+		Ints{},
+		[]int{3, 6, 2},
+		Ints{3, 5},
+	},
+	{
+		Ints{},
+		[]int{3, 7, 2},
+		Ints{3, 5},
+	},
+	{
+		Ints{},
+		[]int{-10, -6, 1},
+		Ints{-10, -9, -8, -7},
+	},
+	{
+		Ints{},
+		[]int{-6, -10, -1},
+		Ints{-6, -7, -8, -9},
+	},
+	{
+		Ints{},
+		[]int{-6, -10, 1},
+		nil,
+	},
+}
+
+func TestInts_Sequence(t *testing.T) {
+	for _, test := range intsSequenceAndSequenceUsingTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Sequence(test.params...))
+		})
+	}
+}
+
+func TestInts_SequenceUsing(t *testing.T) {
+	for _, test := range intsSequenceAndSequenceUsingTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.SequenceUsing(func(i int) int { return i }, test.params...))
+		})
+	}
+}
+
+func TestInts_Strings(t *testing.T) {
+	assert.Equal(t, Strings(nil), Ints{}.Strings())
+
+	assert.Equal(t,
+		Strings{"92", "823", "453"},
+		Ints{92, 823, 453}.Strings())
+}
+
+func TestInts_Ints(t *testing.T) {
+	assert.Equal(t, Ints(nil), Ints{}.Ints())
+
+	assert.Equal(t,
+		Ints{92, 823, 453},
+		Ints{92, 823, 453}.Ints())
+}
+
+func TestInts_Float64s(t *testing.T) {
+	assert.Equal(t, Float64s(nil), Ints{}.Float64s())
+
+	assert.Equal(t,
+		Float64s{92, 823, 453},
+		Ints{92, 823, 453}.Float64s())
 }

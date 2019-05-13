@@ -4,11 +4,9 @@ import (
 	"sort"
 )
 
-// Sort works similar to sort.SliceType(). However, unlike sort.SliceType the
+// SortUsing works similar to sort.Slice. However, unlike sort.Slice the
 // slice returned will be reallocated as to not modify the input slice.
-//
-// See Reverse() and AreSorted().
-func (ss SliceType) Sort() SliceType {
+func (ss SliceType) SortUsing(less func(a, b ElementType) bool) SliceType {
 	// Avoid the allocation. If there is one element or less it is already
 	// sorted.
 	if len(ss) < 2 {
@@ -18,7 +16,7 @@ func (ss SliceType) Sort() SliceType {
 	sorted := make(SliceType, len(ss))
 	copy(sorted, ss)
 	sort.Slice(sorted, func(i, j int) bool {
-		return sorted[i] < sorted[j]
+		return less(sorted[i], sorted[j])
 	})
 
 	return sorted

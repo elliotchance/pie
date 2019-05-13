@@ -3,8 +3,10 @@ package pie
 import (
 	"fmt"
 	"math/rand"
+	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/elliotchance/testify-stats/assert"
 )
@@ -34,12 +36,12 @@ func TestStrings_Contains(t *testing.T) {
 	}
 }
 
-var stringsSelectTests = []struct {
+var stringsFilterTests = []struct {
 	ss                Strings
 	condition         func(string) bool
-	expectedSelect    Strings
-	expectedUnselect  Strings
-	expectedTransform Strings
+	expectedFilter    Strings
+	expectedFilterNot Strings
+	expectedMap       Strings
 }{
 	{
 		nil,
@@ -61,29 +63,29 @@ var stringsSelectTests = []struct {
 	},
 }
 
-func TestStrings_Select(t *testing.T) {
-	for _, test := range stringsSelectTests {
+func TestStrings_Filter(t *testing.T) {
+	for _, test := range stringsFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
-			assert.Equal(t, test.expectedSelect, test.ss.Select(test.condition))
+			assert.Equal(t, test.expectedFilter, test.ss.Filter(test.condition))
 		})
 	}
 }
 
-func TestStrings_Unselect(t *testing.T) {
-	for _, test := range stringsSelectTests {
+func TestStrings_FilterNot(t *testing.T) {
+	for _, test := range stringsFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
-			assert.Equal(t, test.expectedUnselect, test.ss.Unselect(test.condition))
+			assert.Equal(t, test.expectedFilterNot, test.ss.FilterNot(test.condition))
 		})
 	}
 }
 
-func TestStrings_Transform(t *testing.T) {
-	for _, test := range stringsSelectTests {
+func TestStrings_Map(t *testing.T) {
+	for _, test := range stringsFilterTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
-			assert.Equal(t, test.expectedTransform, test.ss.Transform(strings.ToUpper))
+			assert.Equal(t, test.expectedMap, test.ss.Map(strings.ToUpper))
 		})
 	}
 }
@@ -323,6 +325,65 @@ func TestStrings_AreSorted(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
 			assert.Equal(t, test.areSorted, test.ss.AreSorted())
+		})
+	}
+}
+
+func stringShorter(a, b string) bool {
+	return len(a) < len(b)
+}
+
+var stringsSortByLengthTests = []struct {
+	ss           Strings
+	sortedStable Strings
+}{
+	{
+		nil,
+		nil,
+	},
+	{
+		Strings{},
+		Strings{},
+	},
+	{
+		Strings{"foo"},
+		Strings{"foo"},
+	},
+	{
+		Strings{"aaa", "b", "cc"},
+		Strings{"b", "cc", "aaa"},
+	},
+	{
+		Strings{"zz", "aaa", "b", "cc"},
+		Strings{"b", "zz", "cc", "aaa"},
+	},
+}
+
+func TestStrings_SortUsing(t *testing.T) {
+	isSortedByLength := func(ss Strings) bool {
+		for i := 1; i < len(ss); i++ {
+			if stringShorter(ss[i], ss[i-1]) {
+				return false
+			}
+		}
+		return true
+	}
+	less := stringShorter
+	for _, test := range stringsSortByLengthTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			sortedCustom := test.ss.SortUsing(less)
+			assert.True(t, isSortedByLength(sortedCustom))
+		})
+	}
+}
+
+func TestStrings_SortStableUsing(t *testing.T) {
+	less := stringShorter
+	for _, test := range stringsSortByLengthTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.sortedStable, test.ss.SortStableUsing(less))
 		})
 	}
 }
@@ -708,6 +769,337 @@ func TestStrings_Random(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
 			assert.Equal(t, test.expected, test.ss.Random(test.source))
+		})
+	}
+}
+
+var stringsReduceTests = []struct {
+	ss       Strings
+	expected string
+	reducer  func(a, b string) string
+}{
+	{
+		Strings{"Hello", " ", "World"},
+		"Hello World",
+		func(a, b string) string { return a + b },
+	},
+	{
+		Strings{},
+		"",
+		func(a, b string) string { return a + b },
+	},
+	{
+		Strings{"Hello"},
+		"Hello",
+		func(a, b string) string { return a + b },
+	},
+}
+
+func TestStrings_Reduce(t *testing.T) {
+	for _, test := range stringsReduceTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.expected, test.ss.Reduce(test.reducer))
+		})
+	}
+}
+
+var stringsSendTests = []struct {
+	ss            Strings
+	recieveDelay  time.Duration
+	canceledDelay time.Duration
+	expected      Strings
+}{
+	{
+		nil,
+		0,
+		0,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		0,
+		0,
+		Strings{"foo", "bar"},
+	},
+	{
+		Strings{"foo", "bar"},
+		time.Millisecond * 30,
+		time.Millisecond * 10,
+		Strings{"foo"},
+	},
+	{
+		Strings{"foo", "bar"},
+		time.Millisecond * 3,
+		time.Millisecond * 10,
+		Strings{"foo", "bar"},
+	},
+}
+
+func TestStrings_Send(t *testing.T) {
+	for _, test := range stringsSendTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			ch := make(chan string)
+			actual := getStringsFromChan(ch, test.recieveDelay)
+			ctx := createContextByDelay(test.canceledDelay)
+
+			actualSended := test.ss.Send(ctx, ch)
+			close(ch)
+
+			assert.Equal(t, test.expected, actualSended)
+			assert.Equal(t, test.expected, actual())
+		})
+	}
+}
+
+var stringsIntersectTests = []struct {
+	ss       Strings
+	params   []Strings
+	expected Strings
+}{
+	{
+		nil,
+		nil,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		nil,
+		nil,
+	},
+	{
+		nil,
+		[]Strings{{"foo", "bar", "baz"}, {"baz", "foo"}},
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		[]Strings{{"bar"}, {"foo"}},
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		[]Strings{{"bar"}},
+		Strings{"bar"},
+	},
+	{
+		Strings{"foo", "bar"},
+		[]Strings{{"foo", "bar", "baz"}, {"baz", "foo"}},
+		Strings{"foo"},
+	},
+}
+
+func TestStrings_Intersect(t *testing.T) {
+	for _, test := range stringsIntersectTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Intersect(test.params...))
+		})
+	}
+}
+
+var stringsDiffTests = map[string]struct {
+	ss1     Strings
+	ss2     Strings
+	added   Strings
+	removed Strings
+}{
+	"BothEmpty": {
+		nil,
+		nil,
+		nil,
+		nil,
+	},
+	"OnlyRemovedUnique": {
+		Strings{"foo", "bar"},
+		nil,
+		nil,
+		Strings{"foo", "bar"},
+	},
+	"OnlyRemovedDuplicates": {
+		Strings{"foo", "baz", "foo"},
+		nil,
+		nil,
+		Strings{"foo", "baz", "foo"},
+	},
+	"OnlyAddedUnique": {
+		nil,
+		Strings{"bar", "baz"},
+		Strings{"bar", "baz"},
+		nil,
+	},
+	"OnlyAddedDuplicates": {
+		nil,
+		Strings{"bar", "baz", "baz", "bar"},
+		Strings{"bar", "baz", "baz", "bar"},
+		nil,
+	},
+	"AddedAndRemovedUnique": {
+		Strings{"foo", "bar", "baz", "qux"},
+		Strings{"baz", "qux", "quux", "corge"},
+		Strings{"quux", "corge"},
+		Strings{"foo", "bar"},
+	},
+	"AddedAndRemovedDuplicates": {
+		Strings{"foo", "bar", "baz", "baz", "qux"},
+		Strings{"baz", "qux", "quux", "qux", "corge"},
+		Strings{"quux", "qux", "corge"},
+		Strings{"foo", "bar", "baz"},
+	},
+}
+
+func TestStrings_Diff(t *testing.T) {
+	for testName, test := range stringsDiffTests {
+		t.Run(testName, func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss1)()
+			defer assertImmutableStrings(t, &test.ss2)()
+
+			added, removed := test.ss1.Diff(test.ss2)
+			assert.Equal(t, test.added, added)
+			assert.Equal(t, test.removed, removed)
+		})
+	}
+}
+
+// Make sure that Append never alters the receiver, or other
+// slices sharing the same memory, unlike the built-in append.
+func TestAppendNonDestructive(t *testing.T) {
+	ab := Strings{"A", "B"}
+	if x, expected := ab.Join(""), "AB"; x != expected {
+		t.Errorf("Expected %q, got %q", expected, x)
+	}
+
+	abc := ab.Append("C")
+	aby := ab.Append("Y")
+	if x, expected := abc.Join(""), "ABC"; x != expected {
+		t.Errorf("Expected %q, got %q", expected, x)
+	}
+	if x, expected := aby.Join(""), "ABY"; x != expected {
+		t.Errorf("Expected %q, got %q", expected, x)
+	}
+
+	abcd := abc.Append("D")
+	abcz := abc.Append("Z")
+	if x, expected := abcd.Join(""), "ABCD"; x != expected {
+		t.Errorf("Expected %q, got %q", expected, x)
+	}
+	if x, expected := abcz.Join(""), "ABCZ"; x != expected {
+		t.Errorf("Expected %q, got %q", expected, x)
+	}
+}
+
+func TestStrings_Strings(t *testing.T) {
+	assert.Equal(t, Strings(nil), Strings{}.Strings())
+
+	assert.Equal(t,
+		Strings{"foo", "bar", "BAZ"},
+		Strings{"foo", "bar", "BAZ"}.Strings())
+}
+
+func TestStrings_Ints(t *testing.T) {
+	assert.Equal(t, Ints(nil), Strings{}.Ints())
+
+	assert.Equal(t,
+		Ints{92, 0, 453},
+		Strings{"92.384", "foo", "453"}.Ints())
+}
+
+func TestStrings_Float64s(t *testing.T) {
+	assert.Equal(t, Float64s(nil), Strings{}.Float64s())
+
+	assert.Equal(t,
+		Float64s{92.384, 0, 453},
+		Strings{"92.384", "foo", "453"}.Float64s())
+}
+
+var stringsSequenceTests = []struct {
+	ss       Strings
+	creator  func(int) string
+	params   []int
+	expected Strings
+}{
+	// n
+	{
+		nil,
+		nil,
+		nil,
+		nil,
+	},
+	{
+		nil,
+		nil,
+		[]int{0},
+		nil,
+	},
+	{
+		nil,
+		nil,
+		[]int{-1},
+		nil,
+	},
+	{
+		nil,
+		func(i int) string { return "p_" + strconv.Itoa(i) },
+		[]int{3},
+		Strings{"p_0", "p_1", "p_2"},
+	},
+	// range
+	{
+		nil,
+		func(i int) string { return "p_" + strconv.Itoa(i) },
+		[]int{6, 6},
+		nil,
+	},
+	{
+		nil,
+		func(i int) string { return "p_" + strconv.Itoa(i) },
+		[]int{8, 6},
+		nil,
+	},
+	{
+		nil,
+		func(i int) string { return "p_" + strconv.Itoa(i) },
+		[]int{3, 6},
+		Strings{"p_3", "p_4", "p_5"},
+	},
+	{
+		nil,
+		func(i int) string { return "p_" + strconv.Itoa(i) },
+		[]int{-6, -3},
+		Strings{"p_-6", "p_-5", "p_-4"},
+	},
+	{
+		nil,
+		func(i int) string { return "p_" + strconv.Itoa(i) },
+		[]int{-3, -6},
+		nil,
+	},
+	// range with step
+	{
+		nil,
+		func(i int) string { return "p_" + strconv.Itoa(i) },
+		[]int{3, 7, 2},
+		Strings{"p_3", "p_5"},
+	},
+	{
+		nil,
+		func(i int) string { return "p_" + strconv.Itoa(i) },
+		[]int{-3, -6, -2},
+		Strings{"p_-3", "p_-5"},
+	},
+	{
+		nil,
+		func(i int) string { return "p_" + strconv.Itoa(i) },
+		[]int{3, 7, 10},
+		nil,
+	},
+}
+
+func TestStrings_SequenceUsing(t *testing.T) {
+	for _, test := range stringsSequenceTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.SequenceUsing(test.creator, test.params...))
 		})
 	}
 }

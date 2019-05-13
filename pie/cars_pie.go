@@ -1,9 +1,13 @@
 package pie
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/elliotchance/pie/pie/util"
 	"math/rand"
+	"sort"
+	"strconv"
 )
 
 // All will return true if all callbacks return true. It follows the same logic
@@ -34,13 +38,16 @@ func (ss cars) Any(fn func(value car) bool) bool {
 	return false
 }
 
-// Append will return a new slice with the elements appended to the end. It is a
-// wrapper for the internal append(). It is offered as a function so that it can
-// more easily chained.
+// Append will return a new slice with the elements appended to the end.
 //
 // It is acceptable to provide zero arguments.
 func (ss cars) Append(elements ...car) cars {
-	return append(ss, elements...)
+	// Copy ss, to make sure no memory is overlapping between input and
+	// output. See issue #97.
+	result := append(cars{}, ss...)
+
+	result = append(result, elements...)
+	return result
 }
 
 // Bottom will return n elements from bottom
@@ -64,12 +71,52 @@ func (ss cars) Bottom(n int) (top cars) {
 // When using slices of pointers it will only compare by address, not value.
 func (ss cars) Contains(lookingFor car) bool {
 	for _, s := range ss {
-		if s == lookingFor {
+		if lookingFor == s {
 			return true
 		}
 	}
 
 	return false
+}
+
+// Diff returns the elements that needs to be added or removed from the first
+// slice to have the same elements in the second slice.
+//
+// The order of elements is not taken into consideration, so the slices are
+// treated sets that allow duplicate items.
+//
+// The added and removed returned may be blank respectively, or contain upto as
+// many elements that exists in the largest slice.
+func (ss cars) Diff(against cars) (added, removed cars) {
+	// This is probably not the best way to do it. We do an O(n^2) between the
+	// slices to see which items are missing in each direction.
+
+	diffOneWay := func(ss1, ss2raw cars) (result cars) {
+		ss2 := make(cars, len(ss2raw))
+		copy(ss2, ss2raw)
+
+		for _, s := range ss1 {
+			found := false
+
+			for i, element := range ss2 {
+				if s == element {
+					ss2 = append(ss2[:i], ss2[i+1:]...)
+					found = true
+				}
+			}
+
+			if !found {
+				result = append(result, s)
+			}
+		}
+
+		return
+	}
+
+	removed = diffOneWay(ss, against)
+	added = diffOneWay(against, ss)
+
+	return
 }
 
 // Each is more condensed version of Transform that allows an action to happen
@@ -109,6 +156,32 @@ func (ss cars) Extend(slices ...cars) (ss2 cars) {
 	return ss2
 }
 
+// Filter will return a new slice containing only the elements that return
+// true from the condition. The returned slice may contain zero elements (nil).
+//
+// FilterNot works in the opposite way of Filter.
+func (ss cars) Filter(condition func(car) bool) (ss2 cars) {
+	for _, s := range ss {
+		if condition(s) {
+			ss2 = append(ss2, s)
+		}
+	}
+	return
+}
+
+// FilterNot works the same as Filter, with a negated condition. That is, it will
+// return a new slice only containing the elements that returned false from the
+// condition. The returned slice may contain zero elements (nil).
+func (ss cars) FilterNot(condition func(car) bool) (ss2 cars) {
+	for _, s := range ss {
+		if !condition(s) {
+			ss2 = append(ss2, s)
+		}
+	}
+
+	return
+}
+
 // First returns the first element, or zero. Also see FirstOr().
 func (ss cars) First() car {
 	return ss.FirstOr(car{})
@@ -122,6 +195,43 @@ func (ss cars) FirstOr(defaultValue car) car {
 	}
 
 	return ss[0]
+}
+
+// Float64s transforms each element to a float64.
+func (ss cars) Float64s() Float64s {
+	l := len(ss)
+
+	// Avoid the allocation.
+	if l == 0 {
+		return nil
+	}
+
+	result := make(Float64s, l)
+	for i := 0; i < l; i++ {
+		mightBeString := ss[i]
+		result[i], _ = strconv.ParseFloat(fmt.Sprintf("%v", mightBeString), 64)
+	}
+
+	return result
+}
+
+// Ints transforms each element to an integer.
+func (ss cars) Ints() Ints {
+	l := len(ss)
+
+	// Avoid the allocation.
+	if l == 0 {
+		return nil
+	}
+
+	result := make(Ints, l)
+	for i := 0; i < l; i++ {
+		mightBeString := ss[i]
+		f, _ := strconv.ParseFloat(fmt.Sprintf("%v", mightBeString), 64)
+		result[i] = int(f)
+	}
+
+	return result
 }
 
 // JSONBytes returns the JSON encoded array as bytes.
@@ -173,6 +283,25 @@ func (ss cars) Len() int {
 	return len(ss)
 }
 
+// Map will return a new slice where each element has been mapped (transformed).
+// The number of elements returned will always be the same as the input.
+//
+// Be careful when using this with slices of pointers. If you modify the input
+// value it will affect the original slice. Be sure to return a new allocated
+// object or deep copy the existing one.
+func (ss cars) Map(fn func(car) car) (ss2 cars) {
+	if ss == nil {
+		return nil
+	}
+
+	ss2 = make([]car, len(ss))
+	for i, s := range ss {
+		ss2[i] = fn(s)
+	}
+
+	return
+}
+
 // Random returns a random element by your rand.Source, or zero
 func (ss cars) Random(source rand.Source) car {
 	n := len(ss)
@@ -209,18 +338,64 @@ func (ss cars) Reverse() cars {
 	return sorted
 }
 
-// Select will return a new slice containing only the elements that return
-// true from the condition. The returned slice may contain zero elements (nil).
+// Send sends elements to channel
+// in normal act it sends all elements but if func canceled it can be less
 //
-// Unselect works in the opposite way as Select.
-func (ss cars) Select(condition func(car) bool) (ss2 cars) {
-	for _, s := range ss {
-		if condition(s) {
-			ss2 = append(ss2, s)
+// it locks execution of gorutine
+// it doesn't close channel after work
+// returns sended elements if len(this) != len(old) considered func was canceled
+func (ss cars) Send(ctx context.Context, ch chan<- car) cars {
+	for i, s := range ss {
+		select {
+		case <-ctx.Done():
+			return ss[:i]
+		default:
+			ch <- s
 		}
 	}
 
-	return
+	return ss
+}
+
+// SequenceUsing generates slice in range using creator function
+//
+// There are 3 variations to generate:
+// 		1. [0, n).
+//		2. [min, max).
+//		3. [min, max) with step.
+//
+// if len(params) == 1 considered that will be returned slice between 0 and n,
+// where n is the first param, [0, n).
+// if len(params) == 2 considered that will be returned slice between min and max,
+// where min is the first param, max is the second, [min, max).
+// if len(params) > 2 considered that will be returned slice between min and max with step,
+// where min is the first param, max is the second, step is the third one, [min, max) with step,
+// others params will be ignored
+func (ss cars) SequenceUsing(creator func(int) car, params ...int) cars {
+	var seq = func(min, max, step int) (seq cars) {
+		lenght := int(util.Round(float64(max-min) / float64(step)))
+		if lenght < 1 {
+			return
+		}
+
+		seq = make(cars, lenght)
+		for i := 0; i < lenght; min += step {
+			seq[i] = creator(min)
+			i++
+		}
+
+		return seq
+	}
+
+	if len(params) > 2 {
+		return seq(params[0], params[1], params[2])
+	} else if len(params) == 2 {
+		return seq(params[0], params[1], 1)
+	} else if len(params) == 1 {
+		return seq(0, params[0], 1)
+	} else {
+		return nil
+	}
 }
 
 // Shuffle returns shuffled slice by your rand.Source
@@ -245,6 +420,66 @@ func (ss cars) Shuffle(source rand.Source) cars {
 	})
 
 	return shuffled
+}
+
+// SortStableUsing works similar to sort.SliceStable. However, unlike sort.SliceStable the
+// slice returned will be reallocated as to not modify the input slice.
+func (ss cars) SortStableUsing(less func(a, b car) bool) cars {
+	// Avoid the allocation. If there is one element or less it is already
+	// sorted.
+	if len(ss) < 2 {
+		return ss
+	}
+
+	sorted := make(cars, len(ss))
+	copy(sorted, ss)
+	sort.SliceStable(sorted, func(i, j int) bool {
+		return less(sorted[i], sorted[j])
+	})
+
+	return sorted
+}
+
+// SortUsing works similar to sort.Slice. However, unlike sort.Slice the
+// slice returned will be reallocated as to not modify the input slice.
+func (ss cars) SortUsing(less func(a, b car) bool) cars {
+	// Avoid the allocation. If there is one element or less it is already
+	// sorted.
+	if len(ss) < 2 {
+		return ss
+	}
+
+	sorted := make(cars, len(ss))
+	copy(sorted, ss)
+	sort.Slice(sorted, func(i, j int) bool {
+		return less(sorted[i], sorted[j])
+	})
+
+	return sorted
+}
+
+// Strings transforms each element to a string.
+//
+// If the element type implements fmt.Stringer it will be used. Otherwise it
+// will fallback to the result of:
+//
+//   fmt.Sprintf("%v")
+//
+func (ss cars) Strings() Strings {
+	l := len(ss)
+
+	// Avoid the allocation.
+	if l == 0 {
+		return nil
+	}
+
+	result := make(Strings, l)
+	for i := 0; i < l; i++ {
+		mightBeString := ss[i]
+		result[i] = fmt.Sprintf("%v", mightBeString)
+	}
+
+	return result
 }
 
 // Top will return n elements from head of the slice
@@ -274,36 +509,4 @@ func (ss cars) ToStrings(transform func(car) string) Strings {
 	}
 
 	return result
-}
-
-// Transform will return a new slice where each element has been transformed.
-// The number of element returned will always be the same as the input.
-//
-// Be careful when using this with slices of pointers. If you modify the input
-// value it will affect the original slice. Be sure to return a new allocated
-// object or deep copy the existing one.
-func (ss cars) Transform(fn func(car) car) (ss2 cars) {
-	if ss == nil {
-		return nil
-	}
-
-	ss2 = make([]car, len(ss))
-	for i, s := range ss {
-		ss2[i] = fn(s)
-	}
-
-	return
-}
-
-// Unselect works the same as Select, with a negated condition. That is, it will
-// return a new slice only containing the elements that returned false from the
-// condition. The returned slice may contain zero elements (nil).
-func (ss cars) Unselect(condition func(car) bool) (ss2 cars) {
-	for _, s := range ss {
-		if !condition(s) {
-			ss2 = append(ss2, s)
-		}
-	}
-
-	return
 }
