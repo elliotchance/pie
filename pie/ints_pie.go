@@ -109,7 +109,7 @@ func (ss Ints) Bottom(n int) (top Ints) {
 // When using slices of pointers it will only compare by address, not value.
 func (ss Ints) Contains(lookingFor int) bool {
 	for _, s := range ss {
-		if lookingFor == s {
+		if (lookingFor == s) {
 			return true
 		}
 	}
@@ -137,7 +137,7 @@ func (ss Ints) Diff(against Ints) (added, removed Ints) {
 			found := false
 
 			for i, element := range ss2 {
-				if s == element {
+				if (s == element) {
 					ss2 = append(ss2[:i], ss2[i+1:]...)
 					found = true
 				}
