@@ -168,7 +168,7 @@ func TestCars_Last(t *testing.T) {
 var carsStatsTests = []struct {
 	ss       cars
 	min, max car
-	mode cars
+	mode     cars
 	len      int
 }{
 	{
@@ -202,7 +202,7 @@ var carsStatsTests = []struct {
 }
 
 func TestCars_Mode(t *testing.T) {
-	cmp := func(a,b cars) bool {
+	cmp := func(a, b cars) bool {
 		m := make(map[car]struct{})
 		for _, i := range a {
 			m[i] = struct{}{}

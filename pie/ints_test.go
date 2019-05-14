@@ -155,7 +155,7 @@ func TestInts_Last(t *testing.T) {
 var intsStatsTests = []struct {
 	ss                          []int
 	min, max, sum, product, len int
-	mode Ints
+	mode                        Ints
 	average                     float64
 }{
 	{
@@ -195,7 +195,7 @@ var intsStatsTests = []struct {
 		11,
 		30,
 		4,
-		Ints{2,3,5,1},
+		Ints{2, 3, 5, 1},
 		2.75,
 	},
 }
@@ -217,7 +217,7 @@ func TestInts_Max(t *testing.T) {
 }
 
 func TestInts_Mode(t *testing.T) {
-	cmp := func(a,b Ints) bool {
+	cmp := func(a, b Ints) bool {
 		m := make(map[int]struct{})
 		for _, i := range a {
 			m[i] = struct{}{}

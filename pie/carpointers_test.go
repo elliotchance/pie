@@ -181,7 +181,7 @@ func TestCarPointers_Last(t *testing.T) {
 var carPointersStatsTests = []struct {
 	ss       carPointers
 	min, max *car
-	mode	carPointers
+	mode     carPointers
 	len      int
 }{
 	{
@@ -215,7 +215,7 @@ var carPointersStatsTests = []struct {
 }
 
 func TestCarPointers_Mode(t *testing.T) {
-	cmp := func(a,b carPointers) bool {
+	cmp := func(a, b carPointers) bool {
 		m := make(map[car]struct{})
 		for _, i := range a {
 			m[*i] = struct{}{}
@@ -227,7 +227,7 @@ func TestCarPointers_Mode(t *testing.T) {
 		}
 		return true
 	}
-	for _, test := range carPointersStatsTests{
+	for _, test := range carPointersStatsTests {
 		t.Run("", func(t *testing.T) {
 			assert.True(t, cmp(test.mode, test.ss.Mode()))
 		})

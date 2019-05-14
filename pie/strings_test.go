@@ -164,7 +164,7 @@ func TestStrings_Last(t *testing.T) {
 var stringsStatsTests = []struct {
 	ss       Strings
 	min, max string
-	mode Strings
+	mode     Strings
 	len      int
 }{
 	{
@@ -192,7 +192,7 @@ var stringsStatsTests = []struct {
 		[]string{"bar", "Baz", "qux", "foo"},
 		"Baz",
 		"qux",
-		Strings{"bar","Baz","qux","foo"},
+		Strings{"bar", "Baz", "qux", "foo"},
 		4,
 	},
 }
@@ -216,7 +216,7 @@ func TestStrings_Max(t *testing.T) {
 }
 
 func TestStrings_Mode(t *testing.T) {
-	cmp := func(a,b Strings) bool {
+	cmp := func(a, b Strings) bool {
 		m := make(map[string]struct{})
 		for _, i := range a {
 			m[i] = struct{}{}
