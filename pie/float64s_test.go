@@ -280,6 +280,14 @@ var float64sJSONTests = []struct {
 	},
 }
 
+func TestFloat64s_JSONBytes(t *testing.T) {
+	for _, test := range float64sJSONTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, []byte(test.jsonString), test.ss.JSONBytes())
+		})
+	}
+}
 func TestFloat64s_JSONString(t *testing.T) {
 	for _, test := range float64sJSONTests {
 		t.Run("", func(t *testing.T) {
@@ -1100,4 +1108,56 @@ func TestFloat64s_Float64s(t *testing.T) {
 	assert.Equal(t,
 		Float64s{92.384, 823.324, 453},
 		Float64s{92.384, 823.324, 453}.Float64s())
+}
+
+var float64sDropTopTests = []struct {
+	ss      Float64s
+	n       int
+	dropTop Float64s
+}{
+	{
+		nil,
+		1,
+		nil,
+	},
+	{
+		Float64s{},
+		1,
+		nil,
+	},
+	{
+		Float64s{1.23, 2.34},
+		-1,
+		nil,
+	},
+	{
+		Float64s{1.23, 2.34},
+		0,
+		Float64s{1.23, 2.34},
+	},
+
+	{
+		Float64s{1.23, 2.34},
+		1,
+		Float64s{2.34},
+	},
+	{
+		Float64s{1.23, 2.34},
+		2,
+		nil,
+	},
+	{
+		Float64s{1.23, 2.34},
+		3,
+		nil,
+	},
+}
+
+func TestFloat64s_DropTop(t *testing.T) {
+	for _, test := range float64sDropTopTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, test.dropTop, test.ss.DropTop(test.n))
+		})
+	}
 }

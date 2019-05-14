@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/elliotchance/pie/pie/util"
-	"math"
 	"math/rand"
 	"sort"
 	"strconv"
@@ -14,10 +13,15 @@ import (
 // Abs is a function which returns the absolute value of all the
 // elements in the slice.
 func (ss Ints) Abs() Ints {
+	result := make(Ints, len(ss))
 	for i, val := range ss {
-		ss[i] = int(math.Abs(float64(val)))
+		if val < 0 {
+			result[i] = -val
+		} else {
+			result[i] = val
+		}
 	}
-	return ss
+	return result
 }
 
 // All will return true if all callbacks return true. It follows the same logic
@@ -149,6 +153,19 @@ func (ss Ints) Diff(against Ints) (added, removed Ints) {
 
 	removed = diffOneWay(ss, against)
 	added = diffOneWay(against, ss)
+
+	return
+}
+
+// DropTop will return the rest slice after dropping the top n elements
+// if the slice has less elements then n that'll return empty slice
+// if n < 0 it'll return empty slice.
+func (ss Ints) DropTop(n int) (drop Ints) {
+	if n < 0 || n >= len(ss) {
+		return
+	}
+
+	drop = ss[n:]
 
 	return
 }
@@ -301,6 +318,21 @@ func (ss Ints) Ints() Ints {
 	}
 
 	return result
+}
+
+// JSONBytes returns the JSON encoded array as bytes.
+//
+// One important thing to note is that it will treat a nil slice as an empty
+// slice to ensure that the JSON value return is always an array.
+func (ss Ints) JSONBytes() []byte {
+	if ss == nil {
+		return []byte("[]")
+	}
+
+	// An error should not be possible.
+	data, _ := json.Marshal(ss)
+
+	return data
 }
 
 // JSONString returns the JSON encoded array as a string.

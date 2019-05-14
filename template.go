@@ -4,17 +4,18 @@ package main
 var pieTemplates = map[string]string{
 	"Abs": `package functions
 
-import (
-	"math"
-)
-
 // Abs is a function which returns the absolute value of all the
 // elements in the slice.
 func (ss SliceType) Abs() SliceType {
+	result := make(SliceType, len(ss))
 	for i, val := range ss {
-		ss[i] = ElementType(math.Abs(float64(val)))
+		if val < 0 {
+			result[i] = -val
+		} else {
+			result[i] = val
+		}
 	}
-	return ss
+	return result
 }
 `,
 	"All": `package functions
@@ -168,6 +169,21 @@ func (ss SliceType) Diff(against SliceType) (added, removed SliceType) {
 
 	removed = diffOneWay(ss, against)
 	added = diffOneWay(against, ss)
+
+	return
+}
+`,
+	"DropTop": `package functions
+
+// DropTop will return the rest slice after dropping the top n elements
+// if the slice has less elements then n that'll return empty slice
+// if n < 0 it'll return empty slice.
+func (ss SliceType) DropTop(n int) (drop SliceType) {
+	if n < 0 || n >= len(ss) {
+		return
+	}
+
+	drop = ss[n:]
 
 	return
 }
@@ -348,6 +364,27 @@ func (ss SliceType) Ints() pie.Ints {
 	}
 
 	return result
+}
+`,
+	"JSONBytes": `package functions
+
+import (
+	"encoding/json"
+)
+
+// JSONBytes returns the JSON encoded array as bytes.
+//
+// One important thing to note is that it will treat a nil slice as an empty
+// slice to ensure that the JSON value return is always an array.
+func (ss SliceType) JSONBytes() []byte {
+	if ss == nil {
+		return []byte("[]")
+	}
+
+	// An error should not be possible.
+	data, _ := json.Marshal(ss)
+
+	return data
 }
 `,
 	"JSONString": `package functions

@@ -240,6 +240,15 @@ var carPointersJSONTests = []struct {
 	},
 }
 
+func TestCarPointers_JSONBytes(t *testing.T) {
+	for _, test := range carPointersJSONTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			assert.Equal(t, []byte(test.jsonString), test.ss.JSONBytes())
+		})
+	}
+}
+
 func TestCarPointers_JSONString(t *testing.T) {
 	for _, test := range carPointersJSONTests {
 		t.Run("", func(t *testing.T) {
@@ -936,6 +945,57 @@ func TestCarPointers_SequenceUsing(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCarPointers(t, &test.ss)()
 			assert.Equal(t, test.expected, test.ss.SequenceUsing(test.creator, test.params...))
+		})
+	}
+}
+
+var carPointersDropTopTests = []struct {
+	ss      carPointers
+	n       int
+	dropTop carPointers
+}{
+	{
+		nil,
+		1,
+		nil,
+	},
+	{
+		carPointers{},
+		1,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		-1,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		0,
+		carPointers{carPointerA, carPointerB},
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		1,
+		carPointers{carPointerB},
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		2,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		3,
+		nil,
+	},
+}
+
+func TestCarPointers_DropTop(t *testing.T) {
+	for _, test := range carPointersDropTopTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			assert.Equal(t, test.dropTop, test.ss.DropTop(test.n))
 		})
 	}
 }

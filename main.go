@@ -187,7 +187,7 @@ func main() {
 		t = strings.Replace(t, "SliceType", mapOrSliceType, -1)
 
 		if !explorer.HasEquals() {
-			re := regexp.MustCompile(`([\w_]+)\.Equals\(([^)]+)\)`)
+			re := regexp.MustCompile(`([\w_]+|[\w_]+\[\w+\])\.Equals\(([^)]+)\)`)
 			t = ReplaceAllStringSubmatchFunc(re, t, func(groups []string) string {
 				return fmt.Sprintf("(%s == %s)", groups[1], groups[2])
 			})
