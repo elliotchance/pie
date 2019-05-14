@@ -195,11 +195,11 @@ func (ss cars) FilterNot(condition func(car) bool) (ss2 cars) {
 	return
 }
 
-// FindFirst will return the index of the first element when the callback returns true or -1 if no element is found.
+// FindFirstUsing will return the index of the first element when the callback returns true or -1 if no element is found.
 // It follows the same logic as the findIndex() function in Javascript.
 //
 // If the list is empty then -1 is always returned.
-func (ss cars) FindFirst(fn func(value car) bool) int {
+func (ss cars) FindFirstUsing(fn func(value car) bool) int {
 	for idx, value := range ss {
 		if fn(value) {
 			return idx

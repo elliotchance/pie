@@ -1162,7 +1162,7 @@ func TestFloat64s_DropTop(t *testing.T) {
 	}
 }
 
-var floatFindFirstTests = []struct {
+var floatFindFirstUsingTests = []struct {
 	ss         Float64s
 	expression func(value float64) bool
 	expected   int
@@ -1194,10 +1194,10 @@ var floatFindFirstTests = []struct {
 	},
 }
 
-func TestFloat64_FindFirst(t *testing.T) {
-	for _, test := range floatFindFirstTests {
+func TestFloat64_FindFirstUsing(t *testing.T) {
+	for _, test := range floatFindFirstUsingTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expected, test.ss.FindFirst(test.expression))
+			assert.Equal(t, test.expected, test.ss.FindFirstUsing(test.expression))
 		})
 	}
 }

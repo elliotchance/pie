@@ -35,7 +35,7 @@ var Functions = []struct {
 	{"Extend", "extend.go", ForAll},
 	{"Filter", "filter.go", ForAll},
 	{"FilterNot", "filter_not.go", ForAll},
-	{"FindFirst", "find_first.go", ForAll},
+	{"FindFirstUsing", "find_first_using.go", ForAll},
 	{"First", "first.go", ForAll},
 	{"FirstOr", "first_or.go", ForAll},
 	{"Float64s", "float64s.go", ForAll},

@@ -1144,7 +1144,7 @@ func TestInts_DropTop(t *testing.T) {
 	}
 }
 
-var intsFindFirstTests = []struct {
+var intsFindFirstUsingTests = []struct {
 	ss         Ints
 	expression func(value int) bool
 	expected   int
@@ -1181,10 +1181,10 @@ var intsFindFirstTests = []struct {
 	},
 }
 
-func TestInts_FindFirst(t *testing.T) {
-	for _, test := range intsFindFirstTests {
+func TestInts_FindFirstUsing(t *testing.T) {
+	for _, test := range intsFindFirstUsingTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expected, test.ss.FindFirst(test.expression))
+			assert.Equal(t, test.expected, test.ss.FindFirstUsing(test.expression))
 		})
 	}
 }

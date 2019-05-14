@@ -1000,7 +1000,7 @@ func TestCarPointers_DropTop(t *testing.T) {
 	}
 }
 
-var carsPointerFindFirstTests = []struct {
+var carsPointerFindFirstUsingTests = []struct {
 	ss         carPointers
 	expression func(value *car) bool
 	expected   int
@@ -1032,10 +1032,10 @@ var carsPointerFindFirstTests = []struct {
 	},
 }
 
-func TestCarPointers_FindFirst(t *testing.T) {
-	for _, test := range carsPointerFindFirstTests {
+func TestCarPointers_FindFirstUsing(t *testing.T) {
+	for _, test := range carsPointerFindFirstUsingTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expected, test.ss.FindFirst(test.expression))
+			assert.Equal(t, test.expected, test.ss.FindFirstUsing(test.expression))
 		})
 	}
 }

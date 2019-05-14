@@ -233,11 +233,11 @@ func (ss Ints) FilterNot(condition func(int) bool) (ss2 Ints) {
 	return
 }
 
-// FindFirst will return the index of the first element when the callback returns true or -1 if no element is found.
+// FindFirstUsing will return the index of the first element when the callback returns true or -1 if no element is found.
 // It follows the same logic as the findIndex() function in Javascript.
 //
 // If the list is empty then -1 is always returned.
-func (ss Ints) FindFirst(fn func(value int) bool) int {
+func (ss Ints) FindFirstUsing(fn func(value int) bool) int {
 	for idx, value := range ss {
 		if fn(value) {
 			return idx
