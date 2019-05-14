@@ -287,6 +287,36 @@ func (ss cars) Map(fn func(car) car) (ss2 cars) {
 	return
 }
 
+// Mode returns a new slice containing the most frequently occuring values.
+//
+// The number of items returned may be the same as the input or less. It will
+// never return zero items unless then input slice has zero items.
+func (ss cars) Mode() cars {
+	if ss == nil || len(ss) == 0 {
+		return ss
+	}
+	values := make(map[car]int,0)
+	for _, s:= range ss {
+		values[s]++
+	}
+
+	var maxFrequency int
+	for _,v := range values {
+		if v > maxFrequency {
+			maxFrequency = v
+		}
+	}
+	
+	var maxValues cars
+	for k,v := range values {
+		if v == maxFrequency {
+			maxValues = append(maxValues, k)
+		}
+	}
+
+	return maxValues 
+}
+
 // Random returns a random element by your rand.Source, or zero
 func (ss cars) Random(source rand.Source) car {
 	n := len(ss)

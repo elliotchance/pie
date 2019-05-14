@@ -5,13 +5,15 @@ package functions
 // The number of items returned may be the same as the input or less. It will
 // never return zero items unless then input slice has zero items.
 func (ss SliceType) Mode() SliceType {
-	values := make(map[ElementType]int)
+	if ss == nil || len(ss) == 0 {
+		return ss
+	}
+	values := make(map[ElementType]int,0)
 	for _, s:= range ss {
 		values[s]++
 	}
 
 	var maxFrequency int
-	
 	for _,v := range values {
 		if v > maxFrequency {
 			maxFrequency = v

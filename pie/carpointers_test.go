@@ -181,34 +181,58 @@ func TestCarPointers_Last(t *testing.T) {
 var carPointersStatsTests = []struct {
 	ss       carPointers
 	min, max *car
+	mode	carPointers
 	len      int
 }{
 	{
 		nil,
 		&car{},
 		&car{},
+		carPointers{},
 		0,
 	},
 	{
 		carPointers{},
 		&car{},
 		&car{},
+		carPointers{},
 		0,
 	},
 	{
 		carPointers{&car{"foo", "red"}},
 		&car{"foo", "red"},
 		&car{"foo", "red"},
+		carPointers{&car{"foo", "red"}},
 		1,
 	},
 	{
 		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}, &car{"qux", "cyan"}, &car{"foo", "red"}},
 		&car{"Baz", "black"},
 		&car{"qux", "cyan"},
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}, &car{"qux", "cyan"}, &car{"foo", "red"}},
 		4,
 	},
 }
 
+func TestCarPointers_Mode(t *testing.T) {
+	cmp := func(a,b carPointers) bool {
+		m := make(map[car]struct{})
+		for _, i := range a {
+			m[*i] = struct{}{}
+		}
+		for _, i := range b {
+			if _, ok := m[*i]; !ok {
+				return false
+			}
+		}
+		return true
+	}
+	for _, test := range carPointersStatsTests{
+		t.Run("", func(t *testing.T) {
+			assert.True(t, cmp(test.mode, test.ss.Mode()))
+		})
+	}
+}
 func TestCarPointers_Len(t *testing.T) {
 	for _, test := range carPointersStatsTests {
 		t.Run("", func(t *testing.T) {

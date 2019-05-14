@@ -201,7 +201,8 @@ The letters in brackets indicate:
 | `Map`	            | ✓      | ✓      | ✓      |      | n        | A new slice where each element has been mapped (transformed). |
 | `Max`             | ✓      | ✓      |        |      | n        | The maximum value, or a zeroes value. |
 | `Median`          |        | ✓      |        |      | n⋅log(n) | Median returns the value separating the higher half from the lower half of a data sample. |
-| `Min`             | ✓      | ✓      |        |      | n        | The minimum value, or a zeroed value. |
+| `Min`             | ✓      | ✓      | ✓      |      | n        | The minimum value, or a zeroed value. |
+| `Mode`            | ✓      | ✓      |        |      | n        | Returns a slice of items with the highest frequency. |
 | `Product`         |        | ✓      |        |      | n        | Product of all elements. |
 | `Random`          | ✓      | ✓      | ✓      |      | 1        | Select a random element, or a zeroed value if empty. |
 | `Reduce`          | ✓      | ✓      |        |      | n        | Continously apply a function to the slice (left to right), reducing it to a single value. |

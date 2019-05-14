@@ -516,6 +516,38 @@ func (ss SliceType) Min() (min ElementType) {
 	return
 }
 `,
+	"Mode": `package functions
+
+// Mode returns a new slice containing the most frequently occuring values.
+//
+// The number of items returned may be the same as the input or less. It will
+// never return zero items unless then input slice has zero items.
+func (ss SliceType) Mode() SliceType {
+	if ss == nil || len(ss) == 0 {
+		return ss
+	}
+	values := make(map[ElementType]int,0)
+	for _, s:= range ss {
+		values[s]++
+	}
+
+	var maxFrequency int
+	for _,v := range values {
+		if v > maxFrequency {
+			maxFrequency = v
+		}
+	}
+	
+	var maxValues SliceType
+	for k,v := range values {
+		if v == maxFrequency {
+			maxValues = append(maxValues, k)
+		}
+	}
+
+	return maxValues 
+}
+`,
 	"Product": `package functions
 
 // Product is the product of all of the elements.

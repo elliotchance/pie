@@ -164,30 +164,35 @@ func TestStrings_Last(t *testing.T) {
 var stringsStatsTests = []struct {
 	ss       Strings
 	min, max string
+	mode Strings
 	len      int
 }{
 	{
 		nil,
 		"",
 		"",
+		nil,
 		0,
 	},
 	{
 		[]string{},
 		"",
 		"",
+		Strings{},
 		0,
 	},
 	{
 		[]string{"foo"},
 		"foo",
 		"foo",
+		Strings{"foo"},
 		1,
 	},
 	{
 		[]string{"bar", "Baz", "qux", "foo"},
 		"Baz",
 		"qux",
+		Strings{"bar","Baz","qux","foo"},
 		4,
 	},
 }
@@ -206,6 +211,26 @@ func TestStrings_Max(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
 			assert.Equal(t, test.max, Strings(test.ss).Max())
+		})
+	}
+}
+
+func TestStrings_Mode(t *testing.T) {
+	cmp := func(a,b Strings) bool {
+		m := make(map[string]struct{})
+		for _, i := range a {
+			m[i] = struct{}{}
+		}
+		for _, i := range b {
+			if _, ok := m[i]; !ok {
+				return false
+			}
+		}
+		return true
+	}
+	for _, test := range stringsStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.True(t, cmp(test.mode, Strings(test.ss).Mode()))
 		})
 	}
 }

@@ -168,32 +168,57 @@ func TestCars_Last(t *testing.T) {
 var carsStatsTests = []struct {
 	ss       cars
 	min, max car
+	mode cars
 	len      int
 }{
 	{
 		nil,
 		car{},
 		car{},
+		cars{car{}},
 		0,
 	},
 	{
 		cars{},
 		car{},
 		car{},
+		cars{car{}},
 		0,
 	},
 	{
 		cars{car{"foo", "red"}},
 		car{"foo", "red"},
 		car{"foo", "red"},
+		cars{car{"foo", "red"}},
 		1,
 	},
 	{
 		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"qux", "cyan"}, car{"foo", "red"}},
 		car{"Baz", "black"},
 		car{"qux", "cyan"},
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"qux", "cyan"}, car{"foo", "red"}},
 		4,
 	},
+}
+
+func TestCars_Mode(t *testing.T) {
+	cmp := func(a,b cars) bool {
+		m := make(map[car]struct{})
+		for _, i := range a {
+			m[i] = struct{}{}
+		}
+		for _, i := range b {
+			if _, ok := m[i]; !ok {
+				return false
+			}
+		}
+		return true
+	}
+	for _, test := range carsStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.True(t, cmp(test.mode, cars(test.ss).Mode()))
+		})
+	}
 }
 
 func TestCars_Len(t *testing.T) {

@@ -164,6 +164,7 @@ var float64sStatsTests = []struct {
 	ss                     Float64s
 	min, max, sum, product float64
 	len                    int
+	mode Float64s
 	average                float64
 }{
 	{
@@ -173,6 +174,7 @@ var float64sStatsTests = []struct {
 		0,
 		0,
 		0,
+		nil,
 		0,
 	},
 	{
@@ -182,6 +184,7 @@ var float64sStatsTests = []struct {
 		0,
 		0,
 		0,
+		Float64s{},
 		0,
 	},
 	{
@@ -191,6 +194,7 @@ var float64sStatsTests = []struct {
 		1.5,
 		1.5,
 		1,
+		Float64s{1.5},
 		1.5,
 	},
 	{
@@ -200,6 +204,7 @@ var float64sStatsTests = []struct {
 		12.3,
 		66.0858,
 		4,
+		Float64s{2.2,3.1,5.1,1.9},
 		3.075,
 	},
 }
@@ -221,6 +226,27 @@ func TestFloat64s_Max(t *testing.T) {
 		})
 	}
 }
+
+func TestFloat64s_Mode(t *testing.T) {
+	cmp := func(a,b Float64s) bool {
+		m := make(map[float64]struct{})
+		for _, i := range a {
+			m[i] = struct{}{}
+		}
+		for _, i := range b {
+			if _, ok := m[i]; !ok {
+				return false
+			}
+		}
+		return true
+	}
+	for _, test := range float64sStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.True(t, cmp(test.mode, Float64s(test.ss).Mode()))
+		})
+	}
+}
+
 
 func TestFloat64s_Sum(t *testing.T) {
 	for _, test := range float64sStatsTests {
