@@ -241,6 +241,14 @@ var stringsJSONTests = []struct {
 	},
 }
 
+func TestStrings_JSONBytes(t *testing.T) {
+	for _, test := range stringsJSONTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, []byte(test.jsonString), test.ss.JSONBytes())
+		})
+	}
+}
 func TestStrings_JSONString(t *testing.T) {
 	for _, test := range stringsJSONTests {
 		t.Run("", func(t *testing.T) {
