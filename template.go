@@ -524,28 +524,28 @@ func (ss SliceType) Min() (min ElementType) {
 // never return zero items unless the input slice has zero items.
 func (ss SliceType) Mode() SliceType {
 	if len(ss) == 0 {
-		return nil 
+		return nil
 	}
-	values := make(map[ElementType]int,0)
-	for _, s:= range ss {
+	values := make(map[ElementType]int, 0)
+	for _, s := range ss {
 		values[s]++
 	}
 
 	var maxFrequency int
-	for _,v := range values {
+	for _, v := range values {
 		if v > maxFrequency {
 			maxFrequency = v
 		}
 	}
-	
+
 	var maxValues SliceType
-	for k,v := range values {
+	for k, v := range values {
 		if v == maxFrequency {
 			maxValues = append(maxValues, k)
 		}
 	}
 
-	return maxValues 
+	return maxValues
 }
 `,
 	"Product": `package functions
