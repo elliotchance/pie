@@ -240,6 +240,15 @@ var carPointersJSONTests = []struct {
 	},
 }
 
+func TestCarPointers_JSONBytes(t *testing.T) {
+	for _, test := range carPointersJSONTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			assert.Equal(t, []byte(test.jsonString), test.ss.JSONBytes())
+		})
+	}
+}
+
 func TestCarPointers_JSONString(t *testing.T) {
 	for _, test := range carPointersJSONTests {
 		t.Run("", func(t *testing.T) {
