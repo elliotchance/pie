@@ -265,9 +265,21 @@ func ReplaceAllStringSubmatchFunc(re *regexp.Regexp, str string, repl func([]str
 			groups = append(groups, str[v[i]:v[i+1]])
 		}
 
-		result += str[lastIndex:v[0]] + repl(groups)
+		if isNegative(str[v[0]-1]) {
+			result += str[lastIndex:v[0]] + addBrackets(repl(groups))
+		} else {
+			result += str[lastIndex:v[0]] + repl(groups)
+		}
 		lastIndex = v[1]
 	}
 
 	return result + str[lastIndex:]
+}
+
+func isNegative(b byte) bool {
+	return b == '!'
+}
+
+func addBrackets(str string) string {
+	return `(` + str + `)`
 }
