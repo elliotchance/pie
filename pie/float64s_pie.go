@@ -233,6 +233,20 @@ func (ss Float64s) FilterNot(condition func(float64) bool) (ss2 Float64s) {
 	return
 }
 
+// FindFirstUsing will return the index of the first element when the callback returns true or -1 if no element is found.
+// It follows the same logic as the findIndex() function in Javascript.
+//
+// If the list is empty then -1 is always returned.
+func (ss Float64s) FindFirstUsing(fn func(value float64) bool) int {
+	for idx, value := range ss {
+		if fn(value) {
+			return idx
+		}
+	}
+
+	return -1
+}
+
 // First returns the first element, or zero. Also see FirstOr().
 func (ss Float64s) First() float64 {
 	return ss.FirstOr(0)

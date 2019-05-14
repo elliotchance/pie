@@ -195,6 +195,20 @@ func (ss carPointers) FilterNot(condition func(*car) bool) (ss2 carPointers) {
 	return
 }
 
+// FindFirstUsing will return the index of the first element when the callback returns true or -1 if no element is found.
+// It follows the same logic as the findIndex() function in Javascript.
+//
+// If the list is empty then -1 is always returned.
+func (ss carPointers) FindFirstUsing(fn func(value *car) bool) int {
+	for idx, value := range ss {
+		if fn(value) {
+			return idx
+		}
+	}
+
+	return -1
+}
+
 // First returns the first element, or zero. Also see FirstOr().
 func (ss carPointers) First() *car {
 	return ss.FirstOr(&car{})

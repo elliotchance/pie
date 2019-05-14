@@ -209,6 +209,20 @@ func (ss Strings) FilterNot(condition func(string) bool) (ss2 Strings) {
 	return
 }
 
+// FindFirstUsing will return the index of the first element when the callback returns true or -1 if no element is found.
+// It follows the same logic as the findIndex() function in Javascript.
+//
+// If the list is empty then -1 is always returned.
+func (ss Strings) FindFirstUsing(fn func(value string) bool) int {
+	for idx, value := range ss {
+		if fn(value) {
+			return idx
+		}
+	}
+
+	return -1
+}
+
 // First returns the first element, or zero. Also see FirstOr().
 func (ss Strings) First() string {
 	return ss.FirstOr("")
