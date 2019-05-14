@@ -241,6 +241,14 @@ var stringsJSONTests = []struct {
 	},
 }
 
+func TestStrings_JSONBytes(t *testing.T) {
+	for _, test := range stringsJSONTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, []byte(test.jsonString), test.ss.JSONBytes())
+		})
+	}
+}
 func TestStrings_JSONString(t *testing.T) {
 	for _, test := range stringsJSONTests {
 		t.Run("", func(t *testing.T) {
@@ -1092,6 +1100,58 @@ func TestStrings_SequenceUsing(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
 			assert.Equal(t, test.expected, test.ss.SequenceUsing(test.creator, test.params...))
+		})
+	}
+}
+
+var stringsDropTopTests = []struct {
+	ss      Strings
+	n       int
+	dropTop Strings
+}{
+	{
+		nil,
+		1,
+		nil,
+	},
+	{
+		Strings{},
+		1,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		-1,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		0,
+		Strings{"foo", "bar"},
+	},
+
+	{
+		Strings{"foo", "bar"},
+		1,
+		Strings{"bar"},
+	},
+	{
+		Strings{"foo", "bar"},
+		2,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		3,
+		nil,
+	},
+}
+
+func TestStrings_DropTop(t *testing.T) {
+	for _, test := range stringsDropTopTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.dropTop, test.ss.DropTop(test.n))
 		})
 	}
 }

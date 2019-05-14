@@ -157,6 +157,19 @@ func (ss Float64s) Diff(against Float64s) (added, removed Float64s) {
 	return
 }
 
+// DropTop will return the rest slice after dropping the top n elements
+// if the slice has less elements then n that'll return empty slice
+// if n < 0 it'll return empty slice.
+func (ss Float64s) DropTop(n int) (drop Float64s) {
+	if n < 0 || n >= len(ss) {
+		return
+	}
+
+	drop = ss[n:]
+
+	return
+}
+
 // Each is more condensed version of Transform that allows an action to happen
 // on each elements and pass the original slice on.
 //
@@ -319,6 +332,21 @@ func (ss Float64s) Ints() Ints {
 	}
 
 	return result
+}
+
+// JSONBytes returns the JSON encoded array as bytes.
+//
+// One important thing to note is that it will treat a nil slice as an empty
+// slice to ensure that the JSON value return is always an array.
+func (ss Float64s) JSONBytes() []byte {
+	if ss == nil {
+		return []byte("[]")
+	}
+
+	// An error should not be possible.
+	data, _ := json.Marshal(ss)
+
+	return data
 }
 
 // JSONString returns the JSON encoded array as a string.

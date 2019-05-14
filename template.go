@@ -173,6 +173,21 @@ func (ss SliceType) Diff(against SliceType) (added, removed SliceType) {
 	return
 }
 `,
+	"DropTop": `package functions
+
+// DropTop will return the rest slice after dropping the top n elements
+// if the slice has less elements then n that'll return empty slice
+// if n < 0 it'll return empty slice.
+func (ss SliceType) DropTop(n int) (drop SliceType) {
+	if n < 0 || n >= len(ss) {
+		return
+	}
+
+	drop = ss[n:]
+
+	return
+}
+`,
 	"Each": `package functions
 
 // Each is more condensed version of Transform that allows an action to happen
@@ -365,6 +380,27 @@ func (ss SliceType) Ints() pie.Ints {
 	}
 
 	return result
+}
+`,
+	"JSONBytes": `package functions
+
+import (
+	"encoding/json"
+)
+
+// JSONBytes returns the JSON encoded array as bytes.
+//
+// One important thing to note is that it will treat a nil slice as an empty
+// slice to ensure that the JSON value return is always an array.
+func (ss SliceType) JSONBytes() []byte {
+	if ss == nil {
+		return []byte("[]")
+	}
+
+	// An error should not be possible.
+	data, _ := json.Marshal(ss)
+
+	return data
 }
 `,
 	"JSONString": `package functions
