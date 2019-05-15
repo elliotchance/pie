@@ -155,6 +155,25 @@ func (ss carPointers) Each(fn func(*car)) carPointers {
 	return ss
 }
 
+// Equals compare elements of slice
+//
+// if all elements the same is considered that slices are equal
+//
+// if element realizes Equals interface it uses that method, in other way uses default compare
+func (ss carPointers) Equals(rhs carPointers) bool {
+	if len(ss) != len(rhs) {
+		return false
+	}
+
+	for i := range ss {
+		if !ss[i].Equals(rhs[i]) {
+			return false
+		}
+	}
+
+	return true
+}
+
 // Extend will return a new slice with the slices of elements appended to the
 // end.
 //

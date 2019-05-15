@@ -155,6 +155,25 @@ func (ss cars) Each(fn func(car)) cars {
 	return ss
 }
 
+// Equals compare elements of slice
+//
+// if all elements the same is considered that slices are equal
+//
+// if element realizes Equals interface it uses that method, in other way uses default compare
+func (ss cars) Equals(rhs cars) bool {
+	if len(ss) != len(rhs) {
+		return false
+	}
+
+	for i := range ss {
+		if !(ss[i] == rhs[i]) {
+			return false
+		}
+	}
+
+	return true
+}
+
 // Extend will return a new slice with the slices of elements appended to the
 // end.
 //
