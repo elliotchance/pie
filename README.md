@@ -123,7 +123,7 @@ The `ElementType` must be the same for the receiver and argument and it must
 return a bool. Be careful to create the function on the pointer or non-pointer
 type that is used by the slice.
 
-Here is a  example:
+Here is a minimal example:
 
 ```go
 type Car struct {
