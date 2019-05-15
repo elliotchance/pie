@@ -32,6 +32,7 @@ var Functions = []struct {
 	{"Diff", "diff.go", ForAll},
 	{"DropTop", "drop_top.go", ForAll},
 	{"Each", "each.go", ForAll},
+	{"Equals", "equals.go", ForAll},
 	{"Extend", "extend.go", ForAll},
 	{"Filter", "filter.go", ForAll},
 	{"FilterNot", "filter_not.go", ForAll},
