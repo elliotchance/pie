@@ -897,11 +897,11 @@ func (ss SliceType) SubSlice(start int, end int) (subSlice SliceType) {
 		if end <= length {
 			subSlice = ss[start:end]
 		} else {
-			zeroArray := make([]ElementType, end - length)
+			zeroArray := make([]ElementType, end-length)
 			subSlice = ss[start:length].Append(zeroArray[:]...)
 		}
 	} else {
-		zeroArray := make([]ElementType, end - start)
+		zeroArray := make([]ElementType, end-start)
 		subSlice = zeroArray[:]
 	}
 
