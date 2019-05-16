@@ -227,6 +227,14 @@ var carsJSONTests = []struct {
 	},
 }
 
+func TestCars_JSONBytes(t *testing.T) {
+	for _, test := range carsJSONTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss)()
+			assert.Equal(t, []byte(test.jsonString), test.ss.JSONBytes())
+		})
+	}
+}
 func TestCars_JSONString(t *testing.T) {
 	for _, test := range carsJSONTests {
 		t.Run("", func(t *testing.T) {
@@ -1063,6 +1071,46 @@ func TestCars_SubSlice(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCars(t, &test.ss)()
 			assert.Equal(t, test.subSlice, test.ss.SubSlice(test.start, test.end))
+		})
+	}
+}
+
+var carsFindFirstUsingTests = []struct {
+	ss         cars
+	expression func(value car) bool
+	expected   int
+}{
+	{
+		nil,
+		func(value car) bool { return value.Color == "red" },
+		-1,
+	},
+	{
+		cars{},
+		func(value car) bool { return value.Name == "ferrari" },
+		-1,
+	},
+	{
+		cars{car{Name: "volvo", Color: "brown"}},
+		func(value car) bool { return value.Name == "eclipse" },
+		-1,
+	},
+	{
+		cars{car{Name: "maverick", Color: "red"}, car{Name: "ferrari", Color: "red"}, car{Name: "polo", Color: "white"}},
+		func(value car) bool { return value.Name == "polo" && value.Color == "white" },
+		2,
+	},
+	{
+		cars{car{Name: "maverick", Color: "red"}, car{Name: "ferrari", Color: "red"}, car{Name: "polo", Color: "white"}},
+		func(value car) bool { return value.Name == "maverick" && value.Color == "white" },
+		-1,
+	},
+}
+
+func TestCars_FindFirstUsing(t *testing.T) {
+	for _, test := range carsFindFirstUsingTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.expected, test.ss.FindFirstUsing(test.expression))
 		})
 	}
 }

@@ -280,6 +280,14 @@ var float64sJSONTests = []struct {
 	},
 }
 
+func TestFloat64s_JSONBytes(t *testing.T) {
+	for _, test := range float64sJSONTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, []byte(test.jsonString), test.ss.JSONBytes())
+		})
+	}
+}
 func TestFloat64s_JSONString(t *testing.T) {
 	for _, test := range float64sJSONTests {
 		t.Run("", func(t *testing.T) {
@@ -1252,6 +1260,46 @@ func TestFloat64s_SubSlice(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableFloat64s(t, &test.ss)()
 			assert.Equal(t, test.subSlice, test.ss.SubSlice(test.start, test.end))
+		})
+	}
+}
+
+var floatFindFirstUsingTests = []struct {
+	ss         Float64s
+	expression func(value float64) bool
+	expected   int
+}{
+	{
+		nil,
+		func(value float64) bool { return value == 1.5 },
+		-1,
+	},
+	{
+		Float64s{},
+		func(value float64) bool { return value == 0.1 },
+		-1,
+	},
+	{
+		Float64s{0.0, 1.5, 3.2},
+		func(value float64) bool { return value == 9.99 },
+		-1,
+	},
+	{
+		Float64s{5.4, 6.98, 4.987, 33.04},
+		func(value float64) bool { return value == 33.04 },
+		3,
+	},
+	{
+		Float64s{9.0, 0.11, 150.44, 33.04},
+		func(value float64) bool { return value == 0.11 },
+		1,
+	},
+}
+
+func TestFloat64_FindFirstUsing(t *testing.T) {
+	for _, test := range floatFindFirstUsingTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.expected, test.ss.FindFirstUsing(test.expression))
 		})
 	}
 }
