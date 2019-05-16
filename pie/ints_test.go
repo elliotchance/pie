@@ -1134,3 +1134,105 @@ func TestInts_DropTop(t *testing.T) {
 		})
 	}
 }
+
+var intsSubSliceTests = []struct {
+	ss       Ints
+	start    int
+	end      int
+	subSlice Ints
+}{
+	{
+		nil,
+		1,
+		1,
+		nil,
+	},
+	{
+		nil,
+		1,
+		2,
+		Ints{0},
+	},
+	{
+		Ints{},
+		1,
+		1,
+		nil,
+	},
+	{
+		Ints{},
+		1,
+		2,
+		Ints{0},
+	},
+	{
+		Ints{1, 2},
+		-1,
+		-1,
+		nil,
+	},
+	{
+		Ints{1, 2},
+		-1,
+		1,
+		nil,
+	},
+	{
+		Ints{1, 2},
+		1,
+		-1,
+		nil,
+	},
+	{
+		Ints{1, 2},
+		2,
+		0,
+		nil,
+	},
+
+	{
+		Ints{1, 2},
+		1,
+		1,
+		nil,
+	},
+	{
+		Ints{1, 2},
+		1,
+		2,
+		Ints{2},
+	},
+	{
+		Ints{1, 2},
+		1,
+		3,
+		Ints{2, 0},
+	},
+	{
+		Ints{1, 2},
+		2,
+		2,
+		nil,
+	},
+	{
+		Ints{1, 2},
+		2,
+		3,
+		Ints{0},
+	},
+	{
+		Ints{1, 2, 0},
+		2,
+		3,
+		Ints{0},
+	},
+}
+
+func TestInts_SubSlice(t *testing.T) {
+	for _, test := range intsSubSliceTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.subSlice, test.ss.SubSlice(test.start, test.end))
+		})
+	}
+}

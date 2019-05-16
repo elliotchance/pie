@@ -62,6 +62,7 @@ var Functions = []struct {
 	{"SortStableUsing", "sort_stable_using.go", ForStrings | ForStructs},
 	{"SortUsing", "sort_using.go", ForStrings | ForStructs},
 	{"Strings", "strings.go", ForAll},
+	{"SubSlice", "sub_slice.go", ForAll},
 	{"Sum", "sum.go", ForNumbers},
 	{"Top", "top.go", ForAll},
 	{"ToStrings", "to_strings.go", ForAll},

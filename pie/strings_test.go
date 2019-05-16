@@ -1147,3 +1147,105 @@ func TestStrings_DropTop(t *testing.T) {
 		})
 	}
 }
+
+var stringsSubSliceTests = []struct {
+	ss       Strings
+	start    int
+	end      int
+	subSlice Strings
+}{
+	{
+		nil,
+		1,
+		1,
+		nil,
+	},
+	{
+		nil,
+		1,
+		2,
+		Strings{""},
+	},
+	{
+		Strings{},
+		1,
+		1,
+		nil,
+	},
+	{
+		Strings{},
+		1,
+		2,
+		Strings{""},
+	},
+	{
+		Strings{"foo", "bar"},
+		-1,
+		-1,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		-1,
+		1,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		1,
+		-1,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		2,
+		0,
+		nil,
+	},
+
+	{
+		Strings{"foo", "bar"},
+		1,
+		1,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		1,
+		2,
+		Strings{"bar"},
+	},
+	{
+		Strings{"foo", "bar"},
+		1,
+		3,
+		Strings{"bar", ""},
+	},
+	{
+		Strings{"foo", "bar"},
+		2,
+		2,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		2,
+		3,
+		Strings{""},
+	},
+	{
+		Strings{"foo", "bar", ""},
+		2,
+		3,
+		Strings{""},
+	},
+}
+
+func TestStrings_SubSlice(t *testing.T) {
+	for _, test := range stringsSubSliceTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.subSlice, test.ss.SubSlice(test.start, test.end))
+		})
+	}
+}
