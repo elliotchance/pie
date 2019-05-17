@@ -241,6 +241,14 @@ var stringsJSONTests = []struct {
 	},
 }
 
+func TestStrings_JSONBytes(t *testing.T) {
+	for _, test := range stringsJSONTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, []byte(test.jsonString), test.ss.JSONBytes())
+		})
+	}
+}
 func TestStrings_JSONString(t *testing.T) {
 	for _, test := range stringsJSONTests {
 		t.Run("", func(t *testing.T) {
@@ -1092,6 +1100,200 @@ func TestStrings_SequenceUsing(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
 			assert.Equal(t, test.expected, test.ss.SequenceUsing(test.creator, test.params...))
+		})
+	}
+}
+
+var stringsDropTopTests = []struct {
+	ss      Strings
+	n       int
+	dropTop Strings
+}{
+	{
+		nil,
+		1,
+		nil,
+	},
+	{
+		Strings{},
+		1,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		-1,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		0,
+		Strings{"foo", "bar"},
+	},
+
+	{
+		Strings{"foo", "bar"},
+		1,
+		Strings{"bar"},
+	},
+	{
+		Strings{"foo", "bar"},
+		2,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		3,
+		nil,
+	},
+}
+
+func TestStrings_DropTop(t *testing.T) {
+	for _, test := range stringsDropTopTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.dropTop, test.ss.DropTop(test.n))
+		})
+	}
+}
+
+var stringsSubSliceTests = []struct {
+	ss       Strings
+	start    int
+	end      int
+	subSlice Strings
+}{
+	{
+		nil,
+		1,
+		1,
+		nil,
+	},
+	{
+		nil,
+		1,
+		2,
+		Strings{""},
+	},
+	{
+		Strings{},
+		1,
+		1,
+		nil,
+	},
+	{
+		Strings{},
+		1,
+		2,
+		Strings{""},
+	},
+	{
+		Strings{"foo", "bar"},
+		-1,
+		-1,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		-1,
+		1,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		1,
+		-1,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		2,
+		0,
+		nil,
+	},
+
+	{
+		Strings{"foo", "bar"},
+		1,
+		1,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		1,
+		2,
+		Strings{"bar"},
+	},
+	{
+		Strings{"foo", "bar"},
+		1,
+		3,
+		Strings{"bar", ""},
+	},
+	{
+		Strings{"foo", "bar"},
+		2,
+		2,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		2,
+		3,
+		Strings{""},
+	},
+	{
+		Strings{"foo", "bar", ""},
+		2,
+		3,
+		Strings{""},
+	},
+}
+
+func TestStrings_SubSlice(t *testing.T) {
+	for _, test := range stringsSubSliceTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.subSlice, test.ss.SubSlice(test.start, test.end))
+		})
+	}
+}
+
+var stringsFindFirstUsingTests = []struct {
+	ss         Strings
+	expression func(value string) bool
+	expected   int
+}{
+	{
+		nil,
+		func(value string) bool { return value == "potato" },
+		-1,
+	},
+	{
+		Strings{},
+		func(value string) bool { return value == "eggplant" },
+		-1,
+	},
+	{
+		Strings{"hamburger", "egg"},
+		func(value string) bool { return value == "onion" },
+		-1,
+	},
+	{
+		Strings{"hamburger", "lettuce", "egg"},
+		func(value string) bool { return value == "lettuce" },
+		1,
+	},
+	{
+		Strings{"hamburger", "egg", "zucchini"},
+		func(value string) bool { return value == "zucchini" },
+		2,
+	},
+}
+
+func TestStrings_FindFirstUsing(t *testing.T) {
+	for _, test := range stringsFindFirstUsingTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.expected, test.ss.FindFirstUsing(test.expression))
 		})
 	}
 }

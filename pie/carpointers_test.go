@@ -240,6 +240,15 @@ var carPointersJSONTests = []struct {
 	},
 }
 
+func TestCarPointers_JSONBytes(t *testing.T) {
+	for _, test := range carPointersJSONTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			assert.Equal(t, []byte(test.jsonString), test.ss.JSONBytes())
+		})
+	}
+}
+
 func TestCarPointers_JSONString(t *testing.T) {
 	for _, test := range carPointersJSONTests {
 		t.Run("", func(t *testing.T) {
@@ -936,6 +945,200 @@ func TestCarPointers_SequenceUsing(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCarPointers(t, &test.ss)()
 			assert.Equal(t, test.expected, test.ss.SequenceUsing(test.creator, test.params...))
+		})
+	}
+}
+
+var carPointersDropTopTests = []struct {
+	ss      carPointers
+	n       int
+	dropTop carPointers
+}{
+	{
+		nil,
+		1,
+		nil,
+	},
+	{
+		carPointers{},
+		1,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		-1,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		0,
+		carPointers{carPointerA, carPointerB},
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		1,
+		carPointers{carPointerB},
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		2,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		3,
+		nil,
+	},
+}
+
+func TestCarPointers_DropTop(t *testing.T) {
+	for _, test := range carPointersDropTopTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			assert.Equal(t, test.dropTop, test.ss.DropTop(test.n))
+		})
+	}
+}
+
+var carPointersSubSliceTests = []struct {
+	ss       carPointers
+	start    int
+	end      int
+	subSlice carPointers
+}{
+	{
+		// start:1 ,end: 2
+		nil,
+		1,
+		1,
+		nil,
+	},
+	{
+		// start:1 ,end: 2
+		nil,
+		1,
+		2,
+		carPointers{nil},
+	},
+	{
+		carPointers{},
+		1,
+		1,
+		nil,
+	},
+	{
+		carPointers{},
+		1,
+		2,
+		carPointers{nil},
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		-1,
+		-1,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		-1,
+		1,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		1,
+		-1,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		2,
+		0,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		1,
+		1,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		1,
+		2,
+		carPointers{carPointerB},
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		1,
+		3,
+		carPointers{carPointerB, nil},
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		2,
+		2,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		2,
+		3,
+		carPointers{nil},
+	},
+	{
+		carPointers{carPointerA, carPointerB, nil},
+		2,
+		3,
+		carPointers{nil},
+	},
+}
+
+func TestCarPointers_SubSlice(t *testing.T) {
+	for _, test := range carPointersSubSliceTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			assert.Equal(t, test.subSlice, test.ss.SubSlice(test.start, test.end))
+		})
+	}
+}
+
+var carsPointerFindFirstUsingTests = []struct {
+	ss         carPointers
+	expression func(value *car) bool
+	expected   int
+}{
+	{
+		nil,
+		func(value *car) bool { return value.Color == "red" },
+		-1,
+	},
+	{
+		carPointers{},
+		func(value *car) bool { return value.Name == "ferrari" },
+		-1,
+	},
+	{
+		carPointers{&car{Name: "volvo", Color: "brown"}},
+		func(value *car) bool { return value.Name == "eclipse" },
+		-1,
+	},
+	{
+		carPointers{&car{Name: "maverick", Color: "red"}, &car{Name: "ferrari", Color: "red"}, &car{Name: "polo", Color: "white"}},
+		func(value *car) bool { return value.Name == "polo" && value.Color == "white" },
+		2,
+	},
+	{
+		carPointers{&car{Name: "maverick", Color: "red"}, &car{Name: "ferrari", Color: "red"}, &car{Name: "polo", Color: "white"}},
+		func(value *car) bool { return value.Name == "maverick" && value.Color == "white" },
+		-1,
+	},
+}
+
+func TestCarPointers_FindFirstUsing(t *testing.T) {
+	for _, test := range carsPointerFindFirstUsingTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.expected, test.ss.FindFirstUsing(test.expression))
 		})
 	}
 }

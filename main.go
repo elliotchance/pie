@@ -4,7 +4,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/elliotchance/pie/functions"
 	"go/ast"
 	"go/parser"
 	"go/token"
@@ -13,6 +12,8 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+
+	"github.com/elliotchance/pie/functions"
 )
 
 func check(err error) {
@@ -186,7 +187,7 @@ func main() {
 		t = strings.Replace(t, "SliceType", mapOrSliceType, -1)
 
 		if !explorer.HasEquals() {
-			re := regexp.MustCompile(`([\w_]+)\.Equals\(([^)]+)\)`)
+			re := regexp.MustCompile(`([\w_]+|[\w_]+\[\w+\])\.Equals\(([^)]+)\)`)
 			t = ReplaceAllStringSubmatchFunc(re, t, func(groups []string) string {
 				return fmt.Sprintf("%s == %s", groups[1], groups[2])
 			})
@@ -264,9 +265,21 @@ func ReplaceAllStringSubmatchFunc(re *regexp.Regexp, str string, repl func([]str
 			groups = append(groups, str[v[i]:v[i+1]])
 		}
 
-		result += str[lastIndex:v[0]] + repl(groups)
+		if isNegative(str[v[0]-1]) {
+			result += str[lastIndex:v[0]] + addBrackets(repl(groups))
+		} else {
+			result += str[lastIndex:v[0]] + repl(groups)
+		}
 		lastIndex = v[1]
 	}
 
 	return result + str[lastIndex:]
+}
+
+func isNegative(b byte) bool {
+	return b == '!'
+}
+
+func addBrackets(str string) string {
+	return `(` + str + `)`
 }

@@ -119,6 +119,19 @@ func (ss cars) Diff(against cars) (added, removed cars) {
 	return
 }
 
+// DropTop will return the rest slice after dropping the top n elements
+// if the slice has less elements then n that'll return empty slice
+// if n < 0 it'll return empty slice.
+func (ss cars) DropTop(n int) (drop cars) {
+	if n < 0 || n >= len(ss) {
+		return
+	}
+
+	drop = ss[n:]
+
+	return
+}
+
 // Each is more condensed version of Transform that allows an action to happen
 // on each elements and pass the original slice on.
 //
@@ -182,6 +195,20 @@ func (ss cars) FilterNot(condition func(car) bool) (ss2 cars) {
 	return
 }
 
+// FindFirstUsing will return the index of the first element when the callback returns true or -1 if no element is found.
+// It follows the same logic as the findIndex() function in Javascript.
+//
+// If the list is empty then -1 is always returned.
+func (ss cars) FindFirstUsing(fn func(value car) bool) int {
+	for idx, value := range ss {
+		if fn(value) {
+			return idx
+		}
+	}
+
+	return -1
+}
+
 // First returns the first element, or zero. Also see FirstOr().
 func (ss cars) First() car {
 	return ss.FirstOr(car{})
@@ -232,6 +259,21 @@ func (ss cars) Ints() Ints {
 	}
 
 	return result
+}
+
+// JSONBytes returns the JSON encoded array as bytes.
+//
+// One important thing to note is that it will treat a nil slice as an empty
+// slice to ensure that the JSON value return is always an array.
+func (ss cars) JSONBytes() []byte {
+	if ss == nil {
+		return []byte("[]")
+	}
+
+	// An error should not be possible.
+	data, _ := json.Marshal(ss)
+
+	return data
 }
 
 // JSONString returns the JSON encoded array as a string.
@@ -465,6 +507,37 @@ func (ss cars) Strings() Strings {
 	}
 
 	return result
+}
+
+// SubSlice will return the subSlice from start to end(excluded)
+//
+// Condition 1: If start < 0 or end < 0, nil is returned.
+// Condition 2: If start >= end, nil is returned.
+// Condition 3: Return all elements that exist in the range provided,
+// if start or end is out of bounds, zero items will be placed.
+func (ss cars) SubSlice(start int, end int) (subSlice cars) {
+	if start < 0 || end < 0 {
+		return
+	}
+
+	if start >= end {
+		return
+	}
+
+	length := ss.Len()
+	if start < length {
+		if end <= length {
+			subSlice = ss[start:end]
+		} else {
+			zeroArray := make([]car, end-length)
+			subSlice = ss[start:length].Append(zeroArray[:]...)
+		}
+	} else {
+		zeroArray := make([]car, end-start)
+		subSlice = zeroArray[:]
+	}
+
+	return
 }
 
 // Top will return n elements from head of the slice

@@ -4,17 +4,18 @@ package main
 var pieTemplates = map[string]string{
 	"Abs": `package functions
 
-import (
-	"math"
-)
-
 // Abs is a function which returns the absolute value of all the
 // elements in the slice.
 func (ss SliceType) Abs() SliceType {
+	result := make(SliceType, len(ss))
 	for i, val := range ss {
-		ss[i] = ElementType(math.Abs(float64(val)))
+		if val < 0 {
+			result[i] = -val
+		} else {
+			result[i] = val
+		}
 	}
-	return ss
+	return result
 }
 `,
 	"All": `package functions
@@ -172,6 +173,21 @@ func (ss SliceType) Diff(against SliceType) (added, removed SliceType) {
 	return
 }
 `,
+	"DropTop": `package functions
+
+// DropTop will return the rest slice after dropping the top n elements
+// if the slice has less elements then n that'll return empty slice
+// if n < 0 it'll return empty slice.
+func (ss SliceType) DropTop(n int) (drop SliceType) {
+	if n < 0 || n >= len(ss) {
+		return
+	}
+
+	drop = ss[n:]
+
+	return
+}
+`,
 	"Each": `package functions
 
 // Each is more condensed version of Transform that allows an action to happen
@@ -241,6 +257,22 @@ func (ss SliceType) FilterNot(condition func(ElementType) bool) (ss2 SliceType) 
 	}
 
 	return
+}
+`,
+	"FindFirstUsing": `package functions
+
+// FindFirstUsing will return the index of the first element when the callback returns true or -1 if no element is found.
+// It follows the same logic as the findIndex() function in Javascript.
+//
+// If the list is empty then -1 is always returned.
+func (ss SliceType) FindFirstUsing(fn func(value ElementType) bool) int {
+	for idx, value := range ss {
+		if fn(value) {
+			return idx
+		}
+	}
+
+	return -1
 }
 `,
 	"First": `package functions
@@ -348,6 +380,27 @@ func (ss SliceType) Ints() pie.Ints {
 	}
 
 	return result
+}
+`,
+	"JSONBytes": `package functions
+
+import (
+	"encoding/json"
+)
+
+// JSONBytes returns the JSON encoded array as bytes.
+//
+// One important thing to note is that it will treat a nil slice as an empty
+// slice to ensure that the JSON value return is always an array.
+func (ss SliceType) JSONBytes() []byte {
+	if ss == nil {
+		return []byte("[]")
+	}
+
+	// An error should not be possible.
+	data, _ := json.Marshal(ss)
+
+	return data
 }
 `,
 	"JSONString": `package functions
@@ -838,6 +891,39 @@ func (ss SliceType) Strings() pie.Strings {
 	}
 
 	return result
+}
+`,
+	"SubSlice": `package functions
+
+// SubSlice will return the subSlice from start to end(excluded)
+//
+// Condition 1: If start < 0 or end < 0, nil is returned.
+// Condition 2: If start >= end, nil is returned.
+// Condition 3: Return all elements that exist in the range provided,
+// if start or end is out of bounds, zero items will be placed.
+func (ss SliceType) SubSlice(start int, end int) (subSlice SliceType) {
+	if start < 0 || end < 0 {
+		return
+	}
+
+	if start >= end {
+		return
+	}
+
+	length := ss.Len()
+	if start < length {
+		if end <= length {
+			subSlice = ss[start:end]
+		} else {
+			zeroArray := make([]ElementType, end-length)
+			subSlice = ss[start:length].Append(zeroArray[:]...)
+		}
+	} else {
+		zeroArray := make([]ElementType, end-start)
+		subSlice = zeroArray[:]
+	}
+
+	return
 }
 `,
 	"Sum": `package functions
