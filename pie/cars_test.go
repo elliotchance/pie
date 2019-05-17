@@ -1114,3 +1114,12 @@ func TestCars_FindFirstUsing(t *testing.T) {
 		})
 	}
 }
+
+func TestCars_Join(t *testing.T) {
+	assert.Equal(t, "", cars(nil).Join("a"))
+	assert.Equal(t, "", cars{}.Join("a"))
+	car1, car2 := car{Name: "maverick", Color: "red"}, car{Name: "ferrari", Color: "red"}
+	// We don't use String(), because type car isn't a Stringer. And we don't want (*car).String()
+	car1str, car2str := fmt.Sprintf("%v", car1), fmt.Sprintf("%v", car2)
+	assert.Equal(t, car1str+"-"+car2str, cars{car1, car2}.Join("-"))
+}

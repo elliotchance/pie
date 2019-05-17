@@ -1290,3 +1290,10 @@ func TestInts_FindFirstUsing(t *testing.T) {
 		})
 	}
 }
+
+func TestInts_Join(t *testing.T) {
+	assert.Equal(t, "", Ints(nil).Join("a"))
+	assert.Equal(t, "", Ints{}.Join("a"))
+	assert.Equal(t, "1-2-3", Ints{1, 2, 3}.Join("-"))
+	assert.Equal(t, "1--2-3", Ints{1, -2, 3}.Join("-"))
+}

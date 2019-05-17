@@ -41,7 +41,7 @@ var Functions = []struct {
 	{"Float64s", "float64s.go", ForAll},
 	{"Intersect", "intersect.go", ForNumbersAndStrings},
 	{"Ints", "ints.go", ForAll},
-	{"Join", "join.go", ForStrings},
+	{"Join", "join.go", ForAll},
 	{"JSONBytes", "json_bytes.go", ForAll},
 	{"JSONString", "json_string.go", ForAll},
 	{"Keys", "keys.go", ForMaps},

@@ -1142,3 +1142,10 @@ func TestCarPointers_FindFirstUsing(t *testing.T) {
 		})
 	}
 }
+
+func TestCarPointers_Join(t *testing.T) {
+	assert.Equal(t, "", carPointers(nil).Join("a"))
+	assert.Equal(t, "", carPointers{}.Join("a"))
+	car1, car2 := &car{Name: "maverick", Color: "red"}, &car{Name: "ferrari", Color: "red"}
+	assert.Equal(t, car1.String()+"-"+car2.String(), carPointers{car1, car2}.Join("-"))
+}

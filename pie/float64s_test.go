@@ -1303,3 +1303,11 @@ func TestFloat64_FindFirstUsing(t *testing.T) {
 		})
 	}
 }
+
+func TestFloat64s_Join(t *testing.T) {
+	assert.Equal(t, "", Float64s(nil).Join("a"))
+	assert.Equal(t, "", Float64s{}.Join("a"))
+	var f1, f2 float64 = 0.1, 2e16
+	f1str, f2str := fmt.Sprintf("%v", f1), fmt.Sprintf("%v", f2)
+	assert.Equal(t, f1str+"-"+f2str, Float64s{f1, f2}.Join("-"))
+}
