@@ -3,6 +3,7 @@ package pie
 import (
 	"fmt"
 	"math/rand"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -226,6 +227,14 @@ var carsJSONTests = []struct {
 	},
 }
 
+func TestCars_JSONBytes(t *testing.T) {
+	for _, test := range carsJSONTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss)()
+			assert.Equal(t, []byte(test.jsonString), test.ss.JSONBytes())
+		})
+	}
+}
 func TestCars_JSONString(t *testing.T) {
 	for _, test := range carsJSONTests {
 		t.Run("", func(t *testing.T) {
@@ -820,4 +829,288 @@ func TestCars_Float64s(t *testing.T) {
 	assert.Equal(t,
 		Float64s{0, 0, 0},
 		cars{car{"a", "green"}, car{"bar", "yellow"}, car{"Baz", "black"}}.Float64s())
+}
+
+var carsSequenceTests = []struct {
+	ss       cars
+	creator  func(int) car
+	params   []int
+	expected cars
+}{
+	// n
+	{
+		nil,
+		nil,
+		nil,
+		nil,
+	},
+	{
+		nil,
+		nil,
+		[]int{0},
+		nil,
+	},
+	{
+		nil,
+		nil,
+		[]int{-1},
+		nil,
+	},
+	{
+		nil,
+		func(i int) car { return car{Name: strconv.Itoa(i)} },
+		[]int{3},
+		cars{{Name: "0"}, {Name: "1"}, {Name: "2"}},
+	},
+	// range
+	{
+		nil,
+		func(i int) car { return car{Name: strconv.Itoa(i)} },
+		[]int{6, 6},
+		nil,
+	},
+	{
+		nil,
+		func(i int) car { return car{Name: strconv.Itoa(i)} },
+		[]int{8, 6},
+		nil,
+	},
+	{
+		nil,
+		func(i int) car { return car{Name: strconv.Itoa(i)} },
+		[]int{3, 6},
+		cars{{Name: "3"}, {Name: "4"}, {Name: "5"}},
+	},
+	{
+		nil,
+		func(i int) car { return car{Name: strconv.Itoa(i)} },
+		[]int{-6, -3},
+		cars{{Name: "-6"}, {Name: "-5"}, {Name: "-4"}},
+	},
+	{
+		nil,
+		func(i int) car { return car{Name: strconv.Itoa(i)} },
+		[]int{-3, -6},
+		nil,
+	},
+	// range with step
+	{
+		nil,
+		func(i int) car { return car{Name: strconv.Itoa(i)} },
+		[]int{3, 7, 2},
+		cars{{Name: "3"}, {Name: "5"}},
+	},
+	{
+		nil,
+		func(i int) car { return car{Name: strconv.Itoa(i)} },
+		[]int{-3, -6, -2},
+		cars{{Name: "-3"}, {Name: "-5"}},
+	},
+	{
+		nil,
+		func(i int) car { return car{Name: strconv.Itoa(i)} },
+		[]int{3, 7, 10},
+		nil,
+	},
+}
+
+func TestCars_SequenceUsing(t *testing.T) {
+	for _, test := range carsSequenceTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.SequenceUsing(test.creator, test.params...))
+		})
+	}
+}
+
+var carsDropTopTests = []struct {
+	ss      cars
+	n       int
+	dropTop cars
+}{
+	{
+		nil,
+		1,
+		nil,
+	},
+	{
+		cars{},
+		1,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		-1,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		0,
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		1,
+		cars{car{"Baz", "black"}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		2,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		3,
+		nil,
+	},
+}
+
+func TestCars_DropTop(t *testing.T) {
+	for _, test := range carsDropTopTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss)()
+			assert.Equal(t, test.dropTop, test.ss.DropTop(test.n))
+		})
+	}
+}
+
+var carsSubSliceTests = []struct {
+	ss       cars
+	start    int
+	end      int
+	subSlice cars
+}{
+	{
+		nil,
+		1,
+		1,
+		nil,
+	},
+	{
+		nil,
+		1,
+		2,
+		cars{car{}},
+	},
+	{
+		cars{},
+		1,
+		1,
+		nil,
+	},
+	{
+		cars{},
+		1,
+		2,
+		cars{car{}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		-1,
+		-1,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		-1,
+		1,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		1,
+		-1,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		2,
+		0,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		1,
+		1,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		1,
+		2,
+		cars{car{"Baz", "black"}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		1,
+		3,
+		cars{car{"Baz", "black"}, car{}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		2,
+		2,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		2,
+		3,
+		cars{car{}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{}},
+		2,
+		3,
+		cars{car{}},
+	},
+}
+
+func TestCars_SubSlice(t *testing.T) {
+	for _, test := range carsSubSliceTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss)()
+			assert.Equal(t, test.subSlice, test.ss.SubSlice(test.start, test.end))
+		})
+	}
+}
+
+var carsFindFirstUsingTests = []struct {
+	ss         cars
+	expression func(value car) bool
+	expected   int
+}{
+	{
+		nil,
+		func(value car) bool { return value.Color == "red" },
+		-1,
+	},
+	{
+		cars{},
+		func(value car) bool { return value.Name == "ferrari" },
+		-1,
+	},
+	{
+		cars{car{Name: "volvo", Color: "brown"}},
+		func(value car) bool { return value.Name == "eclipse" },
+		-1,
+	},
+	{
+		cars{car{Name: "maverick", Color: "red"}, car{Name: "ferrari", Color: "red"}, car{Name: "polo", Color: "white"}},
+		func(value car) bool { return value.Name == "polo" && value.Color == "white" },
+		2,
+	},
+	{
+		cars{car{Name: "maverick", Color: "red"}, car{Name: "ferrari", Color: "red"}, car{Name: "polo", Color: "white"}},
+		func(value car) bool { return value.Name == "maverick" && value.Color == "white" },
+		-1,
+	},
+}
+
+func TestCars_FindFirstUsing(t *testing.T) {
+	for _, test := range carsFindFirstUsingTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.expected, test.ss.FindFirstUsing(test.expression))
+		})
+	}
 }

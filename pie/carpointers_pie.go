@@ -119,6 +119,19 @@ func (ss carPointers) Diff(against carPointers) (added, removed carPointers) {
 	return
 }
 
+// DropTop will return the rest slice after dropping the top n elements
+// if the slice has less elements then n that'll return empty slice
+// if n < 0 it'll return empty slice.
+func (ss carPointers) DropTop(n int) (drop carPointers) {
+	if n < 0 || n >= len(ss) {
+		return
+	}
+
+	drop = ss[n:]
+
+	return
+}
+
 // Each is more condensed version of Transform that allows an action to happen
 // on each elements and pass the original slice on.
 //
@@ -182,6 +195,20 @@ func (ss carPointers) FilterNot(condition func(*car) bool) (ss2 carPointers) {
 	return
 }
 
+// FindFirstUsing will return the index of the first element when the callback returns true or -1 if no element is found.
+// It follows the same logic as the findIndex() function in Javascript.
+//
+// If the list is empty then -1 is always returned.
+func (ss carPointers) FindFirstUsing(fn func(value *car) bool) int {
+	for idx, value := range ss {
+		if fn(value) {
+			return idx
+		}
+	}
+
+	return -1
+}
+
 // First returns the first element, or zero. Also see FirstOr().
 func (ss carPointers) First() *car {
 	return ss.FirstOr(&car{})
@@ -232,6 +259,21 @@ func (ss carPointers) Ints() Ints {
 	}
 
 	return result
+}
+
+// JSONBytes returns the JSON encoded array as bytes.
+//
+// One important thing to note is that it will treat a nil slice as an empty
+// slice to ensure that the JSON value return is always an array.
+func (ss carPointers) JSONBytes() []byte {
+	if ss == nil {
+		return []byte("[]")
+	}
+
+	// An error should not be possible.
+	data, _ := json.Marshal(ss)
+
+	return data
 }
 
 // JSONString returns the JSON encoded array as a string.
@@ -342,6 +384,47 @@ func (ss carPointers) Send(ctx context.Context, ch chan<- *car) carPointers {
 	return ss
 }
 
+// SequenceUsing generates slice in range using creator function
+//
+// There are 3 variations to generate:
+// 		1. [0, n).
+//		2. [min, max).
+//		3. [min, max) with step.
+//
+// if len(params) == 1 considered that will be returned slice between 0 and n,
+// where n is the first param, [0, n).
+// if len(params) == 2 considered that will be returned slice between min and max,
+// where min is the first param, max is the second, [min, max).
+// if len(params) > 2 considered that will be returned slice between min and max with step,
+// where min is the first param, max is the second, step is the third one, [min, max) with step,
+// others params will be ignored
+func (ss carPointers) SequenceUsing(creator func(int) *car, params ...int) carPointers {
+	var seq = func(min, max, step int) (seq carPointers) {
+		lenght := int(util.Round(float64(max-min) / float64(step)))
+		if lenght < 1 {
+			return
+		}
+
+		seq = make(carPointers, lenght)
+		for i := 0; i < lenght; min += step {
+			seq[i] = creator(min)
+			i++
+		}
+
+		return seq
+	}
+
+	if len(params) > 2 {
+		return seq(params[0], params[1], params[2])
+	} else if len(params) == 2 {
+		return seq(params[0], params[1], 1)
+	} else if len(params) == 1 {
+		return seq(0, params[0], 1)
+	} else {
+		return nil
+	}
+}
+
 // Shuffle returns shuffled slice by your rand.Source
 func (ss carPointers) Shuffle(source rand.Source) carPointers {
 	n := len(ss)
@@ -424,6 +507,37 @@ func (ss carPointers) Strings() Strings {
 	}
 
 	return result
+}
+
+// SubSlice will return the subSlice from start to end(excluded)
+//
+// Condition 1: If start < 0 or end < 0, nil is returned.
+// Condition 2: If start >= end, nil is returned.
+// Condition 3: Return all elements that exist in the range provided,
+// if start or end is out of bounds, zero items will be placed.
+func (ss carPointers) SubSlice(start int, end int) (subSlice carPointers) {
+	if start < 0 || end < 0 {
+		return
+	}
+
+	if start >= end {
+		return
+	}
+
+	length := ss.Len()
+	if start < length {
+		if end <= length {
+			subSlice = ss[start:end]
+		} else {
+			zeroArray := make([]*car, end-length)
+			subSlice = ss[start:length].Append(zeroArray[:]...)
+		}
+	} else {
+		zeroArray := make([]*car, end-start)
+		subSlice = zeroArray[:]
+	}
+
+	return
 }
 
 // Top will return n elements from head of the slice

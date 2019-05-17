@@ -274,6 +274,15 @@ func TestInts_JSONString(t *testing.T) {
 	}
 }
 
+func TestInts_JSONBytes(t *testing.T) {
+	for _, test := range intsJSONTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, []byte(test.jsonString), test.ss.JSONBytes())
+		})
+	}
+}
+
 var intsSortTests = []struct {
 	ss        Ints
 	sorted    Ints
@@ -772,6 +781,22 @@ func TestInts_Abs(t *testing.T) {
 	assert.Equal(t, Ints{1, 2}, Ints{1, 2}.Abs())
 }
 
+func TestInts_AbsLarge(t *testing.T) {
+	// int64: prevent compile error (constant overflow) on 32-bit architectures.
+	a64 := []int64{3, -4, 1234567890123456789, -987654321098765432}
+	var a Ints
+	for _, v := range a64 {
+		a = a.Append(int(v))
+	}
+	b := a.Abs()
+	for i := range a {
+		v, absv := a[i], b[i]
+		if absv != v && absv != -v {
+			t.Errorf("Incorrect result for Abs(%d): %d", v, absv)
+		}
+	}
+}
+
 var intsSendTests = []struct {
 	ss            Ints
 	recieveDelay  time.Duration
@@ -930,12 +955,17 @@ func TestInts_Diff(t *testing.T) {
 	}
 }
 
-var intsSequenceTests = []struct {
+var intsSequenceAndSequenceUsingTests = []struct {
 	ss       Ints
 	params   []int
 	expected Ints
 }{
 	// n
+	{
+		nil,
+		nil,
+		nil,
+	},
 	{
 		nil,
 		[]int{-1},
@@ -1021,10 +1051,19 @@ var intsSequenceTests = []struct {
 }
 
 func TestInts_Sequence(t *testing.T) {
-	for _, test := range intsSequenceTests {
+	for _, test := range intsSequenceAndSequenceUsingTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableInts(t, &test.ss)()
 			assert.Equal(t, test.expected, test.ss.Sequence(test.params...))
+		})
+	}
+}
+
+func TestInts_SequenceUsing(t *testing.T) {
+	for _, test := range intsSequenceAndSequenceUsingTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.SequenceUsing(func(i int) int { return i }, test.params...))
 		})
 	}
 }
@@ -1051,4 +1090,203 @@ func TestInts_Float64s(t *testing.T) {
 	assert.Equal(t,
 		Float64s{92, 823, 453},
 		Ints{92, 823, 453}.Float64s())
+}
+
+var intsDropTopTests = []struct {
+	ss      Ints
+	n       int
+	dropTop Ints
+}{
+	{
+		nil,
+		1,
+		nil,
+	},
+	{
+		Ints{},
+		1,
+		nil,
+	},
+	{
+		Ints{1, 2},
+		-1,
+		nil,
+	},
+	{
+		Ints{1, 2},
+		0,
+		Ints{1, 2},
+	},
+
+	{
+		Ints{1, 2},
+		1,
+		Ints{2},
+	},
+	{
+		Ints{1, 2},
+		2,
+		nil,
+	},
+	{
+		Ints{1, 2},
+		3,
+		nil,
+	},
+}
+
+func TestInts_DropTop(t *testing.T) {
+	for _, test := range intsDropTopTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.dropTop, test.ss.DropTop(test.n))
+		})
+	}
+}
+
+var intsSubSliceTests = []struct {
+	ss       Ints
+	start    int
+	end      int
+	subSlice Ints
+}{
+	{
+		nil,
+		1,
+		1,
+		nil,
+	},
+	{
+		nil,
+		1,
+		2,
+		Ints{0},
+	},
+	{
+		Ints{},
+		1,
+		1,
+		nil,
+	},
+	{
+		Ints{},
+		1,
+		2,
+		Ints{0},
+	},
+	{
+		Ints{1, 2},
+		-1,
+		-1,
+		nil,
+	},
+	{
+		Ints{1, 2},
+		-1,
+		1,
+		nil,
+	},
+	{
+		Ints{1, 2},
+		1,
+		-1,
+		nil,
+	},
+	{
+		Ints{1, 2},
+		2,
+		0,
+		nil,
+	},
+
+	{
+		Ints{1, 2},
+		1,
+		1,
+		nil,
+	},
+	{
+		Ints{1, 2},
+		1,
+		2,
+		Ints{2},
+	},
+	{
+		Ints{1, 2},
+		1,
+		3,
+		Ints{2, 0},
+	},
+	{
+		Ints{1, 2},
+		2,
+		2,
+		nil,
+	},
+	{
+		Ints{1, 2},
+		2,
+		3,
+		Ints{0},
+	},
+	{
+		Ints{1, 2, 0},
+		2,
+		3,
+		Ints{0},
+	},
+}
+
+func TestInts_SubSlice(t *testing.T) {
+	for _, test := range intsSubSliceTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.subSlice, test.ss.SubSlice(test.start, test.end))
+		})
+	}
+}
+
+var intsFindFirstUsingTests = []struct {
+	ss         Ints
+	expression func(value int) bool
+	expected   int
+}{
+	{
+		nil,
+		func(value int) bool { return value == 10 },
+		-1,
+	},
+	{
+		Ints{},
+		func(value int) bool { return value == 150 },
+		-1,
+	},
+	{
+		Ints{10, 15},
+		func(value int) bool { return value == 150 },
+		-1,
+	},
+	{
+		Ints{100},
+		func(value int) bool { return value == 100 },
+		0,
+	},
+	{
+		Ints{1, 2},
+		func(value int) bool { return value == 2 },
+		1,
+	},
+	{
+		Ints{1, 2, 3},
+		func(value int) bool { return value == 3 },
+		2,
+	},
+}
+
+func TestInts_FindFirstUsing(t *testing.T) {
+	for _, test := range intsFindFirstUsingTests {
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, test.expected, test.ss.FindFirstUsing(test.expression))
+		})
+	}
 }
