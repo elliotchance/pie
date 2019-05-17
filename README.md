@@ -217,6 +217,7 @@ The letters in brackets indicate:
 | `SortStableUsing` | ✓      |        | ✓      |      | n⋅log(n) | Return a new sorted slice, using custom comparator, keeping the original order of equal elements. |
 | `SortUsing`       | ✓      |        | ✓      |      | n⋅log(n) | Return a new sorted slice, using custom comparator. |
 | `Strings` (S)     | ✓      | ✓      | ✓      |      | n        | Transforms each element into a string. |
+| `SubSlice`        | ✓      | ✓      | ✓      |      | n        | Return the subSlice from start to end(excluded). |
 | `Sum`             |        | ✓      |        |      | n        | Sum (total) of all elements. |
 | `Top`             | ✓      | ✓      | ✓      |      | n        | Gets several elements from top(head of slice).|
 | `ToStrings`       | ✓      | ✓      | ✓      |      | n        | Transforms each element to a string. |

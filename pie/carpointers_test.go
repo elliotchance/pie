@@ -1000,6 +1000,109 @@ func TestCarPointers_DropTop(t *testing.T) {
 	}
 }
 
+var carPointersSubSliceTests = []struct {
+	ss       carPointers
+	start    int
+	end      int
+	subSlice carPointers
+}{
+	{
+		// start:1 ,end: 2
+		nil,
+		1,
+		1,
+		nil,
+	},
+	{
+		// start:1 ,end: 2
+		nil,
+		1,
+		2,
+		carPointers{nil},
+	},
+	{
+		carPointers{},
+		1,
+		1,
+		nil,
+	},
+	{
+		carPointers{},
+		1,
+		2,
+		carPointers{nil},
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		-1,
+		-1,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		-1,
+		1,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		1,
+		-1,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		2,
+		0,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		1,
+		1,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		1,
+		2,
+		carPointers{carPointerB},
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		1,
+		3,
+		carPointers{carPointerB, nil},
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		2,
+		2,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		2,
+		3,
+		carPointers{nil},
+	},
+	{
+		carPointers{carPointerA, carPointerB, nil},
+		2,
+		3,
+		carPointers{nil},
+	},
+}
+
+func TestCarPointers_SubSlice(t *testing.T) {
+	for _, test := range carPointersSubSliceTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			assert.Equal(t, test.subSlice, test.ss.SubSlice(test.start, test.end))
+		})
+	}
+}
+
 var carsPointerFindFirstUsingTests = []struct {
 	ss         carPointers
 	expression func(value *car) bool

@@ -974,6 +974,107 @@ func TestCars_DropTop(t *testing.T) {
 	}
 }
 
+var carsSubSliceTests = []struct {
+	ss       cars
+	start    int
+	end      int
+	subSlice cars
+}{
+	{
+		nil,
+		1,
+		1,
+		nil,
+	},
+	{
+		nil,
+		1,
+		2,
+		cars{car{}},
+	},
+	{
+		cars{},
+		1,
+		1,
+		nil,
+	},
+	{
+		cars{},
+		1,
+		2,
+		cars{car{}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		-1,
+		-1,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		-1,
+		1,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		1,
+		-1,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		2,
+		0,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		1,
+		1,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		1,
+		2,
+		cars{car{"Baz", "black"}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		1,
+		3,
+		cars{car{"Baz", "black"}, car{}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		2,
+		2,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		2,
+		3,
+		cars{car{}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{}},
+		2,
+		3,
+		cars{car{}},
+	},
+}
+
+func TestCars_SubSlice(t *testing.T) {
+	for _, test := range carsSubSliceTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss)()
+			assert.Equal(t, test.subSlice, test.ss.SubSlice(test.start, test.end))
+		})
+	}
+}
+
 var carsFindFirstUsingTests = []struct {
 	ss         cars
 	expression func(value car) bool

@@ -1162,6 +1162,108 @@ func TestFloat64s_DropTop(t *testing.T) {
 	}
 }
 
+var float64sSubSliceTests = []struct {
+	ss       Float64s
+	start    int
+	end      int
+	subSlice Float64s
+}{
+	{
+		nil,
+		1,
+		1,
+		nil,
+	},
+	{
+		nil,
+		1,
+		2,
+		Float64s{0},
+	},
+	{
+		Float64s{},
+		1,
+		1,
+		nil,
+	},
+	{
+		Float64s{},
+		1,
+		2,
+		Float64s{0},
+	},
+	{
+		Float64s{1.23, 2.34},
+		-1,
+		-1,
+		nil,
+	},
+	{
+		Float64s{1.23, 2.34},
+		-1,
+		1,
+		nil,
+	},
+	{
+		Float64s{1.23, 2.34},
+		1,
+		-1,
+		nil,
+	},
+	{
+		Float64s{1.23, 2.34},
+		2,
+		0,
+		nil,
+	},
+
+	{
+		Float64s{1.23, 2.34},
+		1,
+		1,
+		nil,
+	},
+	{
+		Float64s{1.23, 2.34},
+		1,
+		2,
+		Float64s{2.34},
+	},
+	{
+		Float64s{1.23, 2.34},
+		1,
+		3,
+		Float64s{2.34, 0},
+	},
+	{
+		Float64s{1.23, 2.34},
+		2,
+		2,
+		nil,
+	},
+	{
+		Float64s{1.23, 2.34},
+		2,
+		3,
+		Float64s{0},
+	},
+	{
+		Float64s{1.23, 2.34, 0},
+		2,
+		3,
+		Float64s{0},
+	},
+}
+
+func TestFloat64s_SubSlice(t *testing.T) {
+	for _, test := range float64sSubSliceTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, test.subSlice, test.ss.SubSlice(test.start, test.end))
+		})
+	}
+}
+
 var floatFindFirstUsingTests = []struct {
 	ss         Float64s
 	expression func(value float64) bool
