@@ -557,9 +557,6 @@ func (ss SliceType) Median() ElementType {
 
 	var rec func(a, b int)
 	rec = func(a, b int) {
-		if a > b {
-			panic("bug")
-		}
 		if b-a <= 1 {
 			return
 		}
@@ -576,9 +573,6 @@ func (ss SliceType) Median() ElementType {
 				work[j+1], work[k-1] = work[k-1], work[j+1]
 				k--
 			}
-		}
-		if j > limit1 && j+1 < limit2 {
-			panic("Inconsistency: won't recurse on both left and right")
 		}
 		// 1 or 0 recursive calls
 		if j > limit1 {
