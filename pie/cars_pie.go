@@ -290,10 +290,10 @@ func (ss cars) Map(fn func(car) car) (ss2 cars) {
 // Mode returns a new slice containing the most frequently occuring values.
 //
 // The number of items returned may be the same as the input or less. It will
-// never return zero items unless then input slice has zero items.
+// never return zero items unless the input slice has zero items.
 func (ss cars) Mode() cars {
-	if ss == nil || len(ss) == 0 {
-		return ss
+	if len(ss) == 0 {
+		return nil
 	}
 	values := make(map[car]int, 0)
 	for _, s := range ss {
