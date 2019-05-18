@@ -183,7 +183,10 @@ func (ss SliceType) DropTop(n int) (drop SliceType) {
 		return
 	}
 
-	drop = ss[n:]
+	// Copy ss, to make sure no memory is overlapping between input and
+	// output. See issue #145.
+	drop = make([]ElementType, len(ss) - n)
+	copy(drop, ss[n:])
 
 	return
 }
