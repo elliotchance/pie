@@ -283,6 +283,53 @@ func TestInts_JSONBytes(t *testing.T) {
 	}
 }
 
+var intsJSONIndentTests = []struct {
+	ss         Ints
+	jsonString string
+}{
+	{
+		nil,
+		`[]`, // Instead of null.
+	},
+	{
+		Ints{},
+		`[]`,
+	},
+	{
+		Ints{12},
+		`[
+  12
+]`,
+	},
+	{
+		Ints{23, -2, 3424, 12},
+		`[
+  23,
+  -2,
+  3424,
+  12
+]`,
+	},
+}
+
+func TestInts_JSONStringIndent(t *testing.T) {
+	for _, test := range intsJSONIndentTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.jsonString, test.ss.JSONStringIndent("", "  "))
+		})
+	}
+}
+
+func TestInts_JSONBytesIndent(t *testing.T) {
+	for _, test := range intsJSONIndentTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, []byte(test.jsonString), test.ss.JSONBytesIndent("", "  "))
+		})
+	}
+}
+
 var intsSortTests = []struct {
 	ss        Ints
 	sorted    Ints

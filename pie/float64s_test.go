@@ -297,6 +297,52 @@ func TestFloat64s_JSONString(t *testing.T) {
 	}
 }
 
+var float64sJSONIndentTests = []struct {
+	ss         Float64s
+	jsonString string
+}{
+	{
+		nil,
+		`[]`, // Instead of null.
+	},
+	{
+		Float64s{},
+		`[]`,
+	},
+	{
+		Float64s{12.3},
+		`[
+  12.3
+]`,
+	},
+	{
+		Float64s{23, -2.5, 3424, 12.3},
+		`[
+  23,
+  -2.5,
+  3424,
+  12.3
+]`,
+	},
+}
+
+func TestFloat64s_JSONBytesIndent(t *testing.T) {
+	for _, test := range float64sJSONIndentTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, []byte(test.jsonString), test.ss.JSONBytesIndent("", "  "))
+		})
+	}
+}
+func TestFloat64s_JSONStringIndent(t *testing.T) {
+	for _, test := range float64sJSONIndentTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, test.jsonString, test.ss.JSONStringIndent("", "  "))
+		})
+	}
+}
+
 var float64sSortTests = []struct {
 	ss        Float64s
 	sorted    Float64s

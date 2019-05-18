@@ -195,8 +195,10 @@ The letters in brackets indicate:
 | `Intersect`       | ✓      | ✓      |        |      | n        | Intersect returns elements which exists in all slices. |
 | `Ints` (S)        | ✓      | ✓      | ✓      |      | n        | Transforms each element into an int. |
 | `Join`            | ✓      |        |        |      | n        | A string from joining each of the elements. |
-| `JSONBytes `      | ✓      | ✓      | ✓      |      | n        | The JSON encoded bytes. |
+| `JSONBytes`       | ✓      | ✓      | ✓      |      | n        | The JSON encoded bytes. |
+| `JSONBytesIndent` | ✓      | ✓      | ✓      |      | n        | The indented JSON encoded bytes. |
 | `JSONString`      | ✓      | ✓      | ✓      |      | n        | The JSON encoded string. |
+| `JSONStringIndent`| ✓      | ✓      | ✓      |      | n        | The indented JSON encoded string. |
 | `Keys`            |        |        |        | ✓    | n        | Returns all keys in the map (in random order). |
 | `Last`            | ✓      | ✓      | ✓      |      | 1        | The last element, or a zeroed value. |
 | `LastOr`          | ✓      | ✓      | ✓      |      | 1        | The last element, or a default value. |
