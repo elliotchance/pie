@@ -420,26 +420,26 @@ func (ss Ints) Mode() Ints {
 	if ss == nil || len(ss) == 0 {
 		return ss
 	}
-	values := make(map[int]int,0)
-	for _, s:= range ss {
+	values := make(map[int]int, 0)
+	for _, s := range ss {
 		values[s]++
 	}
 
 	var maxFrequency int
-	for _,v := range values {
+	for _, v := range values {
 		if v > maxFrequency {
 			maxFrequency = v
 		}
 	}
-	
+
 	var maxValues Ints
-	for k,v := range values {
+	for k, v := range values {
 		if v == maxFrequency {
 			maxValues = append(maxValues, k)
 		}
 	}
 
-	return maxValues 
+	return maxValues
 }
 
 // Product is the product of all of the elements.

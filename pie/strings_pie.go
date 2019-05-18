@@ -389,26 +389,26 @@ func (ss Strings) Mode() Strings {
 	if ss == nil || len(ss) == 0 {
 		return ss
 	}
-	values := make(map[string]int,0)
-	for _, s:= range ss {
+	values := make(map[string]int, 0)
+	for _, s := range ss {
 		values[s]++
 	}
 
 	var maxFrequency int
-	for _,v := range values {
+	for _, v := range values {
 		if v > maxFrequency {
 			maxFrequency = v
 		}
 	}
-	
+
 	var maxValues Strings
-	for k,v := range values {
+	for k, v := range values {
 		if v == maxFrequency {
 			maxValues = append(maxValues, k)
 		}
 	}
 
-	return maxValues 
+	return maxValues
 }
 
 // Random returns a random element by your rand.Source, or zero
