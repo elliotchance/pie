@@ -155,6 +155,7 @@ func TestInts_Last(t *testing.T) {
 var intsStatsTests = []struct {
 	ss                          []int
 	min, max, sum, product, len int
+	mode                        Ints
 	average                     float64
 }{
 	{
@@ -164,6 +165,7 @@ var intsStatsTests = []struct {
 		0,
 		0,
 		0,
+		nil,
 		0,
 	},
 	{
@@ -173,6 +175,7 @@ var intsStatsTests = []struct {
 		0,
 		0,
 		0,
+		Ints{},
 		0,
 	},
 	{
@@ -182,6 +185,7 @@ var intsStatsTests = []struct {
 		1,
 		1,
 		1,
+		Ints{1},
 		1,
 	},
 	{
@@ -191,6 +195,7 @@ var intsStatsTests = []struct {
 		11,
 		30,
 		4,
+		Ints{2, 3, 5, 1},
 		2.75,
 	},
 }
@@ -207,6 +212,27 @@ func TestInts_Max(t *testing.T) {
 	for _, test := range intsStatsTests {
 		t.Run("", func(t *testing.T) {
 			assert.Equal(t, test.max, Ints(test.ss).Max())
+		})
+	}
+}
+
+func TestInts_Mode(t *testing.T) {
+	cmp := func(a, b Ints) bool {
+		m := make(map[int]struct{})
+		for _, i := range a {
+			m[i] = struct{}{}
+		}
+		for _, i := range b {
+			if _, ok := m[i]; !ok {
+				return false
+			}
+		}
+		return true
+	}
+	for _, test := range intsStatsTests {
+		t.Run("", func(t *testing.T) {
+			//assert.Equal(t, test.mode, Ints(test.ss).Mode())
+			assert.True(t, cmp(test.mode, Ints(test.ss).Mode()))
 		})
 	}
 }

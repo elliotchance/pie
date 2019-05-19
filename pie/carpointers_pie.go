@@ -332,6 +332,36 @@ func (ss carPointers) Map(fn func(*car) *car) (ss2 carPointers) {
 	return
 }
 
+// Mode returns a new slice containing the most frequently occuring values.
+//
+// The number of items returned may be the same as the input or less. It will
+// never return zero items unless the input slice has zero items.
+func (ss carPointers) Mode() carPointers {
+	if len(ss) == 0 {
+		return nil
+	}
+	values := make(map[*car]int, 0)
+	for _, s := range ss {
+		values[s]++
+	}
+
+	var maxFrequency int
+	for _, v := range values {
+		if v > maxFrequency {
+			maxFrequency = v
+		}
+	}
+
+	var maxValues carPointers
+	for k, v := range values {
+		if v == maxFrequency {
+			maxValues = append(maxValues, k)
+		}
+	}
+
+	return maxValues
+}
+
 // Random returns a random element by your rand.Source, or zero
 func (ss carPointers) Random(source rand.Source) *car {
 	n := len(ss)

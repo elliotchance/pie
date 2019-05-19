@@ -52,6 +52,7 @@ var Functions = []struct {
 	{"Max", "max.go", ForNumbersAndStrings},
 	{"Median", "median.go", ForNumbers},
 	{"Min", "min.go", ForNumbersAndStrings},
+	{"Mode", "mode.go", ForAll},
 	{"Product", "product.go", ForNumbers},
 	{"Random", "random.go", ForAll},
 	{"Reduce", "reduce.go", ForNumbersAndStrings},

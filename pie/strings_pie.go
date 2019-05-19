@@ -426,6 +426,36 @@ func (ss Strings) Min() (min string) {
 	return
 }
 
+// Mode returns a new slice containing the most frequently occuring values.
+//
+// The number of items returned may be the same as the input or less. It will
+// never return zero items unless the input slice has zero items.
+func (ss Strings) Mode() Strings {
+	if len(ss) == 0 {
+		return nil
+	}
+	values := make(map[string]int, 0)
+	for _, s := range ss {
+		values[s]++
+	}
+
+	var maxFrequency int
+	for _, v := range values {
+		if v > maxFrequency {
+			maxFrequency = v
+		}
+	}
+
+	var maxValues Strings
+	for k, v := range values {
+		if v == maxFrequency {
+			maxValues = append(maxValues, k)
+		}
+	}
+
+	return maxValues
+}
+
 // Random returns a random element by your rand.Source, or zero
 func (ss Strings) Random(source rand.Source) string {
 	n := len(ss)
