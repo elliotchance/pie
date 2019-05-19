@@ -165,7 +165,10 @@ func (ss Float64s) DropTop(n int) (drop Float64s) {
 		return
 	}
 
-	drop = ss[n:]
+	// Copy ss, to make sure no memory is overlapping between input and
+	// output. See issue #145.
+	drop = make([]float64, len(ss)-n)
+	copy(drop, ss[n:])
 
 	return
 }

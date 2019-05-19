@@ -1156,6 +1156,31 @@ func TestStrings_DropTop(t *testing.T) {
 	}
 }
 
+// Make sure that input and output of DropTop don't share the same memory.
+func TestDropTopNonDestructive(t *testing.T) {
+	abc := Strings{"A", "B", "C"}
+
+	abc1 := abc.DropTop(0)
+	abc1[0] = "a"
+
+	if x, expected := abc.Join(""), "ABC"; x != expected {
+		t.Errorf("Expected %q, got %q", expected, x)
+	}
+	if x, expected := abc1.Join(""), "aBC"; x != expected {
+		t.Errorf("Expected %q, got %q", expected, x)
+	}
+
+	bc := abc.DropTop(1)
+	bc[0] = "D"
+
+	if x, expected := abc.Join(""), "ABC"; x != expected {
+		t.Errorf("Expected %q, got %q", expected, x)
+	}
+	if x, expected := bc.Join(""), "DC"; x != expected {
+		t.Errorf("Expected %q, got %q", expected, x)
+	}
+}
+
 var stringsSubSliceTests = []struct {
 	ss       Strings
 	start    int

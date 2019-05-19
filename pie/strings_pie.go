@@ -141,7 +141,10 @@ func (ss Strings) DropTop(n int) (drop Strings) {
 		return
 	}
 
-	drop = ss[n:]
+	// Copy ss, to make sure no memory is overlapping between input and
+	// output. See issue #145.
+	drop = make([]string, len(ss)-n)
+	copy(drop, ss[n:])
 
 	return
 }
