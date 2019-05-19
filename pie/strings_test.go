@@ -164,30 +164,35 @@ func TestStrings_Last(t *testing.T) {
 var stringsStatsTests = []struct {
 	ss       Strings
 	min, max string
+	mode     Strings
 	len      int
 }{
 	{
 		nil,
 		"",
 		"",
+		nil,
 		0,
 	},
 	{
 		[]string{},
 		"",
 		"",
+		Strings{},
 		0,
 	},
 	{
 		[]string{"foo"},
 		"foo",
 		"foo",
+		Strings{"foo"},
 		1,
 	},
 	{
 		[]string{"bar", "Baz", "qux", "foo"},
 		"Baz",
 		"qux",
+		Strings{"bar", "Baz", "qux", "foo"},
 		4,
 	},
 }
@@ -206,6 +211,26 @@ func TestStrings_Max(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
 			assert.Equal(t, test.max, Strings(test.ss).Max())
+		})
+	}
+}
+
+func TestStrings_Mode(t *testing.T) {
+	cmp := func(a, b Strings) bool {
+		m := make(map[string]struct{})
+		for _, i := range a {
+			m[i] = struct{}{}
+		}
+		for _, i := range b {
+			if _, ok := m[i]; !ok {
+				return false
+			}
+		}
+		return true
+	}
+	for _, test := range stringsStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.True(t, cmp(test.mode, Strings(test.ss).Mode()))
 		})
 	}
 }
@@ -254,6 +279,52 @@ func TestStrings_JSONString(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
 			assert.Equal(t, test.jsonString, test.ss.JSONString())
+		})
+	}
+}
+
+var stringsJSONIndentTests = []struct {
+	ss         Strings
+	jsonString string
+}{
+	{
+		nil,
+		`[]`, // Instead of null.
+	},
+	{
+		Strings{},
+		`[]`,
+	},
+	{
+		Strings{"foo"},
+		`[
+  "foo"
+]`,
+	},
+	{
+		Strings{"bar", "Baz", "qux", "foo"},
+		`[
+  "bar",
+  "Baz",
+  "qux",
+  "foo"
+]`,
+	},
+}
+
+func TestStrings_JSONBytesIndent(t *testing.T) {
+	for _, test := range stringsJSONIndentTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, []byte(test.jsonString), test.ss.JSONBytesIndent("", "  "))
+		})
+	}
+}
+func TestStrings_JSONStringIndent(t *testing.T) {
+	for _, test := range stringsJSONIndentTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.jsonString, test.ss.JSONStringIndent("", "  "))
 		})
 	}
 }
@@ -441,7 +512,7 @@ func TestStrings_AreUnique(t *testing.T) {
 	}
 }
 
-var carPointersToStringsTests = []struct {
+var carPointersStringsUsingTests = []struct {
 	ss        Strings
 	transform func(string) string
 	expected  Strings
@@ -469,11 +540,11 @@ var carPointersToStringsTests = []struct {
 	},
 }
 
-func TestStrings_ToStrings(t *testing.T) {
-	for _, test := range carPointersToStringsTests {
+func TestStrings_StringsUsing(t *testing.T) {
+	for _, test := range carPointersStringsUsingTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
-			assert.Equal(t, test.expected, test.ss.ToStrings(test.transform))
+			assert.Equal(t, test.expected, test.ss.StringsUsing(test.transform))
 		})
 	}
 }
@@ -1152,6 +1223,133 @@ func TestStrings_DropTop(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
 			assert.Equal(t, test.dropTop, test.ss.DropTop(test.n))
+		})
+	}
+}
+
+// Make sure that input and output of DropTop don't share the same memory.
+func TestDropTopNonDestructive(t *testing.T) {
+	abc := Strings{"A", "B", "C"}
+
+	abc1 := abc.DropTop(0)
+	abc1[0] = "a"
+
+	if x, expected := abc.Join(""), "ABC"; x != expected {
+		t.Errorf("Expected %q, got %q", expected, x)
+	}
+	if x, expected := abc1.Join(""), "aBC"; x != expected {
+		t.Errorf("Expected %q, got %q", expected, x)
+	}
+
+	bc := abc.DropTop(1)
+	bc[0] = "D"
+
+	if x, expected := abc.Join(""), "ABC"; x != expected {
+		t.Errorf("Expected %q, got %q", expected, x)
+	}
+	if x, expected := bc.Join(""), "DC"; x != expected {
+		t.Errorf("Expected %q, got %q", expected, x)
+	}
+}
+
+var stringsSubSliceTests = []struct {
+	ss       Strings
+	start    int
+	end      int
+	subSlice Strings
+}{
+	{
+		nil,
+		1,
+		1,
+		nil,
+	},
+	{
+		nil,
+		1,
+		2,
+		Strings{""},
+	},
+	{
+		Strings{},
+		1,
+		1,
+		nil,
+	},
+	{
+		Strings{},
+		1,
+		2,
+		Strings{""},
+	},
+	{
+		Strings{"foo", "bar"},
+		-1,
+		-1,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		-1,
+		1,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		1,
+		-1,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		2,
+		0,
+		nil,
+	},
+
+	{
+		Strings{"foo", "bar"},
+		1,
+		1,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		1,
+		2,
+		Strings{"bar"},
+	},
+	{
+		Strings{"foo", "bar"},
+		1,
+		3,
+		Strings{"bar", ""},
+	},
+	{
+		Strings{"foo", "bar"},
+		2,
+		2,
+		nil,
+	},
+	{
+		Strings{"foo", "bar"},
+		2,
+		3,
+		Strings{""},
+	},
+	{
+		Strings{"foo", "bar", ""},
+		2,
+		3,
+		Strings{""},
+	},
+}
+
+func TestStrings_SubSlice(t *testing.T) {
+	for _, test := range stringsSubSliceTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.subSlice, test.ss.SubSlice(test.start, test.end))
 		})
 	}
 }

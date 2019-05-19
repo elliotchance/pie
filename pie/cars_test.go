@@ -168,32 +168,57 @@ func TestCars_Last(t *testing.T) {
 var carsStatsTests = []struct {
 	ss       cars
 	min, max car
+	mode     cars
 	len      int
 }{
 	{
 		nil,
 		car{},
 		car{},
+		cars{car{}},
 		0,
 	},
 	{
 		cars{},
 		car{},
 		car{},
+		cars{car{}},
 		0,
 	},
 	{
 		cars{car{"foo", "red"}},
 		car{"foo", "red"},
 		car{"foo", "red"},
+		cars{car{"foo", "red"}},
 		1,
 	},
 	{
 		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"qux", "cyan"}, car{"foo", "red"}},
 		car{"Baz", "black"},
 		car{"qux", "cyan"},
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"qux", "cyan"}, car{"foo", "red"}},
 		4,
 	},
+}
+
+func TestCars_Mode(t *testing.T) {
+	cmp := func(a, b cars) bool {
+		m := make(map[car]struct{})
+		for _, i := range a {
+			m[i] = struct{}{}
+		}
+		for _, i := range b {
+			if _, ok := m[i]; !ok {
+				return false
+			}
+		}
+		return true
+	}
+	for _, test := range carsStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.True(t, cmp(test.mode, cars(test.ss).Mode()))
+		})
+	}
 }
 
 func TestCars_Len(t *testing.T) {
@@ -240,6 +265,68 @@ func TestCars_JSONString(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCars(t, &test.ss)()
 			assert.Equal(t, test.jsonString, test.ss.JSONString())
+		})
+	}
+}
+
+var carsJSONIndentTests = []struct {
+	ss         cars
+	jsonString string
+}{
+	{
+		nil,
+		`[]`, // Instead of null.
+	},
+	{
+		cars{},
+		`[]`,
+	},
+	{
+		cars{car{"foo", "red"}},
+		`[
+  {
+    "Name": "foo",
+    "Color": "red"
+  }
+]`,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"qux", "cyan"}, car{"foo", "red"}},
+		`[
+  {
+    "Name": "bar",
+    "Color": "yellow"
+  },
+  {
+    "Name": "Baz",
+    "Color": "black"
+  },
+  {
+    "Name": "qux",
+    "Color": "cyan"
+  },
+  {
+    "Name": "foo",
+    "Color": "red"
+  }
+]`,
+	},
+}
+
+func TestCars_JSONBytesIndent(t *testing.T) {
+	for _, test := range carsJSONIndentTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss)()
+			assert.Equal(t, []byte(test.jsonString), test.ss.JSONBytesIndent("", "  "))
+		})
+	}
+}
+
+func TestCars_JSONStringIndent(t *testing.T) {
+	for _, test := range carsJSONIndentTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss)()
+			assert.Equal(t, test.jsonString, test.ss.JSONStringIndent("", "  "))
 		})
 	}
 }
@@ -369,7 +456,7 @@ func TestCars_SortUsing(t *testing.T) {
 	}
 }
 
-var carsToStringsTests = []struct {
+var carsStringsUsingTests = []struct {
 	ss        cars
 	transform func(car) string
 	expected  Strings
@@ -397,11 +484,11 @@ var carsToStringsTests = []struct {
 	},
 }
 
-func TestCars_ToStrings(t *testing.T) {
-	for _, test := range carsToStringsTests {
+func TestCars_StringsUsing(t *testing.T) {
+	for _, test := range carsStringsUsingTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCars(t, &test.ss)()
-			assert.Equal(t, test.expected, test.ss.ToStrings(test.transform))
+			assert.Equal(t, test.expected, test.ss.StringsUsing(test.transform))
 		})
 	}
 }
@@ -970,6 +1057,107 @@ func TestCars_DropTop(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCars(t, &test.ss)()
 			assert.Equal(t, test.dropTop, test.ss.DropTop(test.n))
+		})
+	}
+}
+
+var carsSubSliceTests = []struct {
+	ss       cars
+	start    int
+	end      int
+	subSlice cars
+}{
+	{
+		nil,
+		1,
+		1,
+		nil,
+	},
+	{
+		nil,
+		1,
+		2,
+		cars{car{}},
+	},
+	{
+		cars{},
+		1,
+		1,
+		nil,
+	},
+	{
+		cars{},
+		1,
+		2,
+		cars{car{}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		-1,
+		-1,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		-1,
+		1,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		1,
+		-1,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		2,
+		0,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		1,
+		1,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		1,
+		2,
+		cars{car{"Baz", "black"}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		1,
+		3,
+		cars{car{"Baz", "black"}, car{}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		2,
+		2,
+		nil,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		2,
+		3,
+		cars{car{}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{}},
+		2,
+		3,
+		cars{car{}},
+	},
+}
+
+func TestCars_SubSlice(t *testing.T) {
+	for _, test := range carsSubSliceTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss)()
+			assert.Equal(t, test.subSlice, test.ss.SubSlice(test.start, test.end))
 		})
 	}
 }

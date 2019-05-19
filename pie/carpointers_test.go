@@ -181,34 +181,58 @@ func TestCarPointers_Last(t *testing.T) {
 var carPointersStatsTests = []struct {
 	ss       carPointers
 	min, max *car
+	mode     carPointers
 	len      int
 }{
 	{
 		nil,
 		&car{},
 		&car{},
+		carPointers{},
 		0,
 	},
 	{
 		carPointers{},
 		&car{},
 		&car{},
+		carPointers{},
 		0,
 	},
 	{
 		carPointers{&car{"foo", "red"}},
 		&car{"foo", "red"},
 		&car{"foo", "red"},
+		carPointers{&car{"foo", "red"}},
 		1,
 	},
 	{
 		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}, &car{"qux", "cyan"}, &car{"foo", "red"}},
 		&car{"Baz", "black"},
 		&car{"qux", "cyan"},
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}, &car{"qux", "cyan"}, &car{"foo", "red"}},
 		4,
 	},
 }
 
+func TestCarPointers_Mode(t *testing.T) {
+	cmp := func(a, b carPointers) bool {
+		m := make(map[car]struct{})
+		for _, i := range a {
+			m[*i] = struct{}{}
+		}
+		for _, i := range b {
+			if _, ok := m[*i]; !ok {
+				return false
+			}
+		}
+		return true
+	}
+	for _, test := range carPointersStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.True(t, cmp(test.mode, test.ss.Mode()))
+		})
+	}
+}
 func TestCarPointers_Len(t *testing.T) {
 	for _, test := range carPointersStatsTests {
 		t.Run("", func(t *testing.T) {
@@ -254,6 +278,68 @@ func TestCarPointers_JSONString(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCarPointers(t, &test.ss)()
 			assert.Equal(t, test.jsonString, test.ss.JSONString())
+		})
+	}
+}
+
+var carPointersJSONIndentTests = []struct {
+	ss         carPointers
+	jsonString string
+}{
+	{
+		nil,
+		`[]`, // Instead of null.
+	},
+	{
+		carPointers{},
+		`[]`,
+	},
+	{
+		carPointers{&car{"foo", "red"}},
+		`[
+  {
+    "Name": "foo",
+    "Color": "red"
+  }
+]`,
+	},
+	{
+		carPointers{&car{"bar", "yellow"}, &car{"Baz", "black"}, &car{"qux", "cyan"}, &car{"foo", "red"}},
+		`[
+  {
+    "Name": "bar",
+    "Color": "yellow"
+  },
+  {
+    "Name": "Baz",
+    "Color": "black"
+  },
+  {
+    "Name": "qux",
+    "Color": "cyan"
+  },
+  {
+    "Name": "foo",
+    "Color": "red"
+  }
+]`,
+	},
+}
+
+func TestCarPointers_JSONBytesIndent(t *testing.T) {
+	for _, test := range carPointersJSONIndentTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			assert.Equal(t, []byte(test.jsonString), test.ss.JSONBytesIndent("", "  "))
+		})
+	}
+}
+
+func TestCarPointers_JSONStringIndent(t *testing.T) {
+	for _, test := range carPointersJSONIndentTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			assert.Equal(t, test.jsonString, test.ss.JSONStringIndent("", "  "))
 		})
 	}
 }
@@ -311,7 +397,7 @@ func TestCarPointers_Reverse(t *testing.T) {
 	}
 }
 
-var stringsToStringsTests = []struct {
+var stringsStringsUsingTests = []struct {
 	ss        carPointers
 	transform func(*car) string
 	expected  Strings
@@ -411,11 +497,11 @@ func TestCarPointers_SortUsing(t *testing.T) {
 	}
 }
 
-func TestCarPointers_ToStrings(t *testing.T) {
-	for _, test := range stringsToStringsTests {
+func TestCarPointers_StringsUsing(t *testing.T) {
+	for _, test := range stringsStringsUsingTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCarPointers(t, &test.ss)()
-			assert.Equal(t, test.expected, test.ss.ToStrings(test.transform))
+			assert.Equal(t, test.expected, test.ss.StringsUsing(test.transform))
 		})
 	}
 }
@@ -996,6 +1082,109 @@ func TestCarPointers_DropTop(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCarPointers(t, &test.ss)()
 			assert.Equal(t, test.dropTop, test.ss.DropTop(test.n))
+		})
+	}
+}
+
+var carPointersSubSliceTests = []struct {
+	ss       carPointers
+	start    int
+	end      int
+	subSlice carPointers
+}{
+	{
+		// start:1 ,end: 2
+		nil,
+		1,
+		1,
+		nil,
+	},
+	{
+		// start:1 ,end: 2
+		nil,
+		1,
+		2,
+		carPointers{nil},
+	},
+	{
+		carPointers{},
+		1,
+		1,
+		nil,
+	},
+	{
+		carPointers{},
+		1,
+		2,
+		carPointers{nil},
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		-1,
+		-1,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		-1,
+		1,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		1,
+		-1,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		2,
+		0,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		1,
+		1,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		1,
+		2,
+		carPointers{carPointerB},
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		1,
+		3,
+		carPointers{carPointerB, nil},
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		2,
+		2,
+		nil,
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		2,
+		3,
+		carPointers{nil},
+	},
+	{
+		carPointers{carPointerA, carPointerB, nil},
+		2,
+		3,
+		carPointers{nil},
+	},
+}
+
+func TestCarPointers_SubSlice(t *testing.T) {
+	for _, test := range carPointersSubSliceTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			assert.Equal(t, test.subSlice, test.ss.SubSlice(test.start, test.end))
 		})
 	}
 }

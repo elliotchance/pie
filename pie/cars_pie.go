@@ -127,7 +127,10 @@ func (ss cars) DropTop(n int) (drop cars) {
 		return
 	}
 
-	drop = ss[n:]
+	// Copy ss, to make sure no memory is overlapping between input and
+	// output. See issue #145.
+	drop = make([]car, len(ss)-n)
+	copy(drop, ss[n:])
 
 	return
 }
@@ -155,11 +158,10 @@ func (ss cars) Each(fn func(car)) cars {
 	return ss
 }
 
-// Equals compare elements of slice
+// Equals compare elements from the start to the end,
 //
-// if all elements the same is considered that slices are equal
-// if len(first_slice) != len(second_slice) they are not equal
-// if slices == nil is considered that they're equal
+// if they are the same is considered the slices are equal if all elements are the same is considered the slices are equal
+// if each slice == nil is considered that they're equal
 //
 // if element realizes Equals interface it uses that method, in other way uses default compare
 func (ss cars) Equals(rhs cars) bool {
@@ -297,6 +299,22 @@ func (ss cars) JSONBytes() []byte {
 	return data
 }
 
+// JSONBytesIndent returns the JSON encoded array as bytes with indent applied.
+//
+// One important thing to note is that it will treat a nil slice as an empty
+// slice to ensure that the JSON value return is always an array. See
+// json.MarshalIndent for details.
+func (ss cars) JSONBytesIndent(prefix, indent string) []byte {
+	if ss == nil {
+		return []byte("[]")
+	}
+
+	// An error should not be possible.
+	data, _ := json.MarshalIndent(ss, prefix, indent)
+
+	return data
+}
+
 // JSONString returns the JSON encoded array as a string.
 //
 // One important thing to note is that it will treat a nil slice as an empty
@@ -308,6 +326,22 @@ func (ss cars) JSONString() string {
 
 	// An error should not be possible.
 	data, _ := json.Marshal(ss)
+
+	return string(data)
+}
+
+// JSONStringIndent returns the JSON encoded array as a string with indent applied.
+//
+// One important thing to note is that it will treat a nil slice as an empty
+// slice to ensure that the JSON value return is always an array. See
+// json.MarshalIndent for details.
+func (ss cars) JSONStringIndent(prefix, indent string) string {
+	if ss == nil {
+		return "[]"
+	}
+
+	// An error should not be possible.
+	data, _ := json.MarshalIndent(ss, prefix, indent)
 
 	return string(data)
 }
@@ -348,6 +382,36 @@ func (ss cars) Map(fn func(car) car) (ss2 cars) {
 	}
 
 	return
+}
+
+// Mode returns a new slice containing the most frequently occuring values.
+//
+// The number of items returned may be the same as the input or less. It will
+// never return zero items unless the input slice has zero items.
+func (ss cars) Mode() cars {
+	if len(ss) == 0 {
+		return nil
+	}
+	values := make(map[car]int, 0)
+	for _, s := range ss {
+		values[s]++
+	}
+
+	var maxFrequency int
+	for _, v := range values {
+		if v > maxFrequency {
+			maxFrequency = v
+		}
+	}
+
+	var maxValues cars
+	for k, v := range values {
+		if v == maxFrequency {
+			maxValues = append(maxValues, k)
+		}
+	}
+
+	return maxValues
 }
 
 // NotEquals  compare elements of slice
@@ -541,6 +605,37 @@ func (ss cars) Strings() Strings {
 	return result
 }
 
+// SubSlice will return the subSlice from start to end(excluded)
+//
+// Condition 1: If start < 0 or end < 0, nil is returned.
+// Condition 2: If start >= end, nil is returned.
+// Condition 3: Return all elements that exist in the range provided,
+// if start or end is out of bounds, zero items will be placed.
+func (ss cars) SubSlice(start int, end int) (subSlice cars) {
+	if start < 0 || end < 0 {
+		return
+	}
+
+	if start >= end {
+		return
+	}
+
+	length := ss.Len()
+	if start < length {
+		if end <= length {
+			subSlice = ss[start:end]
+		} else {
+			zeroArray := make([]car, end-length)
+			subSlice = ss[start:length].Append(zeroArray[:]...)
+		}
+	} else {
+		zeroArray := make([]car, end-start)
+		subSlice = zeroArray[:]
+	}
+
+	return
+}
+
 // Top will return n elements from head of the slice
 // if the slice has less elements then n that'll return all elements
 // if n < 0 it'll return empty slice.
@@ -553,8 +648,8 @@ func (ss cars) Top(n int) (top cars) {
 	return
 }
 
-// ToStrings transforms each element to a string.
-func (ss cars) ToStrings(transform func(car) string) Strings {
+// StringsUsing transforms each element to a string.
+func (ss cars) StringsUsing(transform func(car) string) Strings {
 	l := len(ss)
 
 	// Avoid the allocation.
