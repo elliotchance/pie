@@ -158,6 +158,8 @@ func (ss cars) Each(fn func(car)) cars {
 // Equals compare elements of slice
 //
 // if all elements the same is considered that slices are equal
+// if len(first_slice) != len(second_slice) they are not equal
+// if slices == nil is considered that they're equal
 //
 // if element realizes Equals interface it uses that method, in other way uses default compare
 func (ss cars) Equals(rhs cars) bool {
@@ -346,6 +348,17 @@ func (ss cars) Map(fn func(car) car) (ss2 cars) {
 	}
 
 	return
+}
+
+// NotEquals  compare elements of slice
+// and return true if they are not equal
+//
+// if element realizes Equals interface it uses that method, in other way uses default compare
+func (ss cars) NotEquals(rhs cars) bool {
+	// It's been done for generator, see issue #143
+	var eq = ss.Equals
+
+	return !eq(rhs)
 }
 
 // Random returns a random element by your rand.Source, or zero

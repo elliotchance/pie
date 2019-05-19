@@ -196,6 +196,8 @@ func (ss Ints) Each(fn func(int)) Ints {
 // Equals compare elements of slice
 //
 // if all elements the same is considered that slices are equal
+// if len(first_slice) != len(second_slice) they are not equal
+// if slices == nil is considered that they're equal
 //
 // if element realizes Equals interface it uses that method, in other way uses default compare
 func (ss Ints) Equals(rhs Ints) bool {
@@ -475,6 +477,17 @@ func (ss Ints) Min() (min int) {
 	}
 
 	return
+}
+
+// NotEquals  compare elements of slice
+// and return true if they are not equal
+//
+// if element realizes Equals interface it uses that method, in other way uses default compare
+func (ss Ints) NotEquals(rhs Ints) bool {
+	// It's been done for generator, see issue #143
+	var eq = ss.Equals
+
+	return !eq(rhs)
 }
 
 // Product is the product of all of the elements.

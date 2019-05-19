@@ -218,6 +218,8 @@ func (ss SliceType) Each(fn func(ElementType)) SliceType {
 // Equals compare elements of slice
 //
 // if all elements the same is considered that slices are equal
+// if len(first_slice) != len(second_slice) they are not equal
+// if slices == nil is considered that they're equal
 //
 // if element realizes Equals interface it uses that method, in other way uses default compare
 func (ss SliceType) Equals(rhs SliceType) bool {
@@ -588,6 +590,19 @@ func (ss SliceType) Min() (min ElementType) {
 	}
 
 	return
+}
+`,
+	"NotEquals": `package functions
+
+// NotEquals  compare elements of slice
+// and return true if they are not equal
+//
+// if element realizes Equals interface it uses that method, in other way uses default compare
+func (ss SliceType) NotEquals(rhs SliceType) bool {
+	// It's been done for generator, see issue #143
+	var eq = ss.Equals
+
+	return !eq(rhs)
 }
 `,
 	"Product": `package functions
