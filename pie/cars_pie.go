@@ -617,8 +617,8 @@ func (ss cars) Top(n int) (top cars) {
 	return
 }
 
-// ToStrings transforms each element to a string.
-func (ss cars) ToStrings(transform func(car) string) Strings {
+// StringsUsing transforms each element to a string.
+func (ss cars) StringsUsing(transform func(car) string) Strings {
 	l := len(ss)
 
 	// Avoid the allocation.

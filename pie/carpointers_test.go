@@ -397,7 +397,7 @@ func TestCarPointers_Reverse(t *testing.T) {
 	}
 }
 
-var stringsToStringsTests = []struct {
+var stringsStringsUsingTests = []struct {
 	ss        carPointers
 	transform func(*car) string
 	expected  Strings
@@ -497,11 +497,11 @@ func TestCarPointers_SortUsing(t *testing.T) {
 	}
 }
 
-func TestCarPointers_ToStrings(t *testing.T) {
-	for _, test := range stringsToStringsTests {
+func TestCarPointers_StringsUsing(t *testing.T) {
+	for _, test := range stringsStringsUsingTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCarPointers(t, &test.ss)()
-			assert.Equal(t, test.expected, test.ss.ToStrings(test.transform))
+			assert.Equal(t, test.expected, test.ss.StringsUsing(test.transform))
 		})
 	}
 }

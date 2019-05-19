@@ -831,8 +831,8 @@ func (ss Float64s) Top(n int) (top Float64s) {
 	return
 }
 
-// ToStrings transforms each element to a string.
-func (ss Float64s) ToStrings(transform func(float64) string) Strings {
+// StringsUsing transforms each element to a string.
+func (ss Float64s) StringsUsing(transform func(float64) string) Strings {
 	l := len(ss)
 
 	// Avoid the allocation.

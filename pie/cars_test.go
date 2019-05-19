@@ -456,7 +456,7 @@ func TestCars_SortUsing(t *testing.T) {
 	}
 }
 
-var carsToStringsTests = []struct {
+var carsStringsUsingTests = []struct {
 	ss        cars
 	transform func(car) string
 	expected  Strings
@@ -484,11 +484,11 @@ var carsToStringsTests = []struct {
 	},
 }
 
-func TestCars_ToStrings(t *testing.T) {
-	for _, test := range carsToStringsTests {
+func TestCars_StringsUsing(t *testing.T) {
+	for _, test := range carsStringsUsingTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableCars(t, &test.ss)()
-			assert.Equal(t, test.expected, test.ss.ToStrings(test.transform))
+			assert.Equal(t, test.expected, test.ss.StringsUsing(test.transform))
 		})
 	}
 }

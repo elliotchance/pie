@@ -492,7 +492,7 @@ func TestFloat64s_AreUnique(t *testing.T) {
 	}
 }
 
-var float64sToStringsTests = []struct {
+var float64sStringsUsingTests = []struct {
 	ss        Float64s
 	transform func(float64) string
 	expected  Strings
@@ -520,11 +520,11 @@ var float64sToStringsTests = []struct {
 	},
 }
 
-func TestFloat64s_ToStrings(t *testing.T) {
-	for _, test := range float64sToStringsTests {
+func TestFloat64s_StringsUsing(t *testing.T) {
+	for _, test := range float64sStringsUsingTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableFloat64s(t, &test.ss)()
-			assert.Equal(t, test.expected, test.ss.ToStrings(test.transform))
+			assert.Equal(t, test.expected, test.ss.StringsUsing(test.transform))
 		})
 	}
 }

@@ -71,7 +71,7 @@ var Functions = []struct {
 	{"SubSlice", "sub_slice.go", ForAll, "n"},
 	{"Sum", "sum.go", ForNumbers, "n"},
 	{"Top", "top.go", ForAll, "n"},
-	{"ToStrings", "to_strings.go", ForAll, "n"},
+	{"StringsUsing", "strings_using.go", ForAll, "n"},
 	{"Unique", "unique.go", ForNumbersAndStrings, "n"},
 	{"Values", "values.go", ForMaps, "n"},
 }

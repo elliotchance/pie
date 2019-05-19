@@ -747,8 +747,8 @@ func (ss Strings) Top(n int) (top Strings) {
 	return
 }
 
-// ToStrings transforms each element to a string.
-func (ss Strings) ToStrings(transform func(string) string) Strings {
+// StringsUsing transforms each element to a string.
+func (ss Strings) StringsUsing(transform func(string) string) Strings {
 	l := len(ss)
 
 	// Avoid the allocation.

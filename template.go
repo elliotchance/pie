@@ -995,6 +995,29 @@ func (ss SliceType) Strings() pie.Strings {
 	return result
 }
 `,
+	"StringsUsing": `package functions
+
+import (
+	"github.com/elliotchance/pie/pie"
+)
+
+// StringsUsing transforms each element to a string.
+func (ss SliceType) StringsUsing(transform func(ElementType) string) pie.Strings {
+	l := len(ss)
+
+	// Avoid the allocation.
+	if l == 0 {
+		return nil
+	}
+
+	result := make(pie.Strings, l)
+	for i := 0; i < l; i++ {
+		result[i] = transform(ss[i])
+	}
+
+	return result
+}
+`,
 	"SubSlice": `package functions
 
 // SubSlice will return the subSlice from start to end(excluded)
@@ -1037,29 +1060,6 @@ func (ss SliceType) Sum() (sum ElementType) {
 	}
 
 	return
-}
-`,
-	"ToStrings": `package functions
-
-import (
-	"github.com/elliotchance/pie/pie"
-)
-
-// ToStrings transforms each element to a string.
-func (ss SliceType) ToStrings(transform func(ElementType) string) pie.Strings {
-	l := len(ss)
-
-	// Avoid the allocation.
-	if l == 0 {
-		return nil
-	}
-
-	result := make(pie.Strings, l)
-	for i := 0; i < l; i++ {
-		result[i] = transform(ss[i])
-	}
-
-	return result
 }
 `,
 	"Top": `package functions

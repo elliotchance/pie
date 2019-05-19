@@ -223,7 +223,7 @@ The letters in brackets indicate:
 | [`SubSlice`](#subslice)                 | ✓      | ✓      | ✓      |      | n        | SubSlice will return the subSlice from start to end(excluded)  |
 | [`Sum`](#sum)                           |        | ✓      |        |      | n        | Sum is the sum of all of the elements.  |
 | [`Top`](#top)                           | ✓      | ✓      | ✓      |      | n        | Top will return n elements from head of the slice if the slice has less elements then n that'll return all elements if n < 0 it'll return empty slice.  |
-| [`ToStrings`](#tostrings)               | ✓      | ✓      | ✓      |      | n        | ToStrings transforms each element to a string.  |
+| [`StringsUsing`](#stringsusing)         | ✓      | ✓      | ✓      |      | n        | StringsUsing transforms each element to a string.  |
 | [`Unique`](#unique)                     | ✓      | ✓      |        |      | n        | Unique returns a new slice with all of the unique values.  |
 | [`Values`](#values)                     |        |        |        | ✓    | n        | Values returns the values in the map.  |
 
@@ -666,9 +666,9 @@ if the slice has less elements then n that'll return all elements
 if n < 0 it'll return empty slice.
 
 
-## ToStrings
+## StringsUsing
 
-ToStrings transforms each element to a string.
+StringsUsing transforms each element to a string.
 
 
 ## Unique
