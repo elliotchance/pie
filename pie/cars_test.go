@@ -269,6 +269,68 @@ func TestCars_JSONString(t *testing.T) {
 	}
 }
 
+var carsJSONIndentTests = []struct {
+	ss         cars
+	jsonString string
+}{
+	{
+		nil,
+		`[]`, // Instead of null.
+	},
+	{
+		cars{},
+		`[]`,
+	},
+	{
+		cars{car{"foo", "red"}},
+		`[
+  {
+    "Name": "foo",
+    "Color": "red"
+  }
+]`,
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}, car{"qux", "cyan"}, car{"foo", "red"}},
+		`[
+  {
+    "Name": "bar",
+    "Color": "yellow"
+  },
+  {
+    "Name": "Baz",
+    "Color": "black"
+  },
+  {
+    "Name": "qux",
+    "Color": "cyan"
+  },
+  {
+    "Name": "foo",
+    "Color": "red"
+  }
+]`,
+	},
+}
+
+func TestCars_JSONBytesIndent(t *testing.T) {
+	for _, test := range carsJSONIndentTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss)()
+			assert.Equal(t, []byte(test.jsonString), test.ss.JSONBytesIndent("", "  "))
+		})
+	}
+}
+
+func TestCars_JSONStringIndent(t *testing.T) {
+	for _, test := range carsJSONIndentTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss)()
+			assert.Equal(t, test.jsonString, test.ss.JSONStringIndent("", "  "))
+		})
+	}
+}
+
 var carsSortTests = []struct {
 	ss        cars
 	sorted    cars
