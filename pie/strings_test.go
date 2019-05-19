@@ -512,7 +512,7 @@ func TestStrings_AreUnique(t *testing.T) {
 	}
 }
 
-var carPointersToStringsTests = []struct {
+var carPointersStringsUsingTests = []struct {
 	ss        Strings
 	transform func(string) string
 	expected  Strings
@@ -540,11 +540,11 @@ var carPointersToStringsTests = []struct {
 	},
 }
 
-func TestStrings_ToStrings(t *testing.T) {
-	for _, test := range carPointersToStringsTests {
+func TestStrings_StringsUsing(t *testing.T) {
+	for _, test := range carPointersStringsUsingTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableStrings(t, &test.ss)()
-			assert.Equal(t, test.expected, test.ss.ToStrings(test.transform))
+			assert.Equal(t, test.expected, test.ss.StringsUsing(test.transform))
 		})
 	}
 }

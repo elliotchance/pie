@@ -480,7 +480,7 @@ func TestInts_AreUnique(t *testing.T) {
 	}
 }
 
-var intsToStringsTests = []struct {
+var intsStringsUsingTests = []struct {
 	ss        Ints
 	transform func(int) string
 	expected  Strings
@@ -508,11 +508,11 @@ var intsToStringsTests = []struct {
 	},
 }
 
-func TestInts_ToStrings(t *testing.T) {
-	for _, test := range intsToStringsTests {
+func TestInts_StringsUsing(t *testing.T) {
+	for _, test := range intsStringsUsingTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableInts(t, &test.ss)()
-			assert.Equal(t, test.expected, test.ss.ToStrings(test.transform))
+			assert.Equal(t, test.expected, test.ss.StringsUsing(test.transform))
 		})
 	}
 }

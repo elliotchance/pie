@@ -617,8 +617,8 @@ func (ss carPointers) Top(n int) (top carPointers) {
 	return
 }
 
-// ToStrings transforms each element to a string.
-func (ss carPointers) ToStrings(transform func(*car) string) Strings {
+// StringsUsing transforms each element to a string.
+func (ss carPointers) StringsUsing(transform func(*car) string) Strings {
 	l := len(ss)
 
 	// Avoid the allocation.
