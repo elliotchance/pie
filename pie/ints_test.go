@@ -1212,3 +1212,12 @@ func TestInts_Equals(t *testing.T) {
 		})
 	}
 }
+
+func TestInts_NotEquals(t *testing.T) {
+	for _, test := range intsEqualsTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.NotEqual(t, test.expected, test.ss.NotEquals(test.rhs))
+		})
+	}
+}
