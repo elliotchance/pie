@@ -209,7 +209,6 @@ The letters in brackets indicate:
 | [`Median`](#median)                     |        | ✓      |        |      | n        | Median returns the value separating the higher half from the lower half of a data sample.  |
 | [`Min`](#min)                           | ✓      | ✓      |        |      | n        | Min is the minimum value, or zero.  |
 | [`Mode`](#mode)                         | ✓      | ✓      | ✓      |      | n        | Mode returns a new slice containing the most frequently occuring values.  |
-| [`NotEquals`](#notequals)               | ✓      | ✓      | ✓      |      | n        | NotEquals  compare elements of slice and return true if they are not equal  |
 | [`Product`](#product)                   |        | ✓      |        |      | n        | Product is the product of all of the elements.  |
 | [`Random`](#random)                     | ✓      | ✓      | ✓      |      | 1        | Random returns a random element by your rand.Source, or zero  |
 | [`Reduce`](#reduce)                     | ✓      | ✓      |        |      | n        | Reduce continually applies the provided function over the slice. Reducing the elements to a single value.  |
@@ -529,15 +528,6 @@ Mode returns a new slice containing the most frequently occuring values.
 
 The number of items returned may be the same as the input or less. It will
 never return zero items unless the input slice has zero items.
-
-
-## NotEquals
-
-NotEquals  compare elements of slice
-and return true if they are not equal
-
-
-if element realizes Equals interface it uses that method, in other way uses default compare
 
 
 ## Product

@@ -414,17 +414,6 @@ func (ss cars) Mode() cars {
 	return maxValues
 }
 
-// NotEquals  compare elements of slice
-// and return true if they are not equal
-//
-// if element realizes Equals interface it uses that method, in other way uses default compare
-func (ss cars) NotEquals(rhs cars) bool {
-	// It's been done for generator, see issue #143
-	var eq = ss.Equals
-
-	return !eq(rhs)
-}
-
 // Random returns a random element by your rand.Source, or zero
 func (ss cars) Random(source rand.Source) car {
 	n := len(ss)

@@ -584,17 +584,6 @@ func (ss Float64s) Mode() Float64s {
 	return maxValues
 }
 
-// NotEquals  compare elements of slice
-// and return true if they are not equal
-//
-// if element realizes Equals interface it uses that method, in other way uses default compare
-func (ss Float64s) NotEquals(rhs Float64s) bool {
-	// It's been done for generator, see issue #143
-	var eq = ss.Equals
-
-	return !eq(rhs)
-}
-
 // Product is the product of all of the elements.
 func (ss Float64s) Product() (product float64) {
 	if len(ss) == 0 {

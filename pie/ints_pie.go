@@ -584,17 +584,6 @@ func (ss Ints) Mode() Ints {
 	return maxValues
 }
 
-// NotEquals  compare elements of slice
-// and return true if they are not equal
-//
-// if element realizes Equals interface it uses that method, in other way uses default compare
-func (ss Ints) NotEquals(rhs Ints) bool {
-	// It's been done for generator, see issue #143
-	var eq = ss.Equals
-
-	return !eq(rhs)
-}
-
 // Product is the product of all of the elements.
 func (ss Ints) Product() (product int) {
 	if len(ss) == 0 {

@@ -508,17 +508,6 @@ func (ss Strings) Mode() Strings {
 	return maxValues
 }
 
-// NotEquals  compare elements of slice
-// and return true if they are not equal
-//
-// if element realizes Equals interface it uses that method, in other way uses default compare
-func (ss Strings) NotEquals(rhs Strings) bool {
-	// It's been done for generator, see issue #143
-	var eq = ss.Equals
-
-	return !eq(rhs)
-}
-
 // Random returns a random element by your rand.Source, or zero
 func (ss Strings) Random(source rand.Source) string {
 	n := len(ss)
