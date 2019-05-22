@@ -1398,12 +1398,3 @@ func TestFloat64s_Equals(t *testing.T) {
 		})
 	}
 }
-
-func TestFloat64s_NotEquals(t *testing.T) {
-	for _, test := range float64sEqualsTests {
-		t.Run("", func(t *testing.T) {
-			defer assertImmutableFloat64s(t, &test.ss)()
-			assert.NotEqual(t, test.expected, test.ss.NotEquals(test.rhs))
-		})
-	}
-}

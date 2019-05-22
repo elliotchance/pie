@@ -1417,12 +1417,3 @@ func TestStrings_Equals(t *testing.T) {
 		})
 	}
 }
-
-func TestStrings_NotEquals(t *testing.T) {
-	for _, test := range stringsEqualsTests {
-		t.Run("", func(t *testing.T) {
-			defer assertImmutableStrings(t, &test.ss)()
-			assert.NotEqual(t, test.expected, test.ss.NotEquals(test.rhs))
-		})
-	}
-}

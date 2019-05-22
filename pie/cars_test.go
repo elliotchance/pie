@@ -1225,12 +1225,3 @@ func TestCars_Equals(t *testing.T) {
 		})
 	}
 }
-
-func TestCars_NotEquals(t *testing.T) {
-	for _, test := range carsEqualsTests {
-		t.Run("", func(t *testing.T) {
-			defer assertImmutableCars(t, &test.ss)()
-			assert.NotEqual(t, test.expected, test.ss.NotEquals(test.rhs))
-		})
-	}
-}
