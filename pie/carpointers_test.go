@@ -1228,3 +1228,27 @@ func TestCarPointers_FindFirstUsing(t *testing.T) {
 		})
 	}
 }
+
+var carPointersEqualsTests = []struct {
+	ss       carPointers
+	rhs      carPointers
+	expected bool
+}{
+	{nil, nil, true},
+	{carPointers{}, carPointers{}, true},
+	{nil, carPointers{}, true},
+	{carPointers{{Name: "1"}, {Name: "2"}}, carPointers{{Name: "1"}, {Name: "2"}}, true},
+	{carPointers{{Name: "1"}, {Name: "2"}}, carPointers{{Name: "1"}, {Name: "3"}}, false},
+	{carPointers{{Name: "1"}, {Name: "2"}}, carPointers{{Name: "1"}}, false},
+	{carPointers{{Name: "2"}}, carPointers{{Name: "1"}}, false},
+	{carPointers{{Name: "2"}}, nil, false},
+}
+
+func TestCarPointers_Equals(t *testing.T) {
+	for _, test := range carPointersEqualsTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Equals(test.rhs))
+		})
+	}
+}

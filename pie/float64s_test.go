@@ -1374,3 +1374,27 @@ func TestFloat64_FindFirstUsing(t *testing.T) {
 		})
 	}
 }
+
+var float64sEqualsTests = []struct {
+	ss       Float64s
+	rhs      Float64s
+	expected bool
+}{
+	{nil, nil, true},
+	{Float64s{}, Float64s{}, true},
+	{nil, Float64s{}, true},
+	{Float64s{1.0, 2.0}, Float64s{1.0, 2.0}, true},
+	{Float64s{1.0, 2.0}, Float64s{1.0, 5.0}, false},
+	{Float64s{1.0, 2.0}, Float64s{1.0}, false},
+	{Float64s{1.0}, Float64s{2.0}, false},
+	{Float64s{1.0}, nil, false},
+}
+
+func TestFloat64s_Equals(t *testing.T) {
+	for _, test := range float64sEqualsTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Equals(test.rhs))
+		})
+	}
+}

@@ -1393,3 +1393,27 @@ func TestStrings_FindFirstUsing(t *testing.T) {
 		})
 	}
 }
+
+var stringsEqualsTests = []struct {
+	ss       Strings
+	rhs      Strings
+	expected bool
+}{
+	{nil, nil, true},
+	{Strings{}, Strings{}, true},
+	{nil, Strings{}, true},
+	{Strings{"a", "b"}, Strings{"a", "b"}, true},
+	{Strings{"a", "b"}, Strings{"a", "c"}, false},
+	{Strings{"a", "b"}, Strings{"a"}, false},
+	{Strings{"a"}, Strings{"b"}, false},
+	{Strings{"a"}, nil, false},
+}
+
+func TestStrings_Equals(t *testing.T) {
+	for _, test := range stringsEqualsTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Equals(test.rhs))
+		})
+	}
+}

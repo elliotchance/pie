@@ -1201,3 +1201,27 @@ func TestCars_FindFirstUsing(t *testing.T) {
 		})
 	}
 }
+
+var carsEqualsTests = []struct {
+	ss       cars
+	rhs      cars
+	expected bool
+}{
+	{nil, nil, true},
+	{cars{}, cars{}, true},
+	{nil, cars{}, true},
+	{cars{{Name: "1"}, {Name: "2"}}, cars{{Name: "1"}, {Name: "2"}}, true},
+	{cars{{Name: "1"}, {Name: "2"}}, cars{{Name: "1"}, {Name: "3"}}, false},
+	{cars{{Name: "1"}, {Name: "2"}}, cars{{Name: "1"}}, false},
+	{cars{{Name: "2"}}, cars{{Name: "1"}}, false},
+	{cars{{Name: "2"}}, nil, false},
+}
+
+func TestCars_Equals(t *testing.T) {
+	for _, test := range carsEqualsTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Equals(test.rhs))
+		})
+	}
+}

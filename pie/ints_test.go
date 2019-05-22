@@ -1363,3 +1363,27 @@ func TestInts_FindFirstUsing(t *testing.T) {
 		})
 	}
 }
+
+var intsEqualsTests = []struct {
+	ss       Ints
+	rhs      Ints
+	expected bool
+}{
+	{nil, nil, true},
+	{Ints{}, Ints{}, true},
+	{nil, Ints{}, true},
+	{Ints{1, 2}, Ints{1, 2}, true},
+	{Ints{1, 2}, Ints{1, 5}, false},
+	{Ints{1, 2}, Ints{1}, false},
+	{Ints{1}, Ints{2}, false},
+	{Ints{1}, nil, false},
+}
+
+func TestInts_Equals(t *testing.T) {
+	for _, test := range intsEqualsTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Equals(test.rhs))
+		})
+	}
+}

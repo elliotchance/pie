@@ -196,6 +196,26 @@ func (ss Float64s) Each(fn func(float64)) Float64s {
 	return ss
 }
 
+// Equals compare elements from the start to the end,
+//
+// if they are the same is considered the slices are equal if all elements are the same is considered the slices are equal
+// if each slice == nil is considered that they're equal
+//
+// if element realizes Equals interface it uses that method, in other way uses default compare
+func (ss Float64s) Equals(rhs Float64s) bool {
+	if len(ss) != len(rhs) {
+		return false
+	}
+
+	for i := range ss {
+		if !(ss[i] == rhs[i]) {
+			return false
+		}
+	}
+
+	return true
+}
+
 // Extend will return a new slice with the slices of elements appended to the
 // end.
 //

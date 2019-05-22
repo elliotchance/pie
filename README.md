@@ -185,6 +185,7 @@ The letters in brackets indicate:
 | [`Diff`](#diff) (E)                     | ✓      | ✓      | ✓      |      | n²       | Diff returns the elements that needs to be added or removed from the first slice to have the same elements in the second slice.  |
 | [`DropTop`](#droptop)                   | ✓      | ✓      | ✓      |      | n        | DropTop will return the rest slice after dropping the top n elements if the slice has less elements then n that'll return empty slice if n < 0 it'll return empty slice.  |
 | [`Each`](#each)                         | ✓      | ✓      | ✓      |      | n        | Each is more condensed version of Transform that allows an action to happen on each elements and pass the original slice on.  |
+| [`Equals`](#equals) (E)                 | ✓      | ✓      | ✓      |      | n        | Equals compare elements from the start to the end,  |
 | [`Extend`](#extend)                     | ✓      | ✓      | ✓      |      | n        | Extend will return a new slice with the slices of elements appended to the end.  |
 | [`Filter`](#filter)                     | ✓      | ✓      | ✓      |      | n        | Filter will return a new slice containing only the elements that return true from the condition. The returned slice may contain zero elements (nil).  |
 | [`FilterNot`](#filternot)               | ✓      | ✓      | ✓      |      | n        | FilterNot works the same as Filter, with a negated condition. That is, it will return a new slice only containing the elements that returned false from the condition. The returned slice may contain zero elements (nil).  |
@@ -342,6 +343,18 @@ cars.Each(func (car *Car) {
 
 ```
 
+
+
+## Equals
+
+Equals compare elements from the start to the end,
+
+
+if they are the same is considered the slices are equal if all elements are the same is considered the slices are equal
+if each slice == nil is considered that they're equal
+
+
+if element realizes Equals interface it uses that method, in other way uses default compare
 
 
 ## Extend
