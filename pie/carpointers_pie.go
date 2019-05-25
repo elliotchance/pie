@@ -234,7 +234,7 @@ func (ss carPointers) FindFirstUsing(fn func(value *car) bool) int {
 
 // First returns the first element, or zero. Also see FirstOr().
 func (ss carPointers) First() *car {
-	return ss.FirstOr(&car{})
+	return ss.FirstOr(nil)
 }
 
 // FirstOr returns the first element or a default value if there are no
@@ -348,7 +348,7 @@ func (ss carPointers) JSONStringIndent(prefix, indent string) string {
 
 // Last returns the last element, or zero. Also see LastOr().
 func (ss carPointers) Last() *car {
-	return ss.LastOr(&car{})
+	return ss.LastOr(nil)
 }
 
 // LastOr returns the last element or a default value if there are no elements.
@@ -420,7 +420,7 @@ func (ss carPointers) Random(source rand.Source) *car {
 
 	// Avoid the extra allocation.
 	if n < 1 {
-		return &car{}
+		return nil
 	}
 	if n < 2 {
 		return ss[0]

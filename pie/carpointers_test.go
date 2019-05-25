@@ -114,9 +114,9 @@ var carPointersFirstAndLastTests = []struct {
 }{
 	{
 		nil,
-		&car{},
+		nil,
 		&car{"default1", "unknown"},
-		&car{},
+		nil,
 		&car{"default2", "unknown"},
 	},
 	{
@@ -762,17 +762,17 @@ var carPointersRandomTests = []struct {
 }{
 	{
 		nil,
-		&car{},
+		nil,
 		nil,
 	},
 	{
 		nil,
-		&car{},
+		nil,
 		rand.NewSource(0),
 	},
 	{
 		carPointers{},
-		&car{},
+		nil,
 		rand.NewSource(0),
 	},
 	{
