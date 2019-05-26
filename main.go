@@ -210,7 +210,7 @@ func main() {
 			// If its a pointer we need to replace '*' -> '&' when
 			// instantiating.
 			if elementType[0] == '*' {
-				zeroValue = "&" + zeroValue[1:]
+				zeroValue = "nil"
 			}
 
 			t = strings.Replace(t, "ElementZeroValue", zeroValue, -1)
