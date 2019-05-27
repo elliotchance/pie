@@ -1398,3 +1398,87 @@ func TestFloat64s_Equals(t *testing.T) {
 		})
 	}
 }
+
+var float64sShiftAndUnshiftTests = []struct {
+	ss      Float64s
+	shifted float64
+	shift   Float64s
+	params  Float64s
+	unshift Float64s
+}{
+	{
+		nil,
+		0,
+		nil,
+		nil,
+		Float64s{},
+	},
+	{
+		nil,
+		0,
+		nil,
+		Float64s{},
+		Float64s{},
+	},
+	{
+		nil,
+		0,
+		nil,
+		Float64s{1.23, 2.34},
+		Float64s{1.23, 2.34},
+	},
+	{
+		Float64s{},
+		0,
+		nil,
+		nil,
+		Float64s{},
+	},
+	{
+		Float64s{},
+		0,
+		nil,
+		Float64s{},
+		Float64s{},
+	},
+	{
+		Float64s{},
+		0,
+		nil,
+		Float64s{1.23, 2.34},
+		Float64s{1.23, 2.34},
+	},
+	{
+		Float64s{1.23},
+		1.23,
+		nil,
+		Float64s{2.34},
+		Float64s{2.34, 1.23},
+	},
+	{
+		Float64s{1.23, 2.34},
+		1.23,
+		Float64s{2.34},
+		Float64s{3.45},
+		Float64s{3.45, 1.23, 2.34},
+	},
+	{
+		Float64s{1.23, 2.34},
+		1.23,
+		Float64s{2.34},
+		Float64s{3.45, 4.56},
+		Float64s{3.45, 4.56, 1.23, 2.34},
+	},
+}
+
+func TestFloat64s_ShiftAndUnshift(t *testing.T) {
+	for _, test := range float64sShiftAndUnshiftTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			shifted, shift := test.ss.Shift()
+			assert.Equal(t, test.shifted, shifted)
+			assert.Equal(t, test.shift, shift)
+			assert.Equal(t, test.unshift, test.ss.Unshift(test.params...))
+		})
+	}
+}

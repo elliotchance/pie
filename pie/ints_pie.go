@@ -731,6 +731,11 @@ func (ss Ints) SequenceUsing(creator func(int) int, params ...int) Ints {
 	}
 }
 
+// Shift will return two values: the shifted value and the rest slice.
+func (ss Ints) Shift() (int, Ints) {
+	return ss.First(), ss.DropTop(1)
+}
+
 // Shuffle returns shuffled slice by your rand.Source
 func (ss Ints) Shuffle(source rand.Source) Ints {
 	n := len(ss)
@@ -897,4 +902,13 @@ func (ss Ints) Unique() Ints {
 	}
 
 	return uniqueValues
+}
+
+// Unshift adds one or more elements to the beginning of the slice
+// and returns the new slice.
+func (ss Ints) Unshift(elements ...int) (unshift Ints) {
+	unshift = append(Ints{}, elements...)
+	unshift = append(unshift, ss...)
+
+	return
 }

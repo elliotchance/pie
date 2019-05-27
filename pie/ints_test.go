@@ -1387,3 +1387,87 @@ func TestInts_Equals(t *testing.T) {
 		})
 	}
 }
+
+var intsShiftAndUnshiftTests = []struct {
+	ss      Ints
+	shifted int
+	shift   Ints
+	params  Ints
+	unshift Ints
+}{
+	{
+		nil,
+		0,
+		nil,
+		nil,
+		Ints{},
+	},
+	{
+		nil,
+		0,
+		nil,
+		Ints{},
+		Ints{},
+	},
+	{
+		nil,
+		0,
+		nil,
+		Ints{1, 2},
+		Ints{1, 2},
+	},
+	{
+		Ints{},
+		0,
+		nil,
+		nil,
+		Ints{},
+	},
+	{
+		Ints{},
+		0,
+		nil,
+		Ints{},
+		Ints{},
+	},
+	{
+		Ints{},
+		0,
+		nil,
+		Ints{1, 2},
+		Ints{1, 2},
+	},
+	{
+		Ints{1},
+		1,
+		nil,
+		Ints{2},
+		Ints{2, 1},
+	},
+	{
+		Ints{1, 2},
+		1,
+		Ints{2},
+		Ints{3},
+		Ints{3, 1, 2},
+	},
+	{
+		Ints{1, 2},
+		1,
+		Ints{2},
+		Ints{3, 4},
+		Ints{3, 4, 1, 2},
+	},
+}
+
+func TestInts_ShiftAndUnshift(t *testing.T) {
+	for _, test := range intsShiftAndUnshiftTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			shifted, shift := test.ss.Shift()
+			assert.Equal(t, test.shifted, shifted)
+			assert.Equal(t, test.shift, shift)
+			assert.Equal(t, test.unshift, test.ss.Unshift(test.params...))
+		})
+	}
+}

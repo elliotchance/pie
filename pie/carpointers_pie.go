@@ -510,6 +510,11 @@ func (ss carPointers) SequenceUsing(creator func(int) *car, params ...int) carPo
 	}
 }
 
+// Shift will return two values: the shifted value and the rest slice.
+func (ss carPointers) Shift() (*car, carPointers) {
+	return ss.First(), ss.DropTop(1)
+}
+
 // Shuffle returns shuffled slice by your rand.Source
 func (ss carPointers) Shuffle(source rand.Source) carPointers {
 	n := len(ss)
@@ -652,4 +657,13 @@ func (ss carPointers) StringsUsing(transform func(*car) string) Strings {
 	}
 
 	return result
+}
+
+// Unshift adds one or more elements to the beginning of the slice
+// and returns the new slice.
+func (ss carPointers) Unshift(elements ...*car) (unshift carPointers) {
+	unshift = append(carPointers{}, elements...)
+	unshift = append(unshift, ss...)
+
+	return
 }

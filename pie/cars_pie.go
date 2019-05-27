@@ -510,6 +510,11 @@ func (ss cars) SequenceUsing(creator func(int) car, params ...int) cars {
 	}
 }
 
+// Shift will return two values: the shifted value and the rest slice.
+func (ss cars) Shift() (car, cars) {
+	return ss.First(), ss.DropTop(1)
+}
+
 // Shuffle returns shuffled slice by your rand.Source
 func (ss cars) Shuffle(source rand.Source) cars {
 	n := len(ss)
@@ -652,4 +657,13 @@ func (ss cars) StringsUsing(transform func(car) string) Strings {
 	}
 
 	return result
+}
+
+// Unshift adds one or more elements to the beginning of the slice
+// and returns the new slice.
+func (ss cars) Unshift(elements ...car) (unshift cars) {
+	unshift = append(cars{}, elements...)
+	unshift = append(unshift, ss...)
+
+	return
 }

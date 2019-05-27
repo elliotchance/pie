@@ -1252,3 +1252,87 @@ func TestCarPointers_Equals(t *testing.T) {
 		})
 	}
 }
+
+var carPointersShiftAndUnshiftTests = []struct {
+	ss      carPointers
+	shifted *car
+	shift   carPointers
+	params  carPointers
+	unshift carPointers
+}{
+	{
+		nil,
+		nil,
+		nil,
+		nil,
+		carPointers{},
+	},
+	{
+		nil,
+		nil,
+		nil,
+		carPointers{},
+		carPointers{},
+	},
+	{
+		nil,
+		nil,
+		nil,
+		carPointers{carPointerA, carPointerB},
+		carPointers{carPointerA, carPointerB},
+	},
+	{
+		carPointers{},
+		nil,
+		nil,
+		nil,
+		carPointers{},
+	},
+	{
+		carPointers{},
+		nil,
+		nil,
+		carPointers{},
+		carPointers{},
+	},
+	{
+		carPointers{},
+		nil,
+		nil,
+		carPointers{carPointerA, carPointerB},
+		carPointers{carPointerA, carPointerB},
+	},
+	{
+		carPointers{carPointerA},
+		carPointerA,
+		nil,
+		carPointers{carPointerB},
+		carPointers{carPointerB, carPointerA},
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		carPointerA,
+		carPointers{carPointerB},
+		carPointers{carPointerC},
+		carPointers{carPointerC, carPointerA, carPointerB},
+	},
+	{
+		carPointers{carPointerA, carPointerB},
+		carPointerA,
+		carPointers{carPointerB},
+		carPointers{carPointerC, carPointerD},
+		carPointers{carPointerC, carPointerD, carPointerA, carPointerB},
+	},
+}
+
+func TestCarPointers_ShiftAndUnshift(t *testing.T) {
+	for _, test := range carPointersShiftAndUnshiftTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			shifted, shift := test.ss.Shift()
+			assert.Equal(t, test.shifted, shifted)
+			assert.Equal(t, test.shift, shift)
+			assert.Equal(t, test.unshift, test.ss.Unshift(test.params...))
+		})
+	}
+}

@@ -64,6 +64,7 @@ var Functions = []struct {
 	{"Send", "send.go", ForAll, "n"},
 	{"Sequence", "sequence.go", ForNumbers, "n"},
 	{"SequenceUsing", "sequence_using.go", ForAll, "n"},
+	{"Shift", "shift.go", ForAll, "n"},
 	{"Shuffle", "shuffle.go", ForAll, "n"},
 	{"Sort", "sort.go", ForNumbersAndStrings, "n⋅log(n)"},
 	{"SortStableUsing", "sort_stable_using.go", ForStrings | ForStructs, "n⋅log(n)"},
@@ -74,6 +75,7 @@ var Functions = []struct {
 	{"Top", "top.go", ForAll, "n"},
 	{"StringsUsing", "strings_using.go", ForAll, "n"},
 	{"Unique", "unique.go", ForNumbersAndStrings, "n"},
+	{"Unshift", "unshift.go", ForAll, "n"},
 	{"Values", "values.go", ForMaps, "n"},
 }
 
