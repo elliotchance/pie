@@ -19,6 +19,7 @@ focuses on type safety, performance and immutability.
   * [What are the goals of `pie`?](#what-are-the-goals-of--pie--)
   * [How do I contribute a function?](#how-do-i-contribute-a-function-)
   * [Why is the emoji a slice of pizza instead of a pie?](#why-is-the-emoji-a-slice-of-pizza-instead-of-a-pie-)
+  * [How do I exclude generated files from code coverage?](#how-do-i-exclude-generated-files-from-code-coverage-)
 
 # Quick Start
 
@@ -767,3 +768,21 @@ emoji. I liked pie, but then I found out that the pie emoji is not fully
 supported everywhere. I didn't want to change the name of the project to cake,
 but pizza pie still made sense. I'm not sure if I will change it back to a pie
 later.
+
+## How do I exclude generated files from code coverage?
+
+Go does not provide a way to exclude code coverage from specific files or lines
+with comments. However, you can remove the `_pie.go` files from the code
+coverage report before it is published:
+
+```bash
+go test -race -coverprofile=coverage.txt -covermode=atomic
+sed -i '/_pie\.go/d' ./coverage.txt
+```
+
+If you are running on macOS, you will need a slightly different syntax for
+`sed`:
+
+```bash
+sed -i '' /_pie\.go/d' ./coverage.txt
+```
