@@ -1225,3 +1225,87 @@ func TestCars_Equals(t *testing.T) {
 		})
 	}
 }
+
+var carsShiftAndUnshiftTests = []struct {
+	ss      cars
+	shifted car
+	shift   cars
+	params  cars
+	unshift cars
+}{
+	{
+		nil,
+		car{},
+		nil,
+		nil,
+		cars{},
+	},
+	{
+		nil,
+		car{},
+		nil,
+		cars{},
+		cars{},
+	},
+	{
+		nil,
+		car{},
+		nil,
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+	},
+	{
+		cars{},
+		car{},
+		nil,
+		nil,
+		cars{},
+	},
+	{
+		cars{},
+		car{},
+		nil,
+		cars{},
+		cars{},
+	},
+	{
+		cars{},
+		car{},
+		nil,
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+	},
+	{
+		cars{car{"bar", "yellow"}},
+		car{"bar", "yellow"},
+		nil,
+		cars{car{"Baz", "black"}},
+		cars{car{"Baz", "black"}, car{"bar", "yellow"}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		car{"bar", "yellow"},
+		cars{car{"Baz", "black"}},
+		cars{car{}},
+		cars{car{}, car{"bar", "yellow"}, car{"Baz", "black"}},
+	},
+	{
+		cars{car{"bar", "yellow"}, car{"Baz", "black"}},
+		car{"bar", "yellow"},
+		cars{car{"Baz", "black"}},
+		cars{car{}, car{"zzz", "blue"}},
+		cars{car{}, car{"zzz", "blue"}, car{"bar", "yellow"}, car{"Baz", "black"}},
+	},
+}
+
+func TestCars_ShiftAndUnshift(t *testing.T) {
+	for _, test := range carsShiftAndUnshiftTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss)()
+			shifted, shift := test.ss.Shift()
+			assert.Equal(t, test.shifted, shifted)
+			assert.Equal(t, test.shift, shift)
+			assert.Equal(t, test.unshift, test.ss.Unshift(test.params...))
+		})
+	}
+}

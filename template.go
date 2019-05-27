@@ -882,6 +882,13 @@ func (ss SliceType) SequenceUsing(creator func(int) ElementType, params ...int) 
 	}
 }
 `,
+	"Shift": `package functions
+
+// Shift will return two values: the shifted value and the rest slice.
+func (ss SliceType) Shift() (ElementType, SliceType) {
+	return ss.First(), ss.DropTop(1)
+}
+`,
 	"Shuffle": `package functions
 
 import (
@@ -1129,6 +1136,17 @@ func (ss SliceType) Unique() SliceType {
 	}
 
 	return uniqueValues
+}
+`,
+	"Unshift": `package functions
+
+// Unshift adds one or more elements to the beginning of the slice
+// and returns the new slice.
+func (ss SliceType) Unshift(elements ...ElementType) (unshift SliceType) {
+	unshift = append(SliceType{}, elements...)
+	unshift = append(unshift, ss...)
+
+	return
 }
 `,
 	"Values": `package functions

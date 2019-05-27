@@ -217,6 +217,7 @@ The letters in brackets indicate:
 | [`Send`](#send)                         | ✓      | ✓      | ✓      |      | n        | Send sends elements to channel in normal act it sends all elements but if func canceled it can be less  |
 | [`Sequence`](#sequence)                 |        | ✓      |        |      | n        | Sequence generates all numbers in range or returns nil if params invalid  |
 | [`SequenceUsing`](#sequenceusing)       | ✓      | ✓      | ✓      |      | n        | SequenceUsing generates slice in range using creator function  |
+| [`Shift`](#shift)                       | ✓      | ✓      | ✓      |      | n        | Shift will return two values: the shifted value and the rest slice.  |
 | [`Shuffle`](#shuffle)                   | ✓      | ✓      | ✓      |      | n        | Shuffle returns shuffled slice by your rand.Source  |
 | [`Sort`](#sort)                         | ✓      | ✓      |        |      | n⋅log(n) | Sort works similar to sort.SliceType(). However, unlike sort.SliceType the slice returned will be reallocated as to not modify the input slice.  |
 | [`SortStableUsing`](#sortstableusing)   | ✓      |        | ✓      |      | n⋅log(n) | SortStableUsing works similar to sort.SliceStable. However, unlike sort.SliceStable the slice returned will be reallocated as to not modify the input slice.  |
@@ -227,6 +228,7 @@ The letters in brackets indicate:
 | [`Top`](#top)                           | ✓      | ✓      | ✓      |      | n        | Top will return n elements from head of the slice if the slice has less elements then n that'll return all elements if n < 0 it'll return empty slice.  |
 | [`StringsUsing`](#stringsusing)         | ✓      | ✓      | ✓      |      | n        | StringsUsing transforms each element to a string.  |
 | [`Unique`](#unique)                     | ✓      | ✓      |        |      | n        | Unique returns a new slice with all of the unique values.  |
+| [`Unshift`](#unshift)                   | ✓      | ✓      | ✓      |      | n        | Unshift adds one or more elements to the beginning of the slice and returns the new slice.  |
 | [`Values`](#values)                     |        |        |        | ✓    | n        | Values returns the values in the map.  |
 
 ## Abs
@@ -615,6 +617,11 @@ where min is the first param, max is the second, step is the third one, [min, ma
 others params will be ignored
 
 
+## Shift
+
+Shift will return two values: the shifted value and the rest slice.
+
+
 ## Shuffle
 
 Shuffle returns shuffled slice by your rand.Source
@@ -701,6 +708,12 @@ A slice with zero elements is considered to be unique.
 
 
 See AreUnique().
+
+
+## Unshift
+
+Unshift adds one or more elements to the beginning of the slice
+and returns the new slice.
 
 
 ## Values

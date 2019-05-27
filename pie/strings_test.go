@@ -1417,3 +1417,87 @@ func TestStrings_Equals(t *testing.T) {
 		})
 	}
 }
+
+var stringsShiftAndUnshiftTests = []struct {
+	ss      Strings
+	shifted string
+	shift   Strings
+	params  Strings
+	unshift Strings
+}{
+	{
+		nil,
+		"",
+		nil,
+		nil,
+		Strings{},
+	},
+	{
+		nil,
+		"",
+		nil,
+		Strings{},
+		Strings{},
+	},
+	{
+		nil,
+		"",
+		nil,
+		Strings{"foo", "bar"},
+		Strings{"foo", "bar"},
+	},
+	{
+		Strings{},
+		"",
+		nil,
+		nil,
+		Strings{},
+	},
+	{
+		Strings{},
+		"",
+		nil,
+		Strings{},
+		Strings{},
+	},
+	{
+		Strings{},
+		"",
+		nil,
+		Strings{"foo", "bar"},
+		Strings{"foo", "bar"},
+	},
+	{
+		Strings{"foo"},
+		"foo",
+		nil,
+		Strings{"bar"},
+		Strings{"bar", "foo"},
+	},
+	{
+		Strings{"foo", "bar"},
+		"foo",
+		Strings{"bar"},
+		Strings{"baz"},
+		Strings{"baz", "foo", "bar"},
+	},
+	{
+		Strings{"foo", "bar"},
+		"foo",
+		Strings{"bar"},
+		Strings{"baz", ""},
+		Strings{"baz", "", "foo", "bar"},
+	},
+}
+
+func TestStrings_ShiftAndUnshift(t *testing.T) {
+	for _, test := range stringsShiftAndUnshiftTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			shifted, shift := test.ss.Shift()
+			assert.Equal(t, test.shifted, shifted)
+			assert.Equal(t, test.shift, shift)
+			assert.Equal(t, test.unshift, test.ss.Unshift(test.params...))
+		})
+	}
+}
