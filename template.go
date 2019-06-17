@@ -183,7 +183,10 @@ func (ss SliceType) DropTop(n int) (drop SliceType) {
 		return
 	}
 
-	drop = ss[n:]
+	// Copy ss, to make sure no memory is overlapping between input and
+	// output. See issue #145.
+	drop = make([]ElementType, len(ss)-n)
+	copy(drop, ss[n:])
 
 	return
 }
@@ -211,6 +214,28 @@ func (ss SliceType) Each(fn func(ElementType)) SliceType {
 	}
 
 	return ss
+}
+`,
+	"Equals": `package functions
+
+// Equals compare elements from the start to the end,
+//
+// if they are the same is considered the slices are equal if all elements are the same is considered the slices are equal
+// if each slice == nil is considered that they're equal
+//
+// if element realizes Equals interface it uses that method, in other way uses default compare
+func (ss SliceType) Equals(rhs SliceType) bool {
+	if len(ss) != len(rhs) {
+		return false
+	}
+
+	for i := range ss {
+		if !ss[i].Equals(rhs[i]) {
+			return false
+		}
+	}
+
+	return true
 }
 `,
 	"Extend": `package functions
@@ -403,6 +428,28 @@ func (ss SliceType) JSONBytes() []byte {
 	return data
 }
 `,
+	"JSONBytesIndent": `package functions
+
+import (
+	"encoding/json"
+)
+
+// JSONBytesIndent returns the JSON encoded array as bytes with indent applied.
+//
+// One important thing to note is that it will treat a nil slice as an empty
+// slice to ensure that the JSON value return is always an array. See
+// json.MarshalIndent for details.
+func (ss SliceType) JSONBytesIndent(prefix, indent string) []byte {
+	if ss == nil {
+		return []byte("[]")
+	}
+
+	// An error should not be possible.
+	data, _ := json.MarshalIndent(ss, prefix, indent)
+
+	return data
+}
+`,
 	"JSONString": `package functions
 
 import (
@@ -420,6 +467,28 @@ func (ss SliceType) JSONString() string {
 
 	// An error should not be possible.
 	data, _ := json.Marshal(ss)
+
+	return string(data)
+}
+`,
+	"JSONStringIndent": `package functions
+
+import (
+	"encoding/json"
+)
+
+// JSONStringIndent returns the JSON encoded array as a string with indent applied.
+//
+// One important thing to note is that it will treat a nil slice as an empty
+// slice to ensure that the JSON value return is always an array. See
+// json.MarshalIndent for details.
+func (ss SliceType) JSONStringIndent(prefix, indent string) string {
+	if ss == nil {
+		return "[]"
+	}
+
+	// An error should not be possible.
+	data, _ := json.MarshalIndent(ss, prefix, indent)
 
 	return string(data)
 }
@@ -538,24 +607,65 @@ func (ss SliceType) Max() (max ElementType) {
 // data sample.
 //
 // Zero is returned if there are no elements in the slice.
+//
+// If the number of elements is even, then the ElementType mean of the two "median values"
+// is returned.
 func (ss SliceType) Median() ElementType {
-	l := len(ss)
-
-	switch {
-	case l == 0:
+	n := len(ss)
+	if n == 0 {
 		return ElementZeroValue
-
-	case l == 1:
+	}
+	if n == 1 {
 		return ss[0]
 	}
 
-	sorted := ss.Sort()
+	// This implementation aims at linear time O(n) on average.
+	// It uses the same idea as QuickSort, but makes only 1 recursive
+	// call instead of 2. See also Quickselect.
 
-	if l%2 != 0 {
-		return sorted[l/2]
+	work := make(SliceType, len(ss))
+	copy(work, ss)
+
+	limit1, limit2 := n/2, n/2+1
+	if n%2 == 0 {
+		limit1, limit2 = n/2-1, n/2+1
 	}
 
-	return (sorted[l/2-1] + sorted[l/2]) / 2
+	var rec func(a, b int)
+	rec = func(a, b int) {
+		if b-a <= 1 {
+			return
+		}
+		ipivot := (a + b) / 2
+		pivot := work[ipivot]
+		work[a], work[ipivot] = work[ipivot], work[a]
+		j := a
+		k := b
+		for j+1 < k {
+			if work[j+1] < pivot {
+				work[j+1], work[j] = work[j], work[j+1]
+				j++
+			} else {
+				work[j+1], work[k-1] = work[k-1], work[j+1]
+				k--
+			}
+		}
+		// 1 or 0 recursive calls
+		if j > limit1 {
+			rec(a, j)
+		}
+		if j+1 < limit2 {
+			rec(j+1, b)
+		}
+	}
+
+	rec(0, len(work))
+
+	if n%2 == 1 {
+		return work[n/2]
+	} else {
+		return (work[n/2-1] + work[n/2]) / 2
+	}
 }
 `,
 	"Min": `package functions
@@ -574,6 +684,38 @@ func (ss SliceType) Min() (min ElementType) {
 	}
 
 	return
+}
+`,
+	"Mode": `package functions
+
+// Mode returns a new slice containing the most frequently occuring values.
+//
+// The number of items returned may be the same as the input or less. It will
+// never return zero items unless the input slice has zero items.
+func (ss SliceType) Mode() SliceType {
+	if len(ss) == 0 {
+		return nil
+	}
+	values := make(map[ElementType]int, 0)
+	for _, s := range ss {
+		values[s]++
+	}
+
+	var maxFrequency int
+	for _, v := range values {
+		if v > maxFrequency {
+			maxFrequency = v
+		}
+	}
+
+	var maxValues SliceType
+	for k, v := range values {
+		if v == maxFrequency {
+			maxValues = append(maxValues, k)
+		}
+	}
+
+	return maxValues
 }
 `,
 	"Product": `package functions
@@ -747,6 +889,13 @@ func (ss SliceType) SequenceUsing(creator func(int) ElementType, params ...int) 
 	}
 }
 `,
+	"Shift": `package functions
+
+// Shift will return two values: the shifted value and the rest slice.
+func (ss SliceType) Shift() (ElementType, SliceType) {
+	return ss.First(), ss.DropTop(1)
+}
+`,
 	"Shuffle": `package functions
 
 import (
@@ -882,6 +1031,29 @@ func (ss SliceType) Strings() pie.Strings {
 	return result
 }
 `,
+	"StringsUsing": `package functions
+
+import (
+	"github.com/elliotchance/pie/pie"
+)
+
+// StringsUsing transforms each element to a string.
+func (ss SliceType) StringsUsing(transform func(ElementType) string) pie.Strings {
+	l := len(ss)
+
+	// Avoid the allocation.
+	if l == 0 {
+		return nil
+	}
+
+	result := make(pie.Strings, l)
+	for i := 0; i < l; i++ {
+		result[i] = transform(ss[i])
+	}
+
+	return result
+}
+`,
 	"SubSlice": `package functions
 
 // SubSlice will return the subSlice from start to end(excluded)
@@ -924,29 +1096,6 @@ func (ss SliceType) Sum() (sum ElementType) {
 	}
 
 	return
-}
-`,
-	"ToStrings": `package functions
-
-import (
-	"github.com/elliotchance/pie/pie"
-)
-
-// ToStrings transforms each element to a string.
-func (ss SliceType) ToStrings(transform func(ElementType) string) pie.Strings {
-	l := len(ss)
-
-	// Avoid the allocation.
-	if l == 0 {
-		return nil
-	}
-
-	result := make(pie.Strings, l)
-	for i := 0; i < l; i++ {
-		result[i] = transform(ss[i])
-	}
-
-	return result
 }
 `,
 	"Top": `package functions
@@ -994,6 +1143,17 @@ func (ss SliceType) Unique() SliceType {
 	}
 
 	return uniqueValues
+}
+`,
+	"Unshift": `package functions
+
+// Unshift adds one or more elements to the beginning of the slice
+// and returns the new slice.
+func (ss SliceType) Unshift(elements ...ElementType) (unshift SliceType) {
+	unshift = append(SliceType{}, elements...)
+	unshift = append(unshift, ss...)
+
+	return
 }
 `,
 	"Values": `package functions

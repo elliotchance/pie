@@ -164,6 +164,7 @@ var float64sStatsTests = []struct {
 	ss                     Float64s
 	min, max, sum, product float64
 	len                    int
+	mode                   Float64s
 	average                float64
 }{
 	{
@@ -173,6 +174,7 @@ var float64sStatsTests = []struct {
 		0,
 		0,
 		0,
+		nil,
 		0,
 	},
 	{
@@ -182,6 +184,7 @@ var float64sStatsTests = []struct {
 		0,
 		0,
 		0,
+		Float64s{},
 		0,
 	},
 	{
@@ -191,6 +194,7 @@ var float64sStatsTests = []struct {
 		1.5,
 		1.5,
 		1,
+		Float64s{1.5},
 		1.5,
 	},
 	{
@@ -200,6 +204,7 @@ var float64sStatsTests = []struct {
 		12.3,
 		66.0858,
 		4,
+		Float64s{2.2, 3.1, 5.1, 1.9},
 		3.075,
 	},
 }
@@ -218,6 +223,26 @@ func TestFloat64s_Max(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableFloat64s(t, &test.ss)()
 			assert.Equal(t, test.max, Float64s(test.ss).Max())
+		})
+	}
+}
+
+func TestFloat64s_Mode(t *testing.T) {
+	cmp := func(a, b Float64s) bool {
+		m := make(map[float64]struct{})
+		for _, i := range a {
+			m[i] = struct{}{}
+		}
+		for _, i := range b {
+			if _, ok := m[i]; !ok {
+				return false
+			}
+		}
+		return true
+	}
+	for _, test := range float64sStatsTests {
+		t.Run("", func(t *testing.T) {
+			assert.True(t, cmp(test.mode, Float64s(test.ss).Mode()))
 		})
 	}
 }
@@ -293,6 +318,52 @@ func TestFloat64s_JSONString(t *testing.T) {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableFloat64s(t, &test.ss)()
 			assert.Equal(t, test.jsonString, test.ss.JSONString())
+		})
+	}
+}
+
+var float64sJSONIndentTests = []struct {
+	ss         Float64s
+	jsonString string
+}{
+	{
+		nil,
+		`[]`, // Instead of null.
+	},
+	{
+		Float64s{},
+		`[]`,
+	},
+	{
+		Float64s{12.3},
+		`[
+  12.3
+]`,
+	},
+	{
+		Float64s{23, -2.5, 3424, 12.3},
+		`[
+  23,
+  -2.5,
+  3424,
+  12.3
+]`,
+	},
+}
+
+func TestFloat64s_JSONBytesIndent(t *testing.T) {
+	for _, test := range float64sJSONIndentTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, []byte(test.jsonString), test.ss.JSONBytesIndent("", "  "))
+		})
+	}
+}
+func TestFloat64s_JSONStringIndent(t *testing.T) {
+	for _, test := range float64sJSONIndentTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, test.jsonString, test.ss.JSONStringIndent("", "  "))
 		})
 	}
 }
@@ -421,7 +492,7 @@ func TestFloat64s_AreUnique(t *testing.T) {
 	}
 }
 
-var float64sToStringsTests = []struct {
+var float64sStringsUsingTests = []struct {
 	ss        Float64s
 	transform func(float64) string
 	expected  Strings
@@ -449,11 +520,11 @@ var float64sToStringsTests = []struct {
 	},
 }
 
-func TestFloat64s_ToStrings(t *testing.T) {
-	for _, test := range float64sToStringsTests {
+func TestFloat64s_StringsUsing(t *testing.T) {
+	for _, test := range float64sStringsUsingTests {
 		t.Run("", func(t *testing.T) {
 			defer assertImmutableFloat64s(t, &test.ss)()
-			assert.Equal(t, test.expected, test.ss.ToStrings(test.transform))
+			assert.Equal(t, test.expected, test.ss.StringsUsing(test.transform))
 		})
 	}
 }
@@ -1304,10 +1375,110 @@ func TestFloat64_FindFirstUsing(t *testing.T) {
 	}
 }
 
-func TestFloat64s_Join(t *testing.T) {
-	assert.Equal(t, "", Float64s(nil).Join("a"))
-	assert.Equal(t, "", Float64s{}.Join("a"))
-	var f1, f2 float64 = 0.1, 2e16
-	f1str, f2str := fmt.Sprintf("%v", f1), fmt.Sprintf("%v", f2)
-	assert.Equal(t, f1str+"-"+f2str, Float64s{f1, f2}.Join("-"))
+var float64sEqualsTests = []struct {
+	ss       Float64s
+	rhs      Float64s
+	expected bool
+}{
+	{nil, nil, true},
+	{Float64s{}, Float64s{}, true},
+	{nil, Float64s{}, true},
+	{Float64s{1.0, 2.0}, Float64s{1.0, 2.0}, true},
+	{Float64s{1.0, 2.0}, Float64s{1.0, 5.0}, false},
+	{Float64s{1.0, 2.0}, Float64s{1.0}, false},
+	{Float64s{1.0}, Float64s{2.0}, false},
+	{Float64s{1.0}, nil, false},
+}
+
+func TestFloat64s_Equals(t *testing.T) {
+	for _, test := range float64sEqualsTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			assert.Equal(t, test.expected, test.ss.Equals(test.rhs))
+		})
+	}
+}
+
+var float64sShiftAndUnshiftTests = []struct {
+	ss      Float64s
+	shifted float64
+	shift   Float64s
+	params  Float64s
+	unshift Float64s
+}{
+	{
+		nil,
+		0,
+		nil,
+		nil,
+		Float64s{},
+	},
+	{
+		nil,
+		0,
+		nil,
+		Float64s{},
+		Float64s{},
+	},
+	{
+		nil,
+		0,
+		nil,
+		Float64s{1.23, 2.34},
+		Float64s{1.23, 2.34},
+	},
+	{
+		Float64s{},
+		0,
+		nil,
+		nil,
+		Float64s{},
+	},
+	{
+		Float64s{},
+		0,
+		nil,
+		Float64s{},
+		Float64s{},
+	},
+	{
+		Float64s{},
+		0,
+		nil,
+		Float64s{1.23, 2.34},
+		Float64s{1.23, 2.34},
+	},
+	{
+		Float64s{1.23},
+		1.23,
+		nil,
+		Float64s{2.34},
+		Float64s{2.34, 1.23},
+	},
+	{
+		Float64s{1.23, 2.34},
+		1.23,
+		Float64s{2.34},
+		Float64s{3.45},
+		Float64s{3.45, 1.23, 2.34},
+	},
+	{
+		Float64s{1.23, 2.34},
+		1.23,
+		Float64s{2.34},
+		Float64s{3.45, 4.56},
+		Float64s{3.45, 4.56, 1.23, 2.34},
+	},
+}
+
+func TestFloat64s_ShiftAndUnshift(t *testing.T) {
+	for _, test := range float64sShiftAndUnshiftTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			shifted, shift := test.ss.Shift()
+			assert.Equal(t, test.shifted, shifted)
+			assert.Equal(t, test.shift, shift)
+			assert.Equal(t, test.unshift, test.ss.Unshift(test.params...))
+		})
+	}
 }

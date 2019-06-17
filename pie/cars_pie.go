@@ -128,7 +128,10 @@ func (ss cars) DropTop(n int) (drop cars) {
 		return
 	}
 
-	drop = ss[n:]
+	// Copy ss, to make sure no memory is overlapping between input and
+	// output. See issue #145.
+	drop = make([]car, len(ss)-n)
+	copy(drop, ss[n:])
 
 	return
 }
@@ -154,6 +157,26 @@ func (ss cars) Each(fn func(car)) cars {
 	}
 
 	return ss
+}
+
+// Equals compare elements from the start to the end,
+//
+// if they are the same is considered the slices are equal if all elements are the same is considered the slices are equal
+// if each slice == nil is considered that they're equal
+//
+// if element realizes Equals interface it uses that method, in other way uses default compare
+func (ss cars) Equals(rhs cars) bool {
+	if len(ss) != len(rhs) {
+		return false
+	}
+
+	for i := range ss {
+		if !(ss[i] == rhs[i]) {
+			return false
+		}
+	}
+
+	return true
 }
 
 // Extend will return a new slice with the slices of elements appended to the
@@ -295,6 +318,22 @@ func (ss cars) JSONBytes() []byte {
 	return data
 }
 
+// JSONBytesIndent returns the JSON encoded array as bytes with indent applied.
+//
+// One important thing to note is that it will treat a nil slice as an empty
+// slice to ensure that the JSON value return is always an array. See
+// json.MarshalIndent for details.
+func (ss cars) JSONBytesIndent(prefix, indent string) []byte {
+	if ss == nil {
+		return []byte("[]")
+	}
+
+	// An error should not be possible.
+	data, _ := json.MarshalIndent(ss, prefix, indent)
+
+	return data
+}
+
 // JSONString returns the JSON encoded array as a string.
 //
 // One important thing to note is that it will treat a nil slice as an empty
@@ -306,6 +345,22 @@ func (ss cars) JSONString() string {
 
 	// An error should not be possible.
 	data, _ := json.Marshal(ss)
+
+	return string(data)
+}
+
+// JSONStringIndent returns the JSON encoded array as a string with indent applied.
+//
+// One important thing to note is that it will treat a nil slice as an empty
+// slice to ensure that the JSON value return is always an array. See
+// json.MarshalIndent for details.
+func (ss cars) JSONStringIndent(prefix, indent string) string {
+	if ss == nil {
+		return "[]"
+	}
+
+	// An error should not be possible.
+	data, _ := json.MarshalIndent(ss, prefix, indent)
 
 	return string(data)
 }
@@ -346,6 +401,36 @@ func (ss cars) Map(fn func(car) car) (ss2 cars) {
 	}
 
 	return
+}
+
+// Mode returns a new slice containing the most frequently occuring values.
+//
+// The number of items returned may be the same as the input or less. It will
+// never return zero items unless the input slice has zero items.
+func (ss cars) Mode() cars {
+	if len(ss) == 0 {
+		return nil
+	}
+	values := make(map[car]int, 0)
+	for _, s := range ss {
+		values[s]++
+	}
+
+	var maxFrequency int
+	for _, v := range values {
+		if v > maxFrequency {
+			maxFrequency = v
+		}
+	}
+
+	var maxValues cars
+	for k, v := range values {
+		if v == maxFrequency {
+			maxValues = append(maxValues, k)
+		}
+	}
+
+	return maxValues
 }
 
 // Random returns a random element by your rand.Source, or zero
@@ -442,6 +527,11 @@ func (ss cars) SequenceUsing(creator func(int) car, params ...int) cars {
 	} else {
 		return nil
 	}
+}
+
+// Shift will return two values: the shifted value and the rest slice.
+func (ss cars) Shift() (car, cars) {
+	return ss.First(), ss.DropTop(1)
 }
 
 // Shuffle returns shuffled slice by your rand.Source
@@ -571,8 +661,8 @@ func (ss cars) Top(n int) (top cars) {
 	return
 }
 
-// ToStrings transforms each element to a string.
-func (ss cars) ToStrings(transform func(car) string) Strings {
+// StringsUsing transforms each element to a string.
+func (ss cars) StringsUsing(transform func(car) string) Strings {
 	l := len(ss)
 
 	// Avoid the allocation.
@@ -586,4 +676,13 @@ func (ss cars) ToStrings(transform func(car) string) Strings {
 	}
 
 	return result
+}
+
+// Unshift adds one or more elements to the beginning of the slice
+// and returns the new slice.
+func (ss cars) Unshift(elements ...car) (unshift cars) {
+	unshift = append(cars{}, elements...)
+	unshift = append(unshift, ss...)
+
+	return
 }

@@ -4,8 +4,8 @@ import (
 	"github.com/elliotchance/pie/pie"
 )
 
-// ToStrings transforms each element to a string.
-func (ss SliceType) ToStrings(transform func(ElementType) string) pie.Strings {
+// StringsUsing transforms each element to a string.
+func (ss SliceType) StringsUsing(transform func(ElementType) string) pie.Strings {
 	l := len(ss)
 
 	// Avoid the allocation.

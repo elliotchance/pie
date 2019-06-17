@@ -128,7 +128,10 @@ func (ss carPointers) DropTop(n int) (drop carPointers) {
 		return
 	}
 
-	drop = ss[n:]
+	// Copy ss, to make sure no memory is overlapping between input and
+	// output. See issue #145.
+	drop = make([]*car, len(ss)-n)
+	copy(drop, ss[n:])
 
 	return
 }
@@ -154,6 +157,26 @@ func (ss carPointers) Each(fn func(*car)) carPointers {
 	}
 
 	return ss
+}
+
+// Equals compare elements from the start to the end,
+//
+// if they are the same is considered the slices are equal if all elements are the same is considered the slices are equal
+// if each slice == nil is considered that they're equal
+//
+// if element realizes Equals interface it uses that method, in other way uses default compare
+func (ss carPointers) Equals(rhs carPointers) bool {
+	if len(ss) != len(rhs) {
+		return false
+	}
+
+	for i := range ss {
+		if !ss[i].Equals(rhs[i]) {
+			return false
+		}
+	}
+
+	return true
 }
 
 // Extend will return a new slice with the slices of elements appended to the
@@ -212,7 +235,7 @@ func (ss carPointers) FindFirstUsing(fn func(value *car) bool) int {
 
 // First returns the first element, or zero. Also see FirstOr().
 func (ss carPointers) First() *car {
-	return ss.FirstOr(&car{})
+	return ss.FirstOr(nil)
 }
 
 // FirstOr returns the first element or a default value if there are no
@@ -295,6 +318,22 @@ func (ss carPointers) JSONBytes() []byte {
 	return data
 }
 
+// JSONBytesIndent returns the JSON encoded array as bytes with indent applied.
+//
+// One important thing to note is that it will treat a nil slice as an empty
+// slice to ensure that the JSON value return is always an array. See
+// json.MarshalIndent for details.
+func (ss carPointers) JSONBytesIndent(prefix, indent string) []byte {
+	if ss == nil {
+		return []byte("[]")
+	}
+
+	// An error should not be possible.
+	data, _ := json.MarshalIndent(ss, prefix, indent)
+
+	return data
+}
+
 // JSONString returns the JSON encoded array as a string.
 //
 // One important thing to note is that it will treat a nil slice as an empty
@@ -310,9 +349,25 @@ func (ss carPointers) JSONString() string {
 	return string(data)
 }
 
+// JSONStringIndent returns the JSON encoded array as a string with indent applied.
+//
+// One important thing to note is that it will treat a nil slice as an empty
+// slice to ensure that the JSON value return is always an array. See
+// json.MarshalIndent for details.
+func (ss carPointers) JSONStringIndent(prefix, indent string) string {
+	if ss == nil {
+		return "[]"
+	}
+
+	// An error should not be possible.
+	data, _ := json.MarshalIndent(ss, prefix, indent)
+
+	return string(data)
+}
+
 // Last returns the last element, or zero. Also see LastOr().
 func (ss carPointers) Last() *car {
-	return ss.LastOr(&car{})
+	return ss.LastOr(nil)
 }
 
 // LastOr returns the last element or a default value if there are no elements.
@@ -348,13 +403,43 @@ func (ss carPointers) Map(fn func(*car) *car) (ss2 carPointers) {
 	return
 }
 
+// Mode returns a new slice containing the most frequently occuring values.
+//
+// The number of items returned may be the same as the input or less. It will
+// never return zero items unless the input slice has zero items.
+func (ss carPointers) Mode() carPointers {
+	if len(ss) == 0 {
+		return nil
+	}
+	values := make(map[*car]int, 0)
+	for _, s := range ss {
+		values[s]++
+	}
+
+	var maxFrequency int
+	for _, v := range values {
+		if v > maxFrequency {
+			maxFrequency = v
+		}
+	}
+
+	var maxValues carPointers
+	for k, v := range values {
+		if v == maxFrequency {
+			maxValues = append(maxValues, k)
+		}
+	}
+
+	return maxValues
+}
+
 // Random returns a random element by your rand.Source, or zero
 func (ss carPointers) Random(source rand.Source) *car {
 	n := len(ss)
 
 	// Avoid the extra allocation.
 	if n < 1 {
-		return &car{}
+		return nil
 	}
 	if n < 2 {
 		return ss[0]
@@ -442,6 +527,11 @@ func (ss carPointers) SequenceUsing(creator func(int) *car, params ...int) carPo
 	} else {
 		return nil
 	}
+}
+
+// Shift will return two values: the shifted value and the rest slice.
+func (ss carPointers) Shift() (*car, carPointers) {
+	return ss.First(), ss.DropTop(1)
 }
 
 // Shuffle returns shuffled slice by your rand.Source
@@ -571,8 +661,8 @@ func (ss carPointers) Top(n int) (top carPointers) {
 	return
 }
 
-// ToStrings transforms each element to a string.
-func (ss carPointers) ToStrings(transform func(*car) string) Strings {
+// StringsUsing transforms each element to a string.
+func (ss carPointers) StringsUsing(transform func(*car) string) Strings {
 	l := len(ss)
 
 	// Avoid the allocation.
@@ -586,4 +676,13 @@ func (ss carPointers) ToStrings(transform func(*car) string) Strings {
 	}
 
 	return result
+}
+
+// Unshift adds one or more elements to the beginning of the slice
+// and returns the new slice.
+func (ss carPointers) Unshift(elements ...*car) (unshift carPointers) {
+	unshift = append(carPointers{}, elements...)
+	unshift = append(unshift, ss...)
+
+	return
 }

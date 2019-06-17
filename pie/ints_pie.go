@@ -166,7 +166,10 @@ func (ss Ints) DropTop(n int) (drop Ints) {
 		return
 	}
 
-	drop = ss[n:]
+	// Copy ss, to make sure no memory is overlapping between input and
+	// output. See issue #145.
+	drop = make([]int, len(ss)-n)
+	copy(drop, ss[n:])
 
 	return
 }
@@ -192,6 +195,26 @@ func (ss Ints) Each(fn func(int)) Ints {
 	}
 
 	return ss
+}
+
+// Equals compare elements from the start to the end,
+//
+// if they are the same is considered the slices are equal if all elements are the same is considered the slices are equal
+// if each slice == nil is considered that they're equal
+//
+// if element realizes Equals interface it uses that method, in other way uses default compare
+func (ss Ints) Equals(rhs Ints) bool {
+	if len(ss) != len(rhs) {
+		return false
+	}
+
+	for i := range ss {
+		if !(ss[i] == rhs[i]) {
+			return false
+		}
+	}
+
+	return true
 }
 
 // Extend will return a new slice with the slices of elements appended to the
@@ -368,6 +391,22 @@ func (ss Ints) JSONBytes() []byte {
 	return data
 }
 
+// JSONBytesIndent returns the JSON encoded array as bytes with indent applied.
+//
+// One important thing to note is that it will treat a nil slice as an empty
+// slice to ensure that the JSON value return is always an array. See
+// json.MarshalIndent for details.
+func (ss Ints) JSONBytesIndent(prefix, indent string) []byte {
+	if ss == nil {
+		return []byte("[]")
+	}
+
+	// An error should not be possible.
+	data, _ := json.MarshalIndent(ss, prefix, indent)
+
+	return data
+}
+
 // JSONString returns the JSON encoded array as a string.
 //
 // One important thing to note is that it will treat a nil slice as an empty
@@ -379,6 +418,22 @@ func (ss Ints) JSONString() string {
 
 	// An error should not be possible.
 	data, _ := json.Marshal(ss)
+
+	return string(data)
+}
+
+// JSONStringIndent returns the JSON encoded array as a string with indent applied.
+//
+// One important thing to note is that it will treat a nil slice as an empty
+// slice to ensure that the JSON value return is always an array. See
+// json.MarshalIndent for details.
+func (ss Ints) JSONStringIndent(prefix, indent string) string {
+	if ss == nil {
+		return "[]"
+	}
+
+	// An error should not be possible.
+	data, _ := json.MarshalIndent(ss, prefix, indent)
 
 	return string(data)
 }
@@ -441,24 +496,65 @@ func (ss Ints) Max() (max int) {
 // data sample.
 //
 // Zero is returned if there are no elements in the slice.
+//
+// If the number of elements is even, then the int mean of the two "median values"
+// is returned.
 func (ss Ints) Median() int {
-	l := len(ss)
-
-	switch {
-	case l == 0:
+	n := len(ss)
+	if n == 0 {
 		return 0
-
-	case l == 1:
+	}
+	if n == 1 {
 		return ss[0]
 	}
 
-	sorted := ss.Sort()
+	// This implementation aims at linear time O(n) on average.
+	// It uses the same idea as QuickSort, but makes only 1 recursive
+	// call instead of 2. See also Quickselect.
 
-	if l%2 != 0 {
-		return sorted[l/2]
+	work := make(Ints, len(ss))
+	copy(work, ss)
+
+	limit1, limit2 := n/2, n/2+1
+	if n%2 == 0 {
+		limit1, limit2 = n/2-1, n/2+1
 	}
 
-	return (sorted[l/2-1] + sorted[l/2]) / 2
+	var rec func(a, b int)
+	rec = func(a, b int) {
+		if b-a <= 1 {
+			return
+		}
+		ipivot := (a + b) / 2
+		pivot := work[ipivot]
+		work[a], work[ipivot] = work[ipivot], work[a]
+		j := a
+		k := b
+		for j+1 < k {
+			if work[j+1] < pivot {
+				work[j+1], work[j] = work[j], work[j+1]
+				j++
+			} else {
+				work[j+1], work[k-1] = work[k-1], work[j+1]
+				k--
+			}
+		}
+		// 1 or 0 recursive calls
+		if j > limit1 {
+			rec(a, j)
+		}
+		if j+1 < limit2 {
+			rec(j+1, b)
+		}
+	}
+
+	rec(0, len(work))
+
+	if n%2 == 1 {
+		return work[n/2]
+	} else {
+		return (work[n/2-1] + work[n/2]) / 2
+	}
 }
 
 // Min is the minimum value, or zero.
@@ -475,6 +571,36 @@ func (ss Ints) Min() (min int) {
 	}
 
 	return
+}
+
+// Mode returns a new slice containing the most frequently occuring values.
+//
+// The number of items returned may be the same as the input or less. It will
+// never return zero items unless the input slice has zero items.
+func (ss Ints) Mode() Ints {
+	if len(ss) == 0 {
+		return nil
+	}
+	values := make(map[int]int, 0)
+	for _, s := range ss {
+		values[s]++
+	}
+
+	var maxFrequency int
+	for _, v := range values {
+		if v > maxFrequency {
+			maxFrequency = v
+		}
+	}
+
+	var maxValues Ints
+	for k, v := range values {
+		if v == maxFrequency {
+			maxValues = append(maxValues, k)
+		}
+	}
+
+	return maxValues
 }
 
 // Product is the product of all of the elements.
@@ -624,6 +750,11 @@ func (ss Ints) SequenceUsing(creator func(int) int, params ...int) Ints {
 	}
 }
 
+// Shift will return two values: the shifted value and the rest slice.
+func (ss Ints) Shift() (int, Ints) {
+	return ss.First(), ss.DropTop(1)
+}
+
 // Shuffle returns shuffled slice by your rand.Source
 func (ss Ints) Shuffle(source rand.Source) Ints {
 	n := len(ss)
@@ -744,8 +875,8 @@ func (ss Ints) Top(n int) (top Ints) {
 	return
 }
 
-// ToStrings transforms each element to a string.
-func (ss Ints) ToStrings(transform func(int) string) Strings {
+// StringsUsing transforms each element to a string.
+func (ss Ints) StringsUsing(transform func(int) string) Strings {
 	l := len(ss)
 
 	// Avoid the allocation.
@@ -790,4 +921,13 @@ func (ss Ints) Unique() Ints {
 	}
 
 	return uniqueValues
+}
+
+// Unshift adds one or more elements to the beginning of the slice
+// and returns the new slice.
+func (ss Ints) Unshift(elements ...int) (unshift Ints) {
+	unshift = append(Ints{}, elements...)
+	unshift = append(unshift, ss...)
+
+	return
 }
