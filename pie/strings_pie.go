@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"sort"
 	"strconv"
+	"strings"
 )
 
 // All will return true if all callbacks return true. It follows the same logic
@@ -335,15 +336,20 @@ func (ss Strings) Ints() Ints {
 
 // Join returns a string from joining each of the elements.
 func (ss Strings) Join(glue string) (s string) {
-	for i, element := range ss {
-		if i > 0 {
-			s += glue
+	var slice interface{} = []string(ss)
+
+	if y, ok := slice.([]string); ok {
+		// The stdlib is efficient for type []string
+		return strings.Join(y, glue)
+	} else {
+		// General case
+		parts := make([]string, len(ss))
+		for i, element := range ss {
+			mightBeString := element
+			parts[i] = fmt.Sprintf("%v", mightBeString)
 		}
-
-		s += string(element)
+		return strings.Join(parts, glue)
 	}
-
-	return s
 }
 
 // JSONBytes returns the JSON encoded array as bytes.

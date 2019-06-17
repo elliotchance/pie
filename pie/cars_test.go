@@ -1309,3 +1309,10 @@ func TestCars_ShiftAndUnshift(t *testing.T) {
 		})
 	}
 }
+
+func TestCars_Join(t *testing.T) {
+	assert.Equal(t, "", cars(nil).Join("a"))
+	assert.Equal(t, "", cars{}.Join("a"))
+	car1, car2 := car{Name: "maverick", Color: "red"}, car{Name: "ferrari", Color: "red"}
+	assert.Equal(t, "{maverick red}-{ferrari red}", cars{car1, car2}.Join("-"))
+}

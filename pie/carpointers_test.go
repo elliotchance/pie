@@ -1336,3 +1336,10 @@ func TestCarPointers_ShiftAndUnshift(t *testing.T) {
 		})
 	}
 }
+
+func TestCarPointers_Join(t *testing.T) {
+	assert.Equal(t, "", carPointers(nil).Join("a"))
+	assert.Equal(t, "", carPointers{}.Join("a"))
+	car1, car2 := &car{Name: "maverick", Color: "red"}, &car{Name: "ferrari", Color: "red"}
+	assert.Equal(t, "maverick is red-ferrari is red", carPointers{car1, car2}.Join("-"))
+}

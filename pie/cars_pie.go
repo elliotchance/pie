@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"sort"
 	"strconv"
+	"strings"
 )
 
 // All will return true if all callbacks return true. It follows the same logic
@@ -282,6 +283,24 @@ func (ss cars) Ints() Ints {
 	}
 
 	return result
+}
+
+// Join returns a string from joining each of the elements.
+func (ss cars) Join(glue string) (s string) {
+	var slice interface{} = []car(ss)
+
+	if y, ok := slice.([]string); ok {
+		// The stdlib is efficient for type []string
+		return strings.Join(y, glue)
+	} else {
+		// General case
+		parts := make([]string, len(ss))
+		for i, element := range ss {
+			mightBeString := element
+			parts[i] = fmt.Sprintf("%v", mightBeString)
+		}
+		return strings.Join(parts, glue)
+	}
 }
 
 // JSONBytes returns the JSON encoded array as bytes.

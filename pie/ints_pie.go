@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"sort"
 	"strconv"
+	"strings"
 )
 
 // Abs is a function which returns the absolute value of all the
@@ -355,6 +356,24 @@ func (ss Ints) Ints() Ints {
 	}
 
 	return result
+}
+
+// Join returns a string from joining each of the elements.
+func (ss Ints) Join(glue string) (s string) {
+	var slice interface{} = []int(ss)
+
+	if y, ok := slice.([]string); ok {
+		// The stdlib is efficient for type []string
+		return strings.Join(y, glue)
+	} else {
+		// General case
+		parts := make([]string, len(ss))
+		for i, element := range ss {
+			mightBeString := element
+			parts[i] = fmt.Sprintf("%v", mightBeString)
+		}
+		return strings.Join(parts, glue)
+	}
 }
 
 // JSONBytes returns the JSON encoded array as bytes.

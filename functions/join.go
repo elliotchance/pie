@@ -1,14 +1,21 @@
 package functions
 
+import "strings"
+
 // Join returns a string from joining each of the elements.
-func (ss StringSliceType) Join(glue string) (s string) {
-	for i, element := range ss {
-		if i > 0 {
-			s += glue
+func (ss SliceType) Join(glue string) (s string) {
+	var slice interface{} = []ElementType(ss)
+
+	if y, ok := slice.([]string); ok {
+		// The stdlib is efficient for type []string
+		return strings.Join(y, glue)
+	} else {
+		// General case
+		parts := make([]string, len(ss))
+		for i, element := range ss {
+			mightBeString := element
+			parts[i] = mightBeString.String()
 		}
-
-		s += string(element)
+		return strings.Join(parts, glue)
 	}
-
-	return s
 }
