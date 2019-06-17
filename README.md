@@ -196,7 +196,7 @@ The letters in brackets indicate:
 | [`Float64s`](#float64s) (S)             | ✓      | ✓      | ✓      |      | n        | Float64s transforms each element to a float64.  |
 | [`Intersect`](#intersect)               | ✓      | ✓      |        |      | n        | Intersect returns items that exist in all lists.  |
 | [`Ints`](#ints) (S)                     | ✓      | ✓      | ✓      |      | n        | Ints transforms each element to an integer.  |
-| [`Join`](#join)                         | ✓      |        |        |      | n        | Join returns a string from joining each of the elements.  |
+| [`Join`](#join) (S)                     | ✓      | ✓      | ✓      |      | n        | Join returns a string from joining each of the elements.  |
 | [`JSONBytes`](#jsonbytes)               | ✓      | ✓      | ✓      |      | n        | JSONBytes returns the JSON encoded array as bytes.  |
 | [`JSONBytesIndent`](#jsonbytesindent)   | ✓      | ✓      | ✓      |      | n        | JSONBytesIndent returns the JSON encoded array as bytes with indent applied.  |
 | [`JSONString`](#jsonstring)             | ✓      | ✓      | ✓      |      | n        | JSONString returns the JSON encoded array as a string.  |
