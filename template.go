@@ -344,6 +344,18 @@ func (ss SliceType) Float64s() pie.Float64s {
 	return result
 }
 `,
+	"Group": `package functions
+
+// Group returns a map of the value with an individual count.
+//
+func (ss SliceType) Group() map[ElementType]int {
+	group := map[ElementType]int{}
+	for _, n := range ss {
+		group[n]++
+	}
+	return group
+}
+`,
 	"Intersect": `package functions
 
 // Intersect returns items that exist in all lists.
