@@ -41,6 +41,7 @@ var Functions = []struct {
 	{"First", "first.go", ForAll, "1"},
 	{"FirstOr", "first_or.go", ForAll, "1"},
 	{"Float64s", "float64s.go", ForAll, "n"},
+	{"Group", "group.go", ForNumbersAndStrings, "n"},
 	{"Intersect", "intersect.go", ForNumbersAndStrings, "n"},
 	{"Ints", "ints.go", ForAll, "n"},
 	{"Join", "join.go", ForAll, "n"},

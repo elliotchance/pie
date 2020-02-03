@@ -1477,3 +1477,17 @@ func TestInts_Join(t *testing.T) {
 	assert.Equal(t, "1-2-3", Ints{1, 2, 3}.Join("-"))
 	assert.Equal(t, "1--2-3", Ints{1, -2, 3}.Join("-"))
 }
+
+func TestInts_Group(t *testing.T) {
+	assert.Equal(t, map[int]int{}, Ints(nil).Group())
+
+	assert.Equal(t, map[int]int{
+		1: 1,
+	}, Ints{1}.Group())
+
+	assert.Equal(t, map[int]int{
+		1: 1,
+		2: 2,
+		3: 3,
+	}, Ints{1, 2, 2, 3, 3, 3}.Group())
+}

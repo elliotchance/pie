@@ -194,6 +194,7 @@ The letters in brackets indicate:
 | [`First`](#first)                       | ✓      | ✓      | ✓      |      | 1        | First returns the first element, or zero. Also see FirstOr().  |
 | [`FirstOr`](#firstor)                   | ✓      | ✓      | ✓      |      | 1        | FirstOr returns the first element or a default value if there are no elements.  |
 | [`Float64s`](#float64s) (S)             | ✓      | ✓      | ✓      |      | n        | Float64s transforms each element to a float64.  |
+| [`Group`](#group)                       | ✓      | ✓      |        |      | n        | Group returns a map of the value with an individual count.  |
 | [`Intersect`](#intersect)               | ✓      | ✓      |        |      | n        | Intersect returns items that exist in all lists.  |
 | [`Ints`](#ints) (S)                     | ✓      | ✓      | ✓      |      | n        | Ints transforms each element to an integer.  |
 | [`Join`](#join) (S)                     | ✓      | ✓      | ✓      |      | n        | Join returns a string from joining each of the elements.  |
@@ -408,6 +409,13 @@ elements.
 ## Float64s
 
 Float64s transforms each element to a float64.
+
+
+## Group
+
+Group returns a map of the value with an individual count.
+
+
 
 
 ## Intersect
