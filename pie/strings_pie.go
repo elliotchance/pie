@@ -514,6 +514,19 @@ func (ss Strings) Mode() Strings {
 	return maxValues
 }
 
+// Sum is the sum of all of the elements.
+func (ss Strings) Pop() (Strings, *string) {
+
+	if len(ss) == 0 {
+		return ss, nil
+	}
+
+	e := &ss[0]
+	ss = ss[1:]
+
+	return ss, e
+}
+
 // Random returns a random element by your rand.Source, or zero
 func (ss Strings) Random(source rand.Source) string {
 	n := len(ss)

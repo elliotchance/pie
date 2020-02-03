@@ -718,6 +718,21 @@ func (ss SliceType) Mode() SliceType {
 	return maxValues
 }
 `,
+	"Pop": `package functions
+
+// Sum is the sum of all of the elements.
+func (ss SliceType) Pop() (SliceType, *ElementType) {
+
+	if len(ss) == 0 {
+		return ss, nil
+	}
+
+	e := &ss[0]
+	ss = ss[1:]
+
+	return ss, e
+}
+`,
 	"Product": `package functions
 
 // Product is the product of all of the elements.

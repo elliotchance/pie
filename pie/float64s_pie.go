@@ -603,6 +603,19 @@ func (ss Float64s) Mode() Float64s {
 	return maxValues
 }
 
+// Sum is the sum of all of the elements.
+func (ss Float64s) Pop() (Float64s, *float64) {
+
+	if len(ss) == 0 {
+		return ss, nil
+	}
+
+	e := &ss[0]
+	ss = ss[1:]
+
+	return ss, e
+}
+
 // Product is the product of all of the elements.
 func (ss Float64s) Product() (product float64) {
 	if len(ss) == 0 {

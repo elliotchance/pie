@@ -603,6 +603,19 @@ func (ss Ints) Mode() Ints {
 	return maxValues
 }
 
+// Sum is the sum of all of the elements.
+func (ss Ints) Pop() (Ints, *int) {
+
+	if len(ss) == 0 {
+		return ss, nil
+	}
+
+	e := &ss[0]
+	ss = ss[1:]
+
+	return ss, e
+}
+
 // Product is the product of all of the elements.
 func (ss Ints) Product() (product int) {
 	if len(ss) == 0 {

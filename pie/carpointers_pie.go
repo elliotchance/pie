@@ -433,6 +433,19 @@ func (ss carPointers) Mode() carPointers {
 	return maxValues
 }
 
+// Sum is the sum of all of the elements.
+func (ss carPointers) Pop() (carPointers, **car) {
+
+	if len(ss) == 0 {
+		return ss, nil
+	}
+
+	e := &ss[0]
+	ss = ss[1:]
+
+	return ss, e
+}
+
 // Random returns a random element by your rand.Source, or zero
 func (ss carPointers) Random(source rand.Source) *car {
 	n := len(ss)
