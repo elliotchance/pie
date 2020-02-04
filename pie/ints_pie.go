@@ -613,6 +613,26 @@ func (ss Ints) Mode() Ints {
 	return maxValues
 }
 
+// Pop the first element of the slice
+//
+// Usage Example:
+//
+//   type knownGreetings []string
+//   greetings := knownGreetings{"ciao", "hello", "hola"}
+//   for greeting := greetings.Pop(); greeting != nil; greeting = greetings.Pop() {
+//       fmt.Println(*greeting)
+//   }
+func (ss *Ints) Pop() (popped *int) {
+
+	if len(*ss) == 0 {
+		return
+	}
+
+	popped = &(*ss)[0]
+	*ss = (*ss)[1:]
+	return
+}
+
 // Product is the product of all of the elements.
 func (ss Ints) Product() (product int) {
 	if len(ss) == 0 {

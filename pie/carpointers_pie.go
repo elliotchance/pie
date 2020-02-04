@@ -433,6 +433,26 @@ func (ss carPointers) Mode() carPointers {
 	return maxValues
 }
 
+// Pop the first element of the slice
+//
+// Usage Example:
+//
+//   type knownGreetings []string
+//   greetings := knownGreetings{"ciao", "hello", "hola"}
+//   for greeting := greetings.Pop(); greeting != nil; greeting = greetings.Pop() {
+//       fmt.Println(*greeting)
+//   }
+func (ss *carPointers) Pop() (popped **car) {
+
+	if len(*ss) == 0 {
+		return
+	}
+
+	popped = &(*ss)[0]
+	*ss = (*ss)[1:]
+	return
+}
+
 // Random returns a random element by your rand.Source, or zero
 func (ss carPointers) Random(source rand.Source) *car {
 	n := len(ss)
