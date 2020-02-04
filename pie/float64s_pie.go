@@ -615,15 +615,13 @@ func (ss Float64s) Mode() Float64s {
 
 // Pop the first element of the slice
 //
-// Example
+// Usage Example:
+//
 //   type knownGreetings []string
-//
 //   greetings := knownGreetings{"ciao", "hello", "hola"}
-//    for greeting := greetings.Pop(); greeting != nil; greeting = greetings.Pop() {
-//  	  fmt.Println(*greeting)
-//    }
-//
-
+//   for greeting := greetings.Pop(); greeting != nil; greeting = greetings.Pop() {
+//       fmt.Println(*greeting)
+//   }
 func (ss *Float64s) Pop() (popped *float64) {
 
 	if len(*ss) == 0 {
