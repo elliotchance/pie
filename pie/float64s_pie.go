@@ -304,6 +304,16 @@ func (ss Float64s) Float64s() Float64s {
 	return result
 }
 
+// Group returns a map of the value with an individual count.
+//
+func (ss Float64s) Group() map[float64]int {
+	group := map[float64]int{}
+	for _, n := range ss {
+		group[n]++
+	}
+	return group
+}
+
 // Intersect returns items that exist in all lists.
 //
 // It returns slice without any duplicates.

@@ -1487,5 +1487,18 @@ func TestInts_Pop(t *testing.T) {
 
 	assert.Equal(t, 999, *numbers.Pop())
 	assert.Equal(t, Ints{}, numbers)
+}
 
+func TestInts_Group(t *testing.T) {
+	assert.Equal(t, map[int]int{}, Ints(nil).Group())
+
+	assert.Equal(t, map[int]int{
+		1: 1,
+	}, Ints{1}.Group())
+
+	assert.Equal(t, map[int]int{
+		1: 1,
+		2: 2,
+		3: 3,
+	}, Ints{1, 2, 2, 3, 3, 3}.Group())
 }

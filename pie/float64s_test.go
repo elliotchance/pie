@@ -1498,5 +1498,18 @@ func TestFloat64s_Pop(t *testing.T) {
 
 	assert.Equal(t, 4.2, *numbers.Pop())
 	assert.Equal(t, Float64s{}, numbers)
+}
 
+func TestFloat64s_Group(t *testing.T) {
+	assert.Equal(t, map[float64]int{}, Float64s(nil).Group())
+
+	assert.Equal(t, map[float64]int{
+		1: 1,
+	}, Float64s{1}.Group())
+
+	assert.Equal(t, map[float64]int{
+		1: 1,
+		2: 2,
+		3: 3,
+	}, Float64s{1, 2, 2, 3, 3, 3}.Group())
 }

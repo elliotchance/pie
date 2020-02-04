@@ -1511,5 +1511,18 @@ func TestStrings_Pop(t *testing.T) {
 
 	assert.Equal(t, "bar", *foobar.Pop())
 	assert.Equal(t, Strings{}, foobar)
+}
 
+func TestStrings_Group(t *testing.T) {
+	assert.Equal(t, map[string]int{}, Strings(nil).Group())
+
+	assert.Equal(t, map[string]int{
+		"foo": 1,
+	}, Strings{"foo"}.Group())
+
+	assert.Equal(t, map[string]int{
+		"foo":    1,
+		"bar":    2,
+		"foobar": 3,
+	}, Strings{"foo", "bar", "bar", "foobar", "foobar", "foobar"}.Group())
 }
