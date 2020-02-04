@@ -433,17 +433,26 @@ func (ss carPointers) Mode() carPointers {
 	return maxValues
 }
 
-// Sum is the sum of all of the elements.
-func (ss carPointers) Pop() (carPointers, **car) {
+// Pop the first element of the slice
+//
+// Example
+//   type knownGreetings []string
+//
+//   greetings := knownGreetings{"ciao", "hello", "hola"}
+//    for greeting := greetings.Pop(); greeting != nil; greeting = greetings.Pop() {
+//  	  fmt.Println(*greeting)
+//    }
+//
 
-	if len(ss) == 0 {
-		return ss, nil
+func (ss *carPointers) Pop() (popped **car) {
+
+	if len(*ss) == 0 {
+		return
 	}
 
-	e := &ss[0]
-	ss = ss[1:]
-
-	return ss, e
+	popped = &(*ss)[0]
+	*ss = (*ss)[1:]
+	return
 }
 
 // Random returns a random element by your rand.Source, or zero

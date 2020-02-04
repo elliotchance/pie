@@ -1477,3 +1477,15 @@ func TestInts_Join(t *testing.T) {
 	assert.Equal(t, "1-2-3", Ints{1, 2, 3}.Join("-"))
 	assert.Equal(t, "1--2-3", Ints{1, -2, 3}.Join("-"))
 }
+
+func TestInts_Pop(t *testing.T) {
+
+	numbers := Ints{42, 999}
+
+	assert.Equal(t, 42, *numbers.Pop())
+	assert.Equal(t, Ints{999}, numbers)
+
+	assert.Equal(t, 999, *numbers.Pop())
+	assert.Equal(t, Ints{}, numbers)
+
+}

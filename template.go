@@ -720,17 +720,26 @@ func (ss SliceType) Mode() SliceType {
 `,
 	"Pop": `package functions
 
-// Sum is the sum of all of the elements.
-func (ss SliceType) Pop() (SliceType, *ElementType) {
+// Pop the first element of the slice
+//
+// Example
+//   type knownGreetings []string
+//
+//   greetings := knownGreetings{"ciao", "hello", "hola"}
+//    for greeting := greetings.Pop(); greeting != nil; greeting = greetings.Pop() {
+//  	  fmt.Println(*greeting)
+//    }
+//
 
-	if len(ss) == 0 {
-		return ss, nil
+func (ss *SliceType) Pop() (popped *ElementType) {
+
+	if len(*ss) == 0 {
+		return
 	}
 
-	e := &ss[0]
-	ss = ss[1:]
-
-	return ss, e
+	popped = &(*ss)[0]
+	*ss = (*ss)[1:]
+	return
 }
 `,
 	"Product": `package functions

@@ -603,17 +603,26 @@ func (ss Float64s) Mode() Float64s {
 	return maxValues
 }
 
-// Sum is the sum of all of the elements.
-func (ss Float64s) Pop() (Float64s, *float64) {
+// Pop the first element of the slice
+//
+// Example
+//   type knownGreetings []string
+//
+//   greetings := knownGreetings{"ciao", "hello", "hola"}
+//    for greeting := greetings.Pop(); greeting != nil; greeting = greetings.Pop() {
+//  	  fmt.Println(*greeting)
+//    }
+//
 
-	if len(ss) == 0 {
-		return ss, nil
+func (ss *Float64s) Pop() (popped *float64) {
+
+	if len(*ss) == 0 {
+		return
 	}
 
-	e := &ss[0]
-	ss = ss[1:]
-
-	return ss, e
+	popped = &(*ss)[0]
+	*ss = (*ss)[1:]
+	return
 }
 
 // Product is the product of all of the elements.

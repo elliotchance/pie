@@ -1316,3 +1316,19 @@ func TestCars_Join(t *testing.T) {
 	car1, car2 := car{Name: "maverick", Color: "red"}, car{Name: "ferrari", Color: "red"}
 	assert.Equal(t, "{maverick red}-{ferrari red}", cars{car1, car2}.Join("-"))
 }
+
+func TestCars_Pop(t *testing.T) {
+	car1, car2 := car{Name: "maverick", Color: "red"}, car{Name: "ferrari", Color: "red"}
+
+	garage := cars{car1, car2}
+
+	assert.Equal(t, &car1, garage.Pop())
+	assert.Equal(t, cars{car2}, garage)
+
+	assert.Equal(t, &car2, garage.Pop())
+	assert.Equal(t, cars{}, garage)
+
+	assert.Equal(t, (*car)(nil), garage.Pop())
+	assert.Equal(t, cars{}, garage)
+
+}

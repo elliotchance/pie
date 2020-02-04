@@ -1343,3 +1343,19 @@ func TestCarPointers_Join(t *testing.T) {
 	car1, car2 := &car{Name: "maverick", Color: "red"}, &car{Name: "ferrari", Color: "red"}
 	assert.Equal(t, "maverick is red-ferrari is red", carPointers{car1, car2}.Join("-"))
 }
+
+func TestCarPointers_Pop(t *testing.T) {
+	car1, car2 := &car{Name: "maverick", Color: "red"}, &car{Name: "ferrari", Color: "red"}
+
+	cars := carPointers{car1, car2}
+
+	assert.Equal(t, &car1, cars.Pop())
+	assert.Equal(t, carPointers{car2}, cars)
+
+	assert.Equal(t, &car2, cars.Pop())
+	assert.Equal(t, carPointers{}, cars)
+
+	assert.Equal(t, (**car)(nil), cars.Pop())
+	assert.Equal(t, carPointers{}, cars)
+
+}

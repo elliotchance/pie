@@ -1488,3 +1488,15 @@ func TestFloat64s_Join(t *testing.T) {
 	var f1, f2 float64 = 0.1, 20000000000000000
 	assert.Equal(t, "0.1;2e+16", Float64s{f1, f2}.Join(";"))
 }
+
+func TestFloat64s_Pop(t *testing.T) {
+
+	numbers := Float64s{42.0, 4.2}
+
+	assert.Equal(t, 42.0, *numbers.Pop())
+	assert.Equal(t, Float64s{4.2}, numbers)
+
+	assert.Equal(t, 4.2, *numbers.Pop())
+	assert.Equal(t, Float64s{}, numbers)
+
+}

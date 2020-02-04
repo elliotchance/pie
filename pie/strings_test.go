@@ -1501,3 +1501,15 @@ func TestStrings_ShiftAndUnshift(t *testing.T) {
 		})
 	}
 }
+
+func TestStrings_Pop(t *testing.T) {
+
+	foobar := Strings{"foo", "bar"}
+
+	assert.Equal(t, "foo", *foobar.Pop())
+	assert.Equal(t, Strings{"bar"}, foobar)
+
+	assert.Equal(t, "bar", *foobar.Pop())
+	assert.Equal(t, Strings{}, foobar)
+
+}
