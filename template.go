@@ -356,6 +356,17 @@ func (ss SliceType) Group() map[ElementType]int {
 	return group
 }
 `,
+	"Insert": `package functions
+
+// Insert a value at an index
+func (ss SliceType) Insert(index int, values ...ElementType) SliceType {
+	if index >= ss.Len() {
+		return SliceType.Extend(ss, SliceType(values))
+	}
+
+	return SliceType.Extend(ss[:index], SliceType(values), ss[index:])
+}
+`,
 	"Intersect": `package functions
 
 // Intersect returns items that exist in all lists.
