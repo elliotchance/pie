@@ -1510,5 +1510,7 @@ func TestInts_IntersectUsing(t *testing.T) {
 	assert.Equal(t, Ints(nil), Ints{0, 1}.IntersectUsing(equals))
 	assert.Equal(t, Ints{}, Ints{0, 1}.IntersectUsing(equals, Ints{2}))
 	assert.Equal(t, Ints{0}, Ints{0, 1}.IntersectUsing(equals, Ints{0}))
-	assert.Equal(t, Ints{0, 1}, Ints{0, 1}.IntersectUsing(equals, Ints{1, 2}, Ints{0, 1, 2}))
+
+	// We have to sort the slice because it is always returned in random order.
+	assert.Equal(t, Ints{0, 1}, Ints{0, 1}.IntersectUsing(equals, Ints{1, 2}, Ints{0, 1, 2}).Sort())
 }

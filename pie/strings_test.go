@@ -1534,5 +1534,7 @@ func TestStrings_IntersectUsing(t *testing.T) {
 	assert.Equal(t, Strings(nil), Strings{"foo", "bar"}.IntersectUsing(equals))
 	assert.Equal(t, Strings{}, Strings{"foo", "bar"}.IntersectUsing(equals, Strings{"baz"}))
 	assert.Equal(t, Strings{"foo"}, Strings{"foo", "bar"}.IntersectUsing(equals, Strings{"foo", "baz"}))
-	assert.Equal(t, Strings{"foo", "bar"}, Strings{"foo", "bar"}.IntersectUsing(equals, Strings{"foo", "baz"}, Strings{"foo", "baz", "bar"}))
+
+	// We have to sort the slice because it is always returned in random order.
+	assert.Equal(t, Strings{"bar", "foo"}, Strings{"foo", "bar"}.IntersectUsing(equals, Strings{"foo", "baz"}, Strings{"foo", "baz", "bar"}).Sort())
 }

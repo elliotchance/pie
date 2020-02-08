@@ -1521,5 +1521,7 @@ func TestFloat64s_IntersectUsing(t *testing.T) {
 	assert.Equal(t, Float64s(nil), Float64s{0, 1}.IntersectUsing(equals))
 	assert.Equal(t, Float64s{}, Float64s{1}.IntersectUsing(equals, Float64s{0}))
 	assert.Equal(t, Float64s{0}, Float64s{0, 1}.IntersectUsing(equals, Float64s{0}))
-	assert.Equal(t, Float64s{0, 1}, Float64s{0, 1}.IntersectUsing(equals, Float64s{1, 2}, Float64s{0, 1, 2}))
+
+	// We have to sort the slice because it is always returned in random order.
+	assert.Equal(t, Float64s{0, 1}, Float64s{0, 1}.IntersectUsing(equals, Float64s{1, 2}, Float64s{0, 1, 2}).Sort())
 }
