@@ -9,6 +9,8 @@ func (ss SliceType) IntersectUsing(equals func(ElementType, ElementType) bool, s
 		return nil
 	}
 
+	ss2 = SliceType{}
+
 	for _, e1 := range ss {
 		for _, s2 := range slices {
 			for _, e2 := range s2 {
