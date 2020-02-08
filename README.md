@@ -196,6 +196,7 @@ The letters in brackets indicate:
 | [`Float64s`](#float64s) (S)             | ✓      | ✓      | ✓      |      | n        | Float64s transforms each element to a float64.  |
 | [`Group`](#group)                       | ✓      | ✓      |        |      | n        | Group returns a map of the value with an individual count.  |
 | [`Intersect`](#intersect)               | ✓      | ✓      |        |      | n        | Intersect returns items that exist in all lists.  |
+| [`IntersectUsing`](#intersectusing)     | ✓      | ✓      |        |      | n        | IntersectUsing returns items that exist in all lists, using equals function  |
 | [`Ints`](#ints) (S)                     | ✓      | ✓      | ✓      |      | n        | Ints transforms each element to an integer.  |
 | [`Join`](#join) (S)                     | ✓      | ✓      | ✓      |      | n        | Join returns a string from joining each of the elements.  |
 | [`JSONBytes`](#jsonbytes)               | ✓      | ✓      | ✓      |      | n        | JSONBytes returns the JSON encoded array as bytes.  |
@@ -422,6 +423,15 @@ Group returns a map of the value with an individual count.
 ## Intersect
 
 Intersect returns items that exist in all lists.
+
+
+It returns slice without any duplicates.
+If zero slice arguments are provided, then nil is returned.
+
+
+## IntersectUsing
+
+IntersectUsing returns items that exist in all lists, using equals function
 
 
 It returns slice without any duplicates.

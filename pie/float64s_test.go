@@ -1513,3 +1513,11 @@ func TestFloat64s_Group(t *testing.T) {
 		3: 3,
 	}, Float64s{1, 2, 2, 3, 3, 3}.Group())
 }
+
+func TestFloat64s_IntersectUsing(t *testing.T) {
+	equals := func(a, b float64) bool {
+		return a == b
+	}
+	assert.Equal(t, Float64s{0}, Float64s{0, 1}.IntersectUsing(equals, Float64s{0}))
+	assert.Equal(t, Float64s{0, 1}, Float64s{0, 1}.IntersectUsing(equals, Float64s{1, 2}, Float64s{0, 1, 2}))
+}

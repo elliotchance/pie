@@ -349,6 +349,28 @@ func (ss Float64s) Intersect(slices ...Float64s) (ss2 Float64s) {
 	return
 }
 
+// IntersectUsing returns items that exist in all lists, using equals function
+//
+// It returns slice without any duplicates.
+// If zero slice arguments are provided, then nil is returned.
+func (ss Float64s) IntersectUsing(equals func(float64, float64) bool, slices ...Float64s) (ss2 Float64s) {
+	if slices == nil {
+		return nil
+	}
+
+	for _, e1 := range ss {
+		for _, s2 := range slices {
+			for _, e2 := range s2 {
+				if equals(e1, e2) {
+					ss2 = append(ss2, e1)
+				}
+			}
+		}
+	}
+
+	return ss2.Unique()
+}
+
 // Ints transforms each element to an integer.
 func (ss Float64s) Ints() Ints {
 	l := len(ss)

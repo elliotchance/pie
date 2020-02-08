@@ -1502,3 +1502,11 @@ func TestInts_Group(t *testing.T) {
 		3: 3,
 	}, Ints{1, 2, 2, 3, 3, 3}.Group())
 }
+
+func TestInts_IntersectUsing(t *testing.T) {
+	equals := func(a, b int) bool {
+		return a == b
+	}
+	assert.Equal(t, Ints{0}, Ints{0, 1}.IntersectUsing(equals, Ints{0}))
+	assert.Equal(t, Ints{0, 1}, Ints{0, 1}.IntersectUsing(equals, Ints{1, 2}, Ints{0, 1, 2}))
+}

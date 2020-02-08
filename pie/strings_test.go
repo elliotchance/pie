@@ -1526,3 +1526,11 @@ func TestStrings_Group(t *testing.T) {
 		"foobar": 3,
 	}, Strings{"foo", "bar", "bar", "foobar", "foobar", "foobar"}.Group())
 }
+
+func TestStrings_IntersectUsing(t *testing.T) {
+	equals := func(a, b string) bool {
+		return a == b
+	}
+	assert.Equal(t, Strings{"foo"}, Strings{"foo", "bar"}.IntersectUsing(equals, Strings{"foo", "baz"}))
+	assert.Equal(t, Strings{"foo", "bar"}, Strings{"foo", "bar"}.IntersectUsing(equals, Strings{"foo", "baz"}, Strings{"foo", "baz", "bar"}))
+}
