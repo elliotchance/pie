@@ -358,6 +358,8 @@ func (ss Ints) IntersectUsing(equals func(int, int) bool, slices ...Ints) (ss2 I
 		return nil
 	}
 
+	ss2 = Ints{}
+
 	for _, e1 := range ss {
 		for _, s2 := range slices {
 			for _, e2 := range s2 {

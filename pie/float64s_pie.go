@@ -358,6 +358,8 @@ func (ss Float64s) IntersectUsing(equals func(float64, float64) bool, slices ...
 		return nil
 	}
 
+	ss2 = Float64s{}
+
 	for _, e1 := range ss {
 		for _, s2 := range slices {
 			for _, e2 := range s2 {

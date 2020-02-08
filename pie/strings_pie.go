@@ -334,6 +334,8 @@ func (ss Strings) IntersectUsing(equals func(string, string) bool, slices ...Str
 		return nil
 	}
 
+	ss2 = Strings{}
+
 	for _, e1 := range ss {
 		for _, s2 := range slices {
 			for _, e2 := range s2 {
