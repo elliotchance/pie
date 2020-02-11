@@ -1513,3 +1513,11 @@ func TestFloat64s_Group(t *testing.T) {
 		3: 3,
 	}, Float64s{1, 2, 2, 3, 3, 3}.Group())
 }
+
+func TestFloat64s_Insert(t *testing.T) {
+
+	assert.Equal(t, Float64s{}, Float64s(nil).Insert(0))
+	assert.Equal(t, Float64s{2.0, 1.0}, Float64s{1.0}.Insert(0, 2.0))
+	assert.Equal(t, Float64s{1.0, 2.0}, Float64s{1.0}.Insert(1, 2.0))
+	assert.Equal(t, Float64s{1.0, 2.0, 3.3}, Float64s{1.0, 3.3}.Insert(1, 2.0))
+}

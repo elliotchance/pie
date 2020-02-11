@@ -1526,3 +1526,11 @@ func TestStrings_Group(t *testing.T) {
 		"foobar": 3,
 	}, Strings{"foo", "bar", "bar", "foobar", "foobar", "foobar"}.Group())
 }
+
+func TestStrings_Insert(t *testing.T) {
+
+	assert.Equal(t, Strings{}, Strings(nil).Insert(0))
+	assert.Equal(t, Strings{"bar", "foo"}, Strings{"foo"}.Insert(0, "bar"))
+	assert.Equal(t, Strings{"foo", "bar"}, Strings{"foo"}.Insert(1, "bar"))
+	assert.Equal(t, Strings{"foo", "bar", "zap"}, Strings{"foo", "zap"}.Insert(1, "bar"))
+}

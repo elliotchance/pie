@@ -1359,3 +1359,14 @@ func TestCarPointers_Pop(t *testing.T) {
 	assert.Equal(t, carPointers{}, cars)
 
 }
+
+func TestCarPointers_Insert(t *testing.T) {
+	car1 := &car{Name: "maverick", Color: "red"}
+	car2 := &car{Name: "ferrari", Color: "red"}
+	car3 := &car{Name: "panda", Color: "white"}
+
+	assert.Equal(t, carPointers{}, carPointers(nil).Insert(0))
+	assert.Equal(t, carPointers{car2, car1}, carPointers{car1}.Insert(0, car2))
+	assert.Equal(t, carPointers{car1, car2}, carPointers{car1}.Insert(1, car2))
+	assert.Equal(t, carPointers{car1, car2, car3}, carPointers{car1, car3}.Insert(1, car2))
+}

@@ -325,6 +325,15 @@ func (ss Strings) Intersect(slices ...Strings) (ss2 Strings) {
 	return
 }
 
+// Insert a value at an index
+func (ss Strings) Insert(index int, values ...string) Strings {
+	if index >= ss.Len() {
+		return Strings.Extend(ss, Strings(values))
+	}
+
+	return Strings.Extend(ss[:index], Strings(values), ss[index:])
+}
+
 // Ints transforms each element to an integer.
 func (ss Strings) Ints() Ints {
 	l := len(ss)

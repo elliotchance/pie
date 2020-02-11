@@ -266,6 +266,15 @@ func (ss cars) Float64s() Float64s {
 	return result
 }
 
+// Insert a value at an index
+func (ss cars) Insert(index int, values ...car) cars {
+	if index >= ss.Len() {
+		return cars.Extend(ss, cars(values))
+	}
+
+	return cars.Extend(ss[:index], cars(values), ss[index:])
+}
+
 // Ints transforms each element to an integer.
 func (ss cars) Ints() Ints {
 	l := len(ss)

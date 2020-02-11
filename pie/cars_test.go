@@ -1332,3 +1332,14 @@ func TestCars_Pop(t *testing.T) {
 	assert.Equal(t, cars{}, garage)
 
 }
+
+func TestCars_Insert(t *testing.T) {
+	car1 := car{Name: "maverick", Color: "red"}
+	car2 := car{Name: "ferrari", Color: "red"}
+	car3 := car{Name: "panda", Color: "white"}
+
+	assert.Equal(t, cars{}, cars(nil).Insert(0))
+	assert.Equal(t, cars{car2, car1}, cars{car1}.Insert(0, car2))
+	assert.Equal(t, cars{car1, car2}, cars{car1}.Insert(1, car2))
+	assert.Equal(t, cars{car1, car2, car3}, cars{car1, car3}.Insert(1, car2))
+}
