@@ -1514,3 +1514,11 @@ func TestInts_IntersectUsing(t *testing.T) {
 	// We have to sort the slice because it is always returned in random order.
 	assert.Equal(t, Ints{0, 1}, Ints{0, 1}.IntersectUsing(equals, Ints{1, 2}, Ints{0, 1, 2}).Sort())
 }
+
+func TestInts_Insert(t *testing.T) {
+
+	assert.Equal(t, Ints{}, Ints(nil).Insert(0))
+	assert.Equal(t, Ints{2, 1}, Ints{1}.Insert(0, 2))
+	assert.Equal(t, Ints{1, 2}, Ints{1}.Insert(1, 2))
+	assert.Equal(t, Ints{1, 2, 3}, Ints{1, 3}.Insert(1, 2))
+}

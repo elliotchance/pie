@@ -266,6 +266,15 @@ func (ss carPointers) Float64s() Float64s {
 	return result
 }
 
+// Insert a value at an index
+func (ss carPointers) Insert(index int, values ...*car) carPointers {
+	if index >= ss.Len() {
+		return carPointers.Extend(ss, carPointers(values))
+	}
+
+	return carPointers.Extend(ss[:index], carPointers(values), ss[index:])
+}
+
 // Ints transforms each element to an integer.
 func (ss carPointers) Ints() Ints {
 	l := len(ss)

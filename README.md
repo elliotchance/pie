@@ -197,6 +197,7 @@ The letters in brackets indicate:
 | [`Group`](#group)                       | ✓      | ✓      |        |      | n        | Group returns a map of the value with an individual count.  |
 | [`Intersect`](#intersect)               | ✓      | ✓      |        |      | n        | Intersect returns items that exist in all lists.  |
 | [`IntersectUsing`](#intersectusing)     | ✓      | ✓      |        |      | n        | IntersectUsing returns items that exist in all lists, using equals function  |
+| [`Insert`](#insert)                     | ✓      | ✓      | ✓      |      | n        | Insert a value at an index  |
 | [`Ints`](#ints) (S)                     | ✓      | ✓      | ✓      |      | n        | Ints transforms each element to an integer.  |
 | [`Join`](#join) (S)                     | ✓      | ✓      | ✓      |      | n        | Join returns a string from joining each of the elements.  |
 | [`JSONBytes`](#jsonbytes)               | ✓      | ✓      | ✓      |      | n        | JSONBytes returns the JSON encoded array as bytes.  |
@@ -436,6 +437,11 @@ IntersectUsing returns items that exist in all lists, using equals function
 
 It returns slice without any duplicates.
 If zero slice arguments are provided, then nil is returned.
+
+
+## Insert
+
+Insert a value at an index
 
 
 ## Ints

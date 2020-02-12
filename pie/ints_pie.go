@@ -373,6 +373,15 @@ func (ss Ints) IntersectUsing(equals func(int, int) bool, slices ...Ints) (ss2 I
 	return ss2.Unique()
 }
 
+// Insert a value at an index
+func (ss Ints) Insert(index int, values ...int) Ints {
+	if index >= ss.Len() {
+		return Ints.Extend(ss, Ints(values))
+	}
+
+	return Ints.Extend(ss[:index], Ints(values), ss[index:])
+}
+
 // Ints transforms each element to an integer.
 func (ss Ints) Ints() Ints {
 	l := len(ss)
