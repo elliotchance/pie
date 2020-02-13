@@ -329,23 +329,35 @@ func (ss Strings) Intersect(slices ...Strings) (ss2 Strings) {
 //
 // It returns slice without any duplicates.
 // If zero slice arguments are provided, then nil is returned.
-func (ss Strings) IntersectUsing(equals func(string, string) bool, slices ...Strings) (ss2 Strings) {
+func (ss Strings) IntersectUsing(equals func(string, string) (bool, string), slices ...Strings) (ss2 Strings) {
 	if slices == nil {
 		return nil
 	}
 
-	ss2 = Strings{}
+	found := map[string]int{}
 
 	for _, e1 := range ss {
 		for _, s2 := range slices {
+			foundInSlice := false
 			for _, e2 := range s2 {
-				if equals(e1, e2) {
-					ss2 = append(ss2, e1)
+				chekFound, checkValue := equals(e1, e2)
+				if chekFound {
+					found[checkValue]++
+					foundInSlice = true
 				}
+			}
+			if !foundInSlice {
+				break
 			}
 		}
 	}
+	ss2 = Strings{}
 
+	for value, count := range found {
+		if count == len(slices) {
+			ss2 = ss2.Append(value)
+		}
+	}
 	return ss2.Unique()
 }
 

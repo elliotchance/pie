@@ -1515,15 +1515,15 @@ func TestFloat64s_Group(t *testing.T) {
 }
 
 func TestFloat64s_IntersectUsing(t *testing.T) {
-	equals := func(a, b float64) bool {
-		return a == b
+	equals := func(a, b float64) (bool, float64) {
+		return a == b, a
 	}
 	assert.Equal(t, Float64s(nil), Float64s{0, 1}.IntersectUsing(equals))
 	assert.Equal(t, Float64s{}, Float64s{1}.IntersectUsing(equals, Float64s{0}))
 	assert.Equal(t, Float64s{0}, Float64s{0, 1}.IntersectUsing(equals, Float64s{0}))
 
 	// We have to sort the slice because it is always returned in random order.
-	assert.Equal(t, Float64s{0, 1}, Float64s{0, 1}.IntersectUsing(equals, Float64s{1, 2}, Float64s{0, 1, 2}).Sort())
+	assert.Equal(t, Float64s{1}, Float64s{0, 1}.IntersectUsing(equals, Float64s{1, 2}, Float64s{0, 1, 2}).Sort())
 }
 
 func TestFloat64s_Insert(t *testing.T) {

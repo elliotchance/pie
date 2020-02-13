@@ -4,22 +4,34 @@ package functions
 //
 // It returns slice without any duplicates.
 // If zero slice arguments are provided, then nil is returned.
-func (ss SliceType) IntersectUsing(equals func(ElementType, ElementType) bool, slices ...SliceType) (ss2 SliceType) {
+func (ss SliceType) IntersectUsing(equals func(ElementType, ElementType) (bool, ElementType), slices ...SliceType) (ss2 SliceType) {
 	if slices == nil {
 		return nil
 	}
 
-	ss2 = SliceType{}
+	found := map[ElementType]int{}
 
 	for _, e1 := range ss {
 		for _, s2 := range slices {
+			foundInSlice := false
 			for _, e2 := range s2 {
-				if equals(e1, e2) {
-					ss2 = append(ss2, e1)
+				chekFound, checkValue := equals(e1, e2)
+				if chekFound {
+					found[checkValue]++
+					foundInSlice = true
 				}
+			}
+			if !foundInSlice {
+				break
 			}
 		}
 	}
+	ss2 = SliceType{}
 
+	for value, count := range found {
+		if count == len(slices) {
+			ss2 = ss2.Append(value)
+		}
+	}
 	return ss2.Unique()
 }

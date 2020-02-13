@@ -353,23 +353,35 @@ func (ss Float64s) Intersect(slices ...Float64s) (ss2 Float64s) {
 //
 // It returns slice without any duplicates.
 // If zero slice arguments are provided, then nil is returned.
-func (ss Float64s) IntersectUsing(equals func(float64, float64) bool, slices ...Float64s) (ss2 Float64s) {
+func (ss Float64s) IntersectUsing(equals func(float64, float64) (bool, float64), slices ...Float64s) (ss2 Float64s) {
 	if slices == nil {
 		return nil
 	}
 
-	ss2 = Float64s{}
+	found := map[float64]int{}
 
 	for _, e1 := range ss {
 		for _, s2 := range slices {
+			foundInSlice := false
 			for _, e2 := range s2 {
-				if equals(e1, e2) {
-					ss2 = append(ss2, e1)
+				chekFound, checkValue := equals(e1, e2)
+				if chekFound {
+					found[checkValue]++
+					foundInSlice = true
 				}
+			}
+			if !foundInSlice {
+				break
 			}
 		}
 	}
+	ss2 = Float64s{}
 
+	for value, count := range found {
+		if count == len(slices) {
+			ss2 = ss2.Append(value)
+		}
+	}
 	return ss2.Unique()
 }
 
