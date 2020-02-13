@@ -34,5 +34,5 @@ func (ss SliceType) IntersectUsing(equals func(ElementType, ElementType) (bool, 
 			ss2 = ss2.Append(value)
 		}
 	}
-	return ss2.Unique()
+	return ss2
 }

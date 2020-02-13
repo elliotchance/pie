@@ -359,7 +359,7 @@ func (ss Strings) IntersectUsing(equals func(string, string) (bool, string), sli
 			ss2 = ss2.Append(value)
 		}
 	}
-	return ss2.Unique()
+	return ss2
 }
 
 // Insert a value at an index

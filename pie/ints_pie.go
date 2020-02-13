@@ -383,7 +383,7 @@ func (ss Ints) IntersectUsing(equals func(int, int) (bool, int), slices ...Ints)
 			ss2 = ss2.Append(value)
 		}
 	}
-	return ss2.Unique()
+	return ss2
 }
 
 // Insert a value at an index

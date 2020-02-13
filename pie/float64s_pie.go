@@ -383,7 +383,7 @@ func (ss Float64s) IntersectUsing(equals func(float64, float64) (bool, float64),
 			ss2 = ss2.Append(value)
 		}
 	}
-	return ss2.Unique()
+	return ss2
 }
 
 // Insert a value at an index
