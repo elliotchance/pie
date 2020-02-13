@@ -344,6 +344,7 @@ func (ss Strings) IntersectUsing(equals func(string, string) (bool, string), sli
 				if chekFound {
 					found[checkValue]++
 					foundInSlice = true
+					break
 				}
 			}
 			if !foundInSlice {

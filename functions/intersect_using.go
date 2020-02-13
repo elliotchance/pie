@@ -19,6 +19,7 @@ func (ss SliceType) IntersectUsing(equals func(ElementType, ElementType) (bool, 
 				if chekFound {
 					found[checkValue]++
 					foundInSlice = true
+					break
 				}
 			}
 			if !foundInSlice {

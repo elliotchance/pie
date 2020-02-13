@@ -368,6 +368,7 @@ func (ss Float64s) IntersectUsing(equals func(float64, float64) (bool, float64),
 				if chekFound {
 					found[checkValue]++
 					foundInSlice = true
+					break
 				}
 			}
 			if !foundInSlice {
