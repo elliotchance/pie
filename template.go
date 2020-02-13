@@ -425,11 +425,11 @@ func (ss SliceType) IntersectUsing(equals func(ElementType, ElementType) (bool, 
 				if chekFound {
 					found[checkValue]++
 					foundInSlice = true
-					break
+					break // if found the element don't check other elements in this slice
 				}
 			}
 			if !foundInSlice {
-				break
+				break // if not found in this slice don't check other slices
 			}
 		}
 	}
