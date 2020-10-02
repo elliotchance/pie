@@ -8,7 +8,7 @@ func (ss SliceType) Mode() SliceType {
 	if len(ss) == 0 {
 		return nil
 	}
-	values := make(map[ElementType]int, 0)
+	values := make(map[ElementType]int)
 	for _, s := range ss {
 		values[s]++
 	}

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/elliotchance/pie/pie/util"
+	"math"
 	"math/rand"
 	"sort"
 	"strconv"
@@ -600,7 +601,7 @@ func (ss Float64s) Mode() Float64s {
 	if len(ss) == 0 {
 		return nil
 	}
-	values := make(map[float64]int, 0)
+	values := make(map[float64]int)
 	for _, s := range ss {
 		values[s]++
 	}
@@ -836,6 +837,23 @@ func (ss Float64s) Sort() Float64s {
 	})
 
 	return sorted
+}
+
+// Stddev is the standard deviation
+func (ss Float64s) Stddev() float64 {
+	if len(ss) == 0 {
+		return 0.0
+	}
+
+	avg := ss.Average()
+
+	var sd float64
+	for i := range ss {
+		sd += math.Pow(float64(ss[i])-avg, 2)
+	}
+	sd = math.Sqrt(sd / float64(len(ss)))
+
+	return sd
 }
 
 // Strings transforms each element to a string.

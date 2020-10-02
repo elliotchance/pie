@@ -1521,3 +1521,11 @@ func TestFloat64s_Insert(t *testing.T) {
 	assert.Equal(t, Float64s{1.0, 2.0}, Float64s{1.0}.Insert(1, 2.0))
 	assert.Equal(t, Float64s{1.0, 2.0, 3.3}, Float64s{1.0, 3.3}.Insert(1, 2.0))
 }
+
+func TestFloat64s_Stddev(t *testing.T) {
+
+	assert.Equal(t, 0.0, Float64s{}.Stddev())
+	assert.Equal(t, 0.0, Float64s{1}.Stddev())
+	assert.Equal(t, 4.8587389053127765, Float64s{10.0, 12.5, 23.3, 23.1, 16.5, 23.1, 21.2, 16.4}.Stddev())
+
+}
