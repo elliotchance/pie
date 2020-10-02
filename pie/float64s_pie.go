@@ -177,7 +177,7 @@ func (ss Float64s) DropTop(n int) (drop Float64s) {
 // Each is more condensed version of Transform that allows an action to happen
 // on each elements and pass the original slice on.
 //
-//   cars.Each(func (car *Car) {
+//   cars.Each(func (car Car) {
 //       fmt.Printf("Car color is: %s\n", car.Color)
 //   })
 //
@@ -185,7 +185,7 @@ func (ss Float64s) DropTop(n int) (drop Float64s) {
 // manipulated, if you choose to do it this way, for example:
 //
 //   // Set all car colors to Red.
-//   cars.Each(func (car *Car) {
+//   cars.Each(func (car Car) {
 //       car.Color = "Red"
 //   })
 //

@@ -328,7 +328,7 @@ on each elements and pass the original slice on.
 
 
 ```go
-cars.Each(func (car *Car) {
+cars.Each(func (car Car) {
     fmt.Printf("Car color is: %s\n", car.Color)
 })
 
@@ -340,7 +340,7 @@ manipulated, if you choose to do it this way, for example:
 
 ```go
 // Set all car colors to Red.
-cars.Each(func (car *Car) {
+cars.Each(func (car Car) {
     car.Color = "Red"
 })
 
