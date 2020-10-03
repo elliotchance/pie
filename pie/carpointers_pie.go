@@ -420,7 +420,7 @@ func (ss carPointers) Mode() carPointers {
 	if len(ss) == 0 {
 		return nil
 	}
-	values := make(map[*car]int, 0)
+	values := make(map[*car]int)
 	for _, s := range ss {
 		values[s]++
 	}

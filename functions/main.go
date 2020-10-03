@@ -72,6 +72,7 @@ var Functions = []struct {
 	{"Sort", "sort.go", ForNumbersAndStrings, "n⋅log(n)"},
 	{"SortStableUsing", "sort_stable_using.go", ForStrings | ForStructs, "n⋅log(n)"},
 	{"SortUsing", "sort_using.go", ForStrings | ForStructs, "n⋅log(n)"},
+	{"Stddev", "stddev.go", ForNumbers, "n"},
 	{"Strings", "strings.go", ForAll, "n"},
 	{"SubSlice", "sub_slice.go", ForAll, "n"},
 	{"Sum", "sum.go", ForNumbers, "n"},

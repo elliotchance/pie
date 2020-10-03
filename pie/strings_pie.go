@@ -511,7 +511,7 @@ func (ss Strings) Mode() Strings {
 	if len(ss) == 0 {
 		return nil
 	}
-	values := make(map[string]int, 0)
+	values := make(map[string]int)
 	for _, s := range ss {
 		values[s]++
 	}

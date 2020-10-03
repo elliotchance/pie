@@ -719,7 +719,7 @@ func (ss SliceType) Mode() SliceType {
 	if len(ss) == 0 {
 		return nil
 	}
-	values := make(map[ElementType]int, 0)
+	values := make(map[ElementType]int)
 	for _, s := range ss {
 		values[s]++
 	}
@@ -1044,6 +1044,27 @@ func (ss SliceType) SortUsing(less func(a, b ElementType) bool) SliceType {
 	})
 
 	return sorted
+}
+`,
+	"Stddev": `package functions
+
+import "math"
+
+// Stddev is the standard deviation
+func (ss SliceType) Stddev() float64 {
+	if len(ss) == 0 {
+		return 0.0
+	}
+
+	avg := ss.Average()
+
+	var sd float64
+	for i := range ss {
+		sd += math.Pow(float64(ss[i])-avg, 2)
+	}
+	sd = math.Sqrt(sd / float64(len(ss)))
+
+	return sd
 }
 `,
 	"Strings": `package functions

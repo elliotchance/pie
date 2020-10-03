@@ -1510,3 +1510,11 @@ func TestInts_Insert(t *testing.T) {
 	assert.Equal(t, Ints{1, 2}, Ints{1}.Insert(1, 2))
 	assert.Equal(t, Ints{1, 2, 3}, Ints{1, 3}.Insert(1, 2))
 }
+
+func TestInts_Stddev(t *testing.T) {
+
+	assert.Equal(t, 0.0, Ints{}.Stddev())
+	assert.Equal(t, 0.0, Ints{1}.Stddev())
+	assert.Equal(t, 4.898979485566356, Ints{10, 12, 23, 23, 16, 23, 21, 16}.Stddev())
+
+}

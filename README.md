@@ -225,6 +225,7 @@ The letters in brackets indicate:
 | [`Sort`](#sort)                         | ✓      | ✓      |        |      | n⋅log(n) | Sort works similar to sort.SliceType(). However, unlike sort.SliceType the slice returned will be reallocated as to not modify the input slice.  |
 | [`SortStableUsing`](#sortstableusing)   | ✓      |        | ✓      |      | n⋅log(n) | SortStableUsing works similar to sort.SliceStable. However, unlike sort.SliceStable the slice returned will be reallocated as to not modify the input slice.  |
 | [`SortUsing`](#sortusing)               | ✓      |        | ✓      |      | n⋅log(n) | SortUsing works similar to sort.Slice. However, unlike sort.Slice the slice returned will be reallocated as to not modify the input slice.  |
+| [`Stddev`](#stddev)                     |        | ✓      |        |      | n        | Stddev is the standard deviation  |
 | [`Strings`](#strings) (S)               | ✓      | ✓      | ✓      |      | n        | Strings transforms each element to a string.  |
 | [`SubSlice`](#subslice)                 | ✓      | ✓      | ✓      |      | n        | SubSlice will return the subSlice from start to end(excluded)  |
 | [`Sum`](#sum)                           |        | ✓      |        |      | n        | Sum is the sum of all of the elements.  |
@@ -678,6 +679,11 @@ slice returned will be reallocated as to not modify the input slice.
 
 SortUsing works similar to sort.Slice. However, unlike sort.Slice the
 slice returned will be reallocated as to not modify the input slice.
+
+
+## Stddev
+
+Stddev is the standard deviation
 
 
 ## Strings
