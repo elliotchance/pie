@@ -41,6 +41,20 @@ func getKeyAndElementType(pkg *ast.Package, name string, typeSpec *ast.TypeSpec)
 	if t, ok := typeSpec.Type.(*ast.ArrayType); ok {
 		explorer := NewTypeExplorer(pkg, getIdentName(t.Elt))
 
+		switch v := t.Elt.(type) {
+		case *ast.Ident:
+			if v == nil || v.Obj == nil {
+				break
+			}
+
+			if ts, ok := v.Obj.Decl.(*ast.TypeSpec); ok {
+				if _, ok := ts.Type.(*ast.InterfaceType); ok {
+					explorer.IsInterface = true
+				}
+			}
+
+		}
+
 		return pkgName, "", getIdentName(t.Elt), explorer
 	}
 
@@ -209,7 +223,7 @@ func main() {
 
 			// If its a pointer we need to replace '*' -> '&' when
 			// instantiating.
-			if elementType[0] == '*' {
+			if elementType[0] == '*' || explorer.IsInterface {
 				zeroValue = "nil"
 			}
 

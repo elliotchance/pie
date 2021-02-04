@@ -6,8 +6,9 @@ import (
 )
 
 type TypeExplorer struct {
-	TypeName string
-	Methods  []string
+	TypeName    string
+	Methods     []string
+	IsInterface bool
 }
 
 func NewTypeExplorer(pkg *ast.Package, typeName string) *TypeExplorer {
