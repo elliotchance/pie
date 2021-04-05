@@ -142,6 +142,7 @@ func (ss Float64s) Diff(against Float64s) (added, removed Float64s) {
 				if s == element {
 					ss2 = append(ss2[:i], ss2[i+1:]...)
 					found = true
+					break
 				}
 			}
 

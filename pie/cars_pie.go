@@ -103,6 +103,7 @@ func (ss cars) Diff(against cars) (added, removed cars) {
 				if s == element {
 					ss2 = append(ss2[:i], ss2[i+1:]...)
 					found = true
+					break
 				}
 			}
 
