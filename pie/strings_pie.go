@@ -117,6 +117,7 @@ func (ss Strings) Diff(against Strings) (added, removed Strings) {
 				if s == element {
 					ss2 = append(ss2[:i], ss2[i+1:]...)
 					found = true
+					break
 				}
 			}
 

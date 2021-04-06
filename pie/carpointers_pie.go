@@ -103,6 +103,7 @@ func (ss carPointers) Diff(against carPointers) (added, removed carPointers) {
 				if s.Equals(element) {
 					ss2 = append(ss2[:i], ss2[i+1:]...)
 					found = true
+					break
 				}
 			}
 
