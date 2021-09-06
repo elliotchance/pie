@@ -876,7 +876,7 @@ func (ss Strings) Unshift(elements ...string) (unshift Strings) {
 }
 
 // Remove items from slice when item existed
-func (ss Strings) Remove(items ...string) (result Strings, removedCnt int) {
+func (ss Strings) Remove(items ...string) (result Strings) {
 	result = Strings{}
 	for _, v := range ss {
 		found := false
@@ -888,8 +888,6 @@ func (ss Strings) Remove(items ...string) (result Strings, removedCnt int) {
 		}
 		if !found {
 			result = append(result, v)
-		} else {
-			removedCnt++
 		}
 	}
 	return

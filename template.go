@@ -1248,7 +1248,7 @@ func (m MapType) Values() []ElementType {
 	"Remove": `package functions
 
 // Remove items from slice when item existed
-func (ss SliceType) Remove(items ...ElementType) (result SliceType, removedCnt int) {
+func (ss SliceType) Remove(items ...ElementType) (result SliceType) {
 	result = SliceType{}
 	for _, v := range ss {
 		found := false
@@ -1260,8 +1260,6 @@ func (ss SliceType) Remove(items ...ElementType) (result SliceType, removedCnt i
 		}
 		if !found {
 			result = append(result, v)
-		} else {
-			removedCnt++
 		}
 	}
 	return
