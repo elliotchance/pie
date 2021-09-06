@@ -989,3 +989,23 @@ func (ss Float64s) Unshift(elements ...float64) (unshift Float64s) {
 
 	return
 }
+
+// Remove items from slice when item existed
+func (ss Float64s) Remove(items ...float64) (result Float64s, removedCnt int) {
+	result = Float64s{}
+	for _, v := range ss {
+		found := false
+		for _, i := range items {
+			if i == v {
+				found = true
+				break
+			}
+		}
+		if !found {
+			result = append(result, v)
+		} else {
+			removedCnt++
+		}
+	}
+	return
+}

@@ -874,3 +874,23 @@ func (ss Strings) Unshift(elements ...string) (unshift Strings) {
 
 	return
 }
+
+// Remove items from slice when item existed
+func (ss Strings) Remove(items ...string) (result Strings, removedCnt int) {
+	result = Strings{}
+	for _, v := range ss {
+		found := false
+		for _, i := range items {
+			if i == v {
+				found = true
+				break
+			}
+		}
+		if !found {
+			result = append(result, v)
+		} else {
+			removedCnt++
+		}
+	}
+	return
+}

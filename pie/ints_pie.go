@@ -989,3 +989,23 @@ func (ss Ints) Unshift(elements ...int) (unshift Ints) {
 
 	return
 }
+
+// Remove items from slice when item existed
+func (ss Ints) Remove(items ...int) (result Ints, removedCnt int) {
+	result = Ints{}
+	for _, v := range ss {
+		found := false
+		for _, i := range items {
+			if i == v {
+				found = true
+				break
+			}
+		}
+		if !found {
+			result = append(result, v)
+		} else {
+			removedCnt++
+		}
+	}
+	return
+}
