@@ -990,21 +990,21 @@ func (ss Ints) Unshift(elements ...int) (unshift Ints) {
 	return
 }
 
-// Remove items from slice when item existed
-func (ss Ints) Remove(items ...int) (result Ints, removedCnt int) {
+// Remove returns a new slice that does not include any of the items.
+func (ss Ints) Remove(items ...int) (result Ints) {
+	if len(items) == 0 {
+		return items
+	}
+
+	ss2 := make(map[int]bool, len(items))
+	for _, item := range items {
+		ss2[item] = true
+	}
+
 	result = Ints{}
 	for _, v := range ss {
-		found := false
-		for _, i := range items {
-			if i == v {
-				found = true
-				break
-			}
-		}
-		if !found {
+		if !ss2[v] {
 			result = append(result, v)
-		} else {
-			removedCnt++
 		}
 	}
 	return

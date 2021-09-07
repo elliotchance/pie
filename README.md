@@ -224,16 +224,19 @@ The letters in brackets indicate:
 | [`Shuffle`](#shuffle)                   | ✓      | ✓      | ✓      |      | n        | Shuffle returns shuffled slice by your rand.Source  |
 | [`Sort`](#sort)                         | ✓      | ✓      |        |      | n⋅log(n) | Sort works similar to sort.SliceType(). However, unlike sort.SliceType the slice returned will be reallocated as to not modify the input slice.  |
 | [`SortStableUsing`](#sortstableusing)   | ✓      |        | ✓      |      | n⋅log(n) | SortStableUsing works similar to sort.SliceStable. However, unlike sort.SliceStable the slice returned will be reallocated as to not modify the input slice.  |
-| [`SortUsing`](#sortusing)               | ✓      |        | ✓      |      | n⋅log(n) | SortUsing works similar to sort.Slice. However, unlike sort.Slice the slice returned will be reallocated as to not modify the input slice.  |
-| [`Stddev`](#stddev)                     |        | ✓      |        |      | n        | Stddev is the standard deviation  |
-| [`Strings`](#strings) (S)               | ✓      | ✓      | ✓      |      | n        | Strings transforms each element to a string.  |
-| [`SubSlice`](#subslice)                 | ✓      | ✓      | ✓      |      | n        | SubSlice will return the subSlice from start to end(excluded)  |
-| [`Sum`](#sum)                           |        | ✓      |        |      | n        | Sum is the sum of all of the elements.  |
-| [`Top`](#top)                           | ✓      | ✓      | ✓      |      | n        | Top will return n elements from head of the slice if the slice has less elements then n that'll return all elements if n < 0 it'll return empty slice.  |
-| [`StringsUsing`](#stringsusing)         | ✓      | ✓      | ✓      |      | n        | StringsUsing transforms each element to a string.  |
-| [`Unique`](#unique)                     | ✓      | ✓      |        |      | n        | Unique returns a new slice with all of the unique values.  |
-| [`Unshift`](#unshift)                   | ✓      | ✓      | ✓      |      | n        | Unshift adds one or more elements to the beginning of the slice and returns the new slice.  |
-| [`Values`](#values)                     |        |        |        | ✓    | n        | Values returns the values in the map.  |
+| [`SortUsing`](#sortusing)               | ✓ | | ✓ | | n⋅log(n) | SortUsing works similar to sort.Slice. However,
+unlike sort.Slice the slice returned will be reallocated as to not modify the input slice. | | [`Stddev`](#stddev)
+| | ✓ | | | n | Stddev is the standard deviation | | [`Strings`](#strings) (S)               | ✓ | ✓ | ✓ | | n | Strings
+transforms each element to a string. | | [`SubSlice`](#subslice)                 | ✓ | ✓ | ✓ | | n | SubSlice will
+return the subSlice from start to end(excluded)  | | [`Sum`](#sum)                           | | ✓ | | | n | Sum is the
+sum of all of the elements. | | [`Top`](#top)                           | ✓ | ✓ | ✓ | | n | Top will return n elements
+from head of the slice if the slice has less elements then n that'll return all elements if n < 0 it'll return empty
+slice. | | [`StringsUsing`](#stringsusing)         | ✓ | ✓ | ✓ | | n | StringsUsing transforms each element to a string.
+| | [`Unique`](#unique)                     | ✓ | ✓ | | | n | Unique returns a new slice with all of the unique values.
+| | [`Unshift`](#unshift)                   | ✓ | ✓ | ✓ | | n | Unshift adds one or more elements to the beginning of
+the slice and returns the new slice. | | [`Values`](#values)                     | | | | ✓ | n | Values returns the
+values in the map. | | [`Remove`](#values)                     | ✓ | ✓ | | ✓ | 2n | Remove returns a new slice that does
+not include any of the items. |
 
 ## Abs
 
@@ -750,17 +753,27 @@ See AreUnique().
 
 ## Unshift
 
-Unshift adds one or more elements to the beginning of the slice
-and returns the new slice.
-
+Unshift adds one or more elements to the beginning of the slice and returns the new slice.
 
 ## Values
 
 Values returns the values in the map.
 
-
 Due to Go's randomization of iterating maps the order is not deterministic.
 
+## Remove
+
+Remove returns a new slice that does not include any of the items.
+
+Usage Example:
+
+```go
+listA := pie.Strings{"1", "2"}
+listB := pie.Strings{"1", "3"}
+      
+// [ "2" ]
+fmt.Println(listA.Remove(listB...))
+```
 
 # FAQ
 
