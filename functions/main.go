@@ -63,6 +63,7 @@ var Functions = []struct {
 	{"Product", "product.go", ForNumbers, "n"},
 	{"Random", "random.go", ForAll, "1"},
 	{"Reduce", "reduce.go", ForNumbersAndStrings, "n"},
+	{"Remove", "remove.go", ForNumbersAndStrings, "n"},
 	{"Reverse", "reverse.go", ForAll, "n"},
 	{"Send", "send.go", ForAll, "n"},
 	{"Sequence", "sequence.go", ForNumbers, "n"},
@@ -81,7 +82,6 @@ var Functions = []struct {
 	{"Unique", "unique.go", ForNumbersAndStrings, "n"},
 	{"Unshift", "unshift.go", ForAll, "n"},
 	{"Values", "values.go", ForMaps, "n"},
-	{"Remove", "remove.go", ForNumbersAndStrings, "2n"},
 }
 
 type ElementType float64

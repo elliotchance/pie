@@ -216,6 +216,7 @@ The letters in brackets indicate:
 | [`Product`](#product)                   |        | ✓      |        |      | n        | Product is the product of all of the elements.  |
 | [`Random`](#random)                     | ✓      | ✓      | ✓      |      | 1        | Random returns a random element by your rand.Source, or zero  |
 | [`Reduce`](#reduce)                     | ✓      | ✓      |        |      | n        | Reduce continually applies the provided function over the slice. Reducing the elements to a single value.  |
+| [`Remove`](#remove)                     | ✓      | ✓      |        | ✓    | n        | Remove returns a new slice that does not include any of the items. |
 | [`Reverse`](#reverse)                   | ✓      | ✓      | ✓      |      | n        | Reverse returns a new copy of the slice with the elements ordered in reverse. This is useful when combined with Sort to get a descending sort order:  |
 | [`Send`](#send)                         | ✓      | ✓      | ✓      |      | n        | Send sends elements to channel in normal act it sends all elements but if func canceled it can be less  |
 | [`Sequence`](#sequence)                 |        | ✓      |        |      | n        | Sequence generates all numbers in range or returns nil if params invalid  |
@@ -224,19 +225,16 @@ The letters in brackets indicate:
 | [`Shuffle`](#shuffle)                   | ✓      | ✓      | ✓      |      | n        | Shuffle returns shuffled slice by your rand.Source  |
 | [`Sort`](#sort)                         | ✓      | ✓      |        |      | n⋅log(n) | Sort works similar to sort.SliceType(). However, unlike sort.SliceType the slice returned will be reallocated as to not modify the input slice.  |
 | [`SortStableUsing`](#sortstableusing)   | ✓      |        | ✓      |      | n⋅log(n) | SortStableUsing works similar to sort.SliceStable. However, unlike sort.SliceStable the slice returned will be reallocated as to not modify the input slice.  |
-| [`SortUsing`](#sortusing)               | ✓ | | ✓ | | n⋅log(n) | SortUsing works similar to sort.Slice. However,
-unlike sort.Slice the slice returned will be reallocated as to not modify the input slice. | | [`Stddev`](#stddev)
-| | ✓ | | | n | Stddev is the standard deviation | | [`Strings`](#strings) (S)               | ✓ | ✓ | ✓ | | n | Strings
-transforms each element to a string. | | [`SubSlice`](#subslice)                 | ✓ | ✓ | ✓ | | n | SubSlice will
-return the subSlice from start to end(excluded)  | | [`Sum`](#sum)                           | | ✓ | | | n | Sum is the
-sum of all of the elements. | | [`Top`](#top)                           | ✓ | ✓ | ✓ | | n | Top will return n elements
-from head of the slice if the slice has less elements then n that'll return all elements if n < 0 it'll return empty
-slice. | | [`StringsUsing`](#stringsusing)         | ✓ | ✓ | ✓ | | n | StringsUsing transforms each element to a string.
-| | [`Unique`](#unique)                     | ✓ | ✓ | | | n | Unique returns a new slice with all of the unique values.
-| | [`Unshift`](#unshift)                   | ✓ | ✓ | ✓ | | n | Unshift adds one or more elements to the beginning of
-the slice and returns the new slice. | | [`Values`](#values)                     | | | | ✓ | n | Values returns the
-values in the map. | | [`Remove`](#values)                     | ✓ | ✓ | | ✓ | 2n | Remove returns a new slice that does
-not include any of the items. |
+| [`SortUsing`](#sortusing)               | ✓      |        | ✓      |      | n⋅log(n) | SortUsing works similar to sort.Slice. However, unlike sort.Slice the slice returned will be reallocated as to not modify the input slice.  |
+| [`Stddev`](#stddev)                     |        | ✓      |        |      | n        | Stddev is the standard deviation  |
+| [`Strings`](#strings) (S)               | ✓      | ✓      | ✓      |      | n        | Strings transforms each element to a string.  |
+| [`SubSlice`](#subslice)                 | ✓      | ✓      | ✓      |      | n        | SubSlice will return the subSlice from start to end(excluded)  |
+| [`Sum`](#sum)                           |        | ✓      |        |      | n        | Sum is the sum of all of the elements.  |
+| [`Top`](#top)                           | ✓      | ✓      | ✓      |      | n        | Top will return n elements from head of the slice if the slice has less elements then n that'll return all elements if n < 0 it'll return empty slice.  |
+| [`StringsUsing`](#stringsusing)         | ✓      | ✓      | ✓      |      | n        | StringsUsing transforms each element to a string.  |
+| [`Unique`](#unique)                     | ✓      | ✓      |        |      | n        | Unique returns a new slice with all of the unique values.  |
+| [`Unshift`](#unshift)                   | ✓      | ✓      | ✓      |      | n        | Unshift adds one or more elements to the beginning of the slice and returns the new slice.  |
+| [`Values`](#values)                     |        |        |        | ✓    | n        | Values returns the values in the map.  |
 
 ## Abs
 
@@ -589,6 +587,20 @@ Returns a zero value of ElementType if there are no elements in the slice. It wi
 Otherwise returns result of applying reducer from left to right.
 
 
+## Remove
+
+Remove returns a new slice that does not include any of the items.
+
+Usage Example:
+
+```go
+listA := pie.Strings{"1", "2"}
+listB := pie.Strings{"1", "3"}
+      
+// [ "2" ]
+fmt.Println(listA.Remove(listB...))
+```
+
 ## Reverse
 
 Reverse returns a new copy of the slice with the elements ordered in reverse.
@@ -753,27 +765,17 @@ See AreUnique().
 
 ## Unshift
 
-Unshift adds one or more elements to the beginning of the slice and returns the new slice.
+Unshift adds one or more elements to the beginning of the slice
+and returns the new slice.
+
 
 ## Values
 
 Values returns the values in the map.
 
+
 Due to Go's randomization of iterating maps the order is not deterministic.
 
-## Remove
-
-Remove returns a new slice that does not include any of the items.
-
-Usage Example:
-
-```go
-listA := pie.Strings{"1", "2"}
-listB := pie.Strings{"1", "3"}
-      
-// [ "2" ]
-fmt.Println(listA.Remove(listB...))
-```
 
 # FAQ
 
