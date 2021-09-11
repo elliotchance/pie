@@ -989,3 +989,23 @@ func (ss Float64s) Unshift(elements ...float64) (unshift Float64s) {
 
 	return
 }
+
+// Remove returns a new slice that does not include any of the items.
+func (ss Float64s) Remove(items ...float64) (result Float64s) {
+	if len(items) == 0 {
+		return items
+	}
+
+	ss2 := make(map[float64]bool, len(items))
+	for _, item := range items {
+		ss2[item] = true
+	}
+
+	result = Float64s{}
+	for _, v := range ss {
+		if !ss2[v] {
+			result = append(result, v)
+		}
+	}
+	return
+}

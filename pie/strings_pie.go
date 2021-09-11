@@ -874,3 +874,23 @@ func (ss Strings) Unshift(elements ...string) (unshift Strings) {
 
 	return
 }
+
+// Remove returns a new slice that does not include any of the items.
+func (ss Strings) Remove(items ...string) (result Strings) {
+	if len(items) == 0 {
+		return items
+	}
+
+	ss2 := make(map[string]bool, len(items))
+	for _, item := range items {
+		ss2[item] = true
+	}
+
+	result = Strings{}
+	for _, v := range ss {
+		if !ss2[v] {
+			result = append(result, v)
+		}
+	}
+	return
+}

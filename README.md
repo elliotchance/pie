@@ -7,19 +7,19 @@
 focuses on type safety, performance and immutability.
 
 - [Quick Start](#quick-start)
-  * [Install/Update](#install-update)
-  * [Built-in Types](#built-in-types)
-  * [Custom Types](#custom-types)
-  * [Custom Equality](#custom-equality)
-  * [Custom Stringer](#custom-stringer)
-  * [Limiting Functions Generated](#limiting-functions-generated)
+    * [Install/Update](#install-update)
+    * [Built-in Types](#built-in-types)
+    * [Custom Types](#custom-types)
+    * [Custom Equality](#custom-equality)
+    * [Custom Stringer](#custom-stringer)
+    * [Limiting Functions Generated](#limiting-functions-generated)
 - [Functions](#functions)
 - [FAQ](#faq)
-  * [What are the requirements?](#what-are-the-requirements-)
-  * [What are the goals of `pie`?](#what-are-the-goals-of--pie--)
-  * [How do I contribute a function?](#how-do-i-contribute-a-function-)
-  * [Why is the emoji a slice of pizza instead of a pie?](#why-is-the-emoji-a-slice-of-pizza-instead-of-a-pie-)
-  * [How do I exclude generated files from code coverage?](#how-do-i-exclude-generated-files-from-code-coverage-)
+    * [What are the requirements?](#what-are-the-requirements-)
+    * [What are the goals of `pie`?](#what-are-the-goals-of--pie--)
+    * [How do I contribute a function?](#how-do-i-contribute-a-function-)
+    * [Why is the emoji a slice of pizza instead of a pie?](#why-is-the-emoji-a-slice-of-pizza-instead-of-a-pie-)
+    * [How do I exclude generated files from code coverage?](#how-do-i-exclude-generated-files-from-code-coverage-)
 
 # Quick Start
 
@@ -167,10 +167,10 @@ Below is a summary of the available functions.
 The letters in brackets indicate:
 
 - **E**: The function will use the `Equals` method if it is available. See
-*Custom Equality*.
+  *Custom Equality*.
 
 - **S**: The function will use the `String` method if it is available. See
-*Custom Stringer*.
+  *Custom Stringer*.
 
 | Function                                | String | Number | Struct | Maps | Big-O    | Description |
 | --------------------------------------- | :----: | :----: | :----: | :--: | :------: | ----------- |
@@ -216,6 +216,7 @@ The letters in brackets indicate:
 | [`Product`](#product)                   |        | ✓      |        |      | n        | Product is the product of all of the elements.  |
 | [`Random`](#random)                     | ✓      | ✓      | ✓      |      | 1        | Random returns a random element by your rand.Source, or zero  |
 | [`Reduce`](#reduce)                     | ✓      | ✓      |        |      | n        | Reduce continually applies the provided function over the slice. Reducing the elements to a single value.  |
+| [`Remove`](#remove)                     | ✓      | ✓      |        | ✓    | n        | Remove returns a new slice that does not include any of the items. |
 | [`Reverse`](#reverse)                   | ✓      | ✓      | ✓      |      | n        | Reverse returns a new copy of the slice with the elements ordered in reverse. This is useful when combined with Sort to get a descending sort order:  |
 | [`Send`](#send)                         | ✓      | ✓      | ✓      |      | n        | Send sends elements to channel in normal act it sends all elements but if func canceled it can be less  |
 | [`Sequence`](#sequence)                 |        | ✓      |        |      | n        | Sequence generates all numbers in range or returns nil if params invalid  |
@@ -586,6 +587,20 @@ Returns a zero value of ElementType if there are no elements in the slice. It wi
 Otherwise returns result of applying reducer from left to right.
 
 
+## Remove
+
+Remove returns a new slice that does not include any of the items.
+
+Usage Example:
+
+```go
+listA := pie.Strings{"1", "2"}
+listB := pie.Strings{"1", "3"}
+      
+// [ "2" ]
+fmt.Println(listA.Remove(listB...))
+```
+
 ## Reverse
 
 Reverse returns a new copy of the slice with the elements ordered in reverse.
@@ -616,9 +631,9 @@ Sequence generates all numbers in range or returns nil if params invalid
 
 
 There are 3 variations to generate:
-		1. [0, n).
-	2. [min, max).
-	3. [min, max) with step.
+1. [0, n).
+2. [min, max).
+3. [min, max) with step.
 
 
 if len(params) == 1 considered that will be returned slice between 0 and n,
@@ -636,9 +651,9 @@ SequenceUsing generates slice in range using creator function
 
 
 There are 3 variations to generate:
-		1. [0, n).
-	2. [min, max).
-	3. [min, max) with step.
+1. [0, n).
+2. [min, max).
+3. [min, max) with step.
 
 
 if len(params) == 1 considered that will be returned slice between 0 and n,
@@ -771,16 +786,16 @@ Due to Go's randomization of iterating maps the order is not deterministic.
 ## What are the goals of `pie`?
 
 1. **Type safety.** I never want to hit runtime bugs because I could pass in the
-wrong type, or perform an invalid type case out the other end.
+   wrong type, or perform an invalid type case out the other end.
 
 2. **Performance.** The functions need to be as fast as native Go
-implementations otherwise there's no point in this library existing.
+   implementations otherwise there's no point in this library existing.
 
 3. **Nil-safe.** All of the functions will happily accept nil and treat them as
-empty slices. Apart from less possible panics, it makes it easier to chain.
+   empty slices. Apart from less possible panics, it makes it easier to chain.
 
 4. **Immutable.** Functions never modify inputs, unlike some built-ins such as
-`sort.Strings`.
+   `sort.Strings`.
 
 ## How do I contribute a function?
 
@@ -789,26 +804,26 @@ Pull requests are always welcome.
 Here is a comprehensive list of steps to follow to add a new function:
 
 1. Create a new file in the `functions/` directory. The file should be named the
-same as the function. You must include documentation for your function.
+   same as the function. You must include documentation for your function.
 
 2. Update `functions/main.go` to register the new function by adding an entry to
-`Functions`. Make sure you choose the correct `For` value that is appropriate
-for your function.
+   `Functions`. Make sure you choose the correct `For` value that is appropriate
+   for your function.
 
 3. Run `go generate ./... && go install && go generate ./...`. The first
-`generate` is to create the pie templates, `install` will update your binary for
-the annotations and the second `generate` will use the newly created templates
-to update the generated code for the internal types. If you encounter errors
-with your code you can safely rerun the command above.
+   `generate` is to create the pie templates, `install` will update your binary for
+   the annotations and the second `generate` will use the newly created templates
+   to update the generated code for the internal types. If you encounter errors
+   with your code you can safely rerun the command above.
 
 4. If you chose `ForAll` or `ForStructs`, then you must add unit tests to
-`pie/carpointers_test.go` and `pie/cars_test.go`.
+   `pie/carpointers_test.go` and `pie/cars_test.go`.
 
 5. If you chose `ForAll`, `ForNumbersAndStrings` or `ForNumbers`, then you must
-add unit tests to `pie/float64s_test.go` and `pie/ints_test.go`.
+   add unit tests to `pie/float64s_test.go` and `pie/ints_test.go`.
 
 6. If you chose `ForAll` or `ForStrings`, then you must add unit tests to
-`pie/strings_test.go`.
+   `pie/strings_test.go`.
 
 7. If you chose `ForMaps`, then you must add unit tests to `pie/currencies.go`.
 
