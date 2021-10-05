@@ -795,7 +795,7 @@ same as the function. You must include documentation for your function.
 `Functions`. Make sure you choose the correct `For` value that is appropriate
 for your function.
 
-3. Run `go generate ./... && go install && go generate ./...`. The first
+3. Run `go generate generate.go && go install && go generate ./...`. The first
 `generate` is to create the pie templates, `install` will update your binary for
 the annotations and the second `generate` will use the newly created templates
 to update the generated code for the internal types. If you encounter errors
