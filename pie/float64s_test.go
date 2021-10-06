@@ -1233,6 +1233,43 @@ func TestFloat64s_DropTop(t *testing.T) {
 	}
 }
 
+var float64sDropWhileTests = []struct {
+	ss        Float64s
+	f         func(s float64) bool
+	dropWhile Float64s
+}{
+	{
+		ss:        nil,
+		f:         func(s float64) bool { return s == 0.1 },
+		dropWhile: Float64s{},
+	},
+	{
+		ss:        Float64s{2.1, 2.1, 2.1, 7.2, 8.1},
+		f:         func(s float64) bool { return s == 2.1 },
+		dropWhile: Float64s{7.2, 8.1},
+	},
+	{
+		ss:        Float64s{2.1, 4.1, 5.1, 7.2, 8.1},
+		f:         func(s float64) bool { return s == 0.2 },
+		dropWhile: Float64s{2.1, 4.1, 5.1, 7.2, 8.1},
+	},
+	{
+		ss:        Float64s{2.1, 2.1, 2.1, 2.1, 2.1},
+		f:         func(s float64) bool { return s == 2.1 },
+		dropWhile: Float64s{},
+	},
+}
+
+func TestFloat64s_DropWhile(t *testing.T) {
+	for _, test := range float64sDropWhileTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableFloat64s(t, &test.ss)()
+			fmt.Println(test.ss.DropWhile(test.f))
+			assert.Equal(t, test.dropWhile, test.ss.DropWhile(test.f))
+		})
+	}
+}
+
 var float64sSubSliceTests = []struct {
 	ss       Float64s
 	start    int

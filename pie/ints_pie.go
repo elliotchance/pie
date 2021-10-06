@@ -176,6 +176,19 @@ func (ss Ints) DropTop(n int) (drop Ints) {
 	return
 }
 
+// Drop items from the slice while f(item) is true.
+// Afterwards, return every element until the slice is empty. It follows the same logic as the dropwhile() function from itertools in Python.
+func (ss Ints) DropWhile(f func(s int) bool) (ss2 Ints) {
+	ss2 = make([]int, len(ss))
+	copy(ss2, ss)
+	for i, value := range ss2 {
+		if !f(value) {
+			return ss2[i:]
+		}
+	}
+	return Ints{}
+}
+
 // Each is more condensed version of Transform that allows an action to happen
 // on each elements and pass the original slice on.
 //
