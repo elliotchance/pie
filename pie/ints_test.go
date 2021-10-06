@@ -1217,6 +1217,52 @@ func TestInts_DropTop(t *testing.T) {
 	}
 }
 
+var intsDropWhileTests = []struct {
+	ss        Ints
+	f         func(s int) bool
+	dropWhile Ints
+}{
+	{
+		ss:        nil,
+		f:         func(s int) bool { return s%2 == 0 },
+		dropWhile: Ints{},
+	},
+	{
+		ss:        Ints{2, 4, 5, 7, 8},
+		f:         func(s int) bool { return s%2 == 0 },
+		dropWhile: Ints{5, 7, 8},
+	},
+	{
+		ss:        Ints{1, 3, 5, 7, 8, 10, 12, 14},
+		f:         func(s int) bool { return s%2 == 1 },
+		dropWhile: Ints{8, 10, 12, 14},
+	},
+	{
+		ss:        Ints{2, 4, 8, 16, 32, 33},
+		f:         func(s int) bool { return s > 0 && (s&(s-1)) == 0 },
+		dropWhile: Ints{33},
+	},
+	{
+		ss:        Ints{2, 4, 8, 16, 32},
+		f:         func(s int) bool { return s > 0 && (s&(s-1)) == 0 },
+		dropWhile: Ints{},
+	},
+	{
+		ss:        Ints{2, 4, 8, 16, 32},
+		f:         func(s int) bool { return false },
+		dropWhile: Ints{2, 4, 8, 16, 32},
+	},
+}
+
+func TestInts_DropWhile(t *testing.T) {
+	for _, test := range intsDropWhileTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableInts(t, &test.ss)()
+			assert.Equal(t, test.dropWhile, test.ss.DropWhile(test.f))
+		})
+	}
+}
+
 var intsSubSliceTests = []struct {
 	ss       Ints
 	start    int

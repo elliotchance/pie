@@ -1227,6 +1227,42 @@ func TestStrings_DropTop(t *testing.T) {
 	}
 }
 
+var stringsDropWhileTests = []struct {
+	ss        Strings
+	f         func(s string) bool
+	dropWhile Strings
+}{
+	{
+		ss:        nil,
+		f:         func(s string) bool { return s == "foo" },
+		dropWhile: Strings{},
+	},
+	{
+		ss:        Strings{"foo", "foo", "bar", "baz"},
+		f:         func(s string) bool { return s == "foo" },
+		dropWhile: Strings{"bar", "baz"},
+	},
+	{
+		ss:        Strings{"foo", "bar", "baz"},
+		f:         func(s string) bool { return s == "baz" },
+		dropWhile: Strings{"foo", "bar", "baz"},
+	},
+	{
+		ss:        Strings{"baz", "bar", "ban"},
+		f:         func(s string) bool { return strings.Contains(s, "a") },
+		dropWhile: Strings{},
+	},
+}
+
+func TestStrings_DropWhile(t *testing.T) {
+	for _, test := range stringsDropWhileTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableStrings(t, &test.ss)()
+			assert.Equal(t, test.dropWhile, test.ss.DropWhile(test.f))
+		})
+	}
+}
+
 // Make sure that input and output of DropTop don't share the same memory.
 func TestDropTopNonDestructive(t *testing.T) {
 	abc := Strings{"A", "B", "C"}

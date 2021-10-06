@@ -1086,6 +1086,42 @@ func TestCarPointers_DropTop(t *testing.T) {
 	}
 }
 
+var carPointersDropWhileTests = []struct {
+	ss        carPointers
+	f         func(s *car) bool
+	dropWhile carPointers
+}{
+	{
+		ss:        nil,
+		f:         func(s *car) bool { return s.Color == "Blue" },
+		dropWhile: carPointers{},
+	},
+	{
+		ss:        carPointers{{"Bar", "blue"}, {"Foo", "blue"}, {"Baz", "blue"}, {"Bit", "pink"}, {"Baz", "red"}},
+		f:         func(s *car) bool { return s.Color == "blue" },
+		dropWhile: carPointers{{"Bit", "pink"}, {"Baz", "red"}},
+	},
+	{
+		ss:        carPointers{{"Bar", "pink"}, {"Foo", "pink"}, {"Baz", "pink"}},
+		f:         func(s *car) bool { return s.Color == "pink" },
+		dropWhile: carPointers{},
+	},
+	{
+		ss:        carPointers{{"Bar", "blue"}, {"Bar", "blue"}, {"Bar", "yellow"}, {"Bar", "black"}, {"Bar", "blue"}},
+		f:         func(s *car) bool { return s.Color == "red" },
+		dropWhile: carPointers{{"Bar", "blue"}, {"Bar", "blue"}, {"Bar", "yellow"}, {"Bar", "black"}, {"Bar", "blue"}},
+	},
+}
+
+func TestCarPointers_DropWhile(t *testing.T) {
+	for _, test := range carPointersDropWhileTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCarPointers(t, &test.ss)()
+			assert.Equal(t, test.dropWhile, test.ss.DropWhile(test.f))
+		})
+	}
+}
+
 var carPointersSubSliceTests = []struct {
 	ss       carPointers
 	start    int

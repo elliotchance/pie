@@ -1061,6 +1061,42 @@ func TestCars_DropTop(t *testing.T) {
 	}
 }
 
+var carsDropWhileTests = []struct {
+	ss        cars
+	f         func(s car) bool
+	dropWhile cars
+}{
+	{
+		ss:        nil,
+		f:         func(s car) bool { return s.Color == "Blue" },
+		dropWhile: cars{},
+	},
+	{
+		ss:        cars{{"Bar", "blue"}, {"Foo", "blue"}, {"Baz", "blue"}, {"Bit", "pink"}, {"Baz", "red"}},
+		f:         func(s car) bool { return s.Color == "blue" },
+		dropWhile: cars{{"Bit", "pink"}, {"Baz", "red"}},
+	},
+	{
+		ss:        cars{{"Bar", "pink"}, {"Foo", "pink"}, {"Baz", "pink"}},
+		f:         func(s car) bool { return s.Color == "pink" },
+		dropWhile: cars{},
+	},
+	{
+		ss:        cars{{"Bar", "blue"}, {"Bar", "blue"}, {"Bar", "yellow"}, {"Bar", "black"}, {"Bar", "blue"}},
+		f:         func(s car) bool { return s.Color == "red" },
+		dropWhile: cars{{"Bar", "blue"}, {"Bar", "blue"}, {"Bar", "yellow"}, {"Bar", "black"}, {"Bar", "blue"}},
+	},
+}
+
+func TestCars_DropWhile(t *testing.T) {
+	for _, test := range carsDropWhileTests {
+		t.Run("", func(t *testing.T) {
+			defer assertImmutableCars(t, &test.ss)()
+			assert.Equal(t, test.dropWhile, test.ss.DropWhile(test.f))
+		})
+	}
+}
+
 var carsSubSliceTests = []struct {
 	ss       cars
 	start    int
