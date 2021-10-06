@@ -185,6 +185,7 @@ The letters in brackets indicate:
 | [`Contains`](#contains) (E)             | ✓      | ✓      | ✓      |      | n        | Contains returns true if the element exists in the slice.  |
 | [`Diff`](#diff) (E)                     | ✓      | ✓      | ✓      |      | n²       | Diff returns the elements that needs to be added or removed from the first slice to have the same elements in the second slice.  |
 | [`DropTop`](#droptop)                   | ✓      | ✓      | ✓      |      | n        | DropTop will return the rest slice after dropping the top n elements if the slice has less elements then n that'll return empty slice if n < 0 it'll return empty slice.  |
+| [`DropWhile`](#dropwhile)               | ✓      | ✓      | ✓      |      | n        | Drop items from the slice while f(item) is true. Afterwards, return every element until the slice is empty. It follows the same logic as the dropwhile() function from itertools in Python.  |
 | [`Each`](#each)                         | ✓      | ✓      | ✓      |      | n        | Each is more condensed version of Transform that allows an action to happen on each elements and pass the original slice on.  |
 | [`Equals`](#equals) (E)                 | ✓      | ✓      | ✓      |      | n        | Equals compare elements from the start to the end,  |
 | [`Extend`](#extend)                     | ✓      | ✓      | ✓      |      | n        | Extend will return a new slice with the slices of elements appended to the end.  |
@@ -323,6 +324,12 @@ many elements that exists in the largest slice.
 DropTop will return the rest slice after dropping the top n elements
 if the slice has less elements then n that'll return empty slice
 if n < 0 it'll return empty slice.
+
+
+## DropWhile
+
+Drop items from the slice while f(item) is true.
+Afterwards, return every element until the slice is empty. It follows the same logic as the dropwhile() function from itertools in Python.
 
 
 ## Each
@@ -795,7 +802,7 @@ same as the function. You must include documentation for your function.
 `Functions`. Make sure you choose the correct `For` value that is appropriate
 for your function.
 
-3. Run `go generate generate.go && go install && go generate ./...`. The first
+3. Run `go generate && go install && go generate ./...`. The first
 `generate` is to create the pie templates, `install` will update your binary for
 the annotations and the second `generate` will use the newly created templates
 to update the generated code for the internal types. If you encounter errors
