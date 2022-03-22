@@ -7,8 +7,6 @@
 on slices and maps.
 
 - [Quick Start](#quick-start)
-  * [Install/Update](#install-update)
-  * [Example](#example)
 - [FAQ](#faq)
   * [What are the requirements?](#what-are-the-requirements-)
   * [What are the goals of `pie`?](#what-are-the-goals-of--pie--)
@@ -17,20 +15,13 @@ on slices and maps.
 
 # Quick Start
 
-## Install/Update
-
 If you are using (or require) Go 1.17 or below, you will have to
 [use v1](https://github.com/elliotchance/pie/v1).
-
-```bash
-go get -u github.com/elliotchance/pie/v2
-```
-
-## Example
 
 `pie` can be used in two ways, the first is to use the regular
 [parameterized functions](https://go.googlesource.com/proposal/+/master/design/15292/2013-12-type-params.md):
 
+[Run this program](https://go.dev/play/p/qYaBXPRs3Nk)
 
 ```go
 package main
@@ -54,9 +45,11 @@ func main() {
 
 Or, if you need to chain multiple operations you can use one of:
 
-- `Of` - works with any element type, but functions are limited.
-- `OfOrders` - only works with numbers and strings, but has more functions.
-- `OfNumeric` - only works with numbers, but has all functions.
+- [`pie.Of`](https://pkg.go.dev/github.com/elliotchance/pie/v2#Of) - works with any element type, but functions are limited.
+- [`pie.OfOrdered`](https://pkg.go.dev/github.com/elliotchance/pie/v2#OfOrdered) - only works with numbers and strings, but has more functions.
+- [`pie.OfNumeric`](https://pkg.go.dev/github.com/elliotchance/pie/v2#OfNumeric) - only works with numbers, but has all functions.
+
+[Run this program](https://go.dev/play/p/cDLBYzKJ9ld)
 
 ```go
 package main
