@@ -82,6 +82,7 @@ var Functions = []struct {
 	{"Unique", "unique.go", ForNumbersAndStrings, "n"},
 	{"Unshift", "unshift.go", ForAll, "n"},
 	{"Values", "values.go", ForMaps, "n"},
+	{"Chunk", "chunk.go", ForMaps, "n"},
 }
 
 type ElementType float64
