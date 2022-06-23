@@ -3,7 +3,7 @@ package pie
 // Average is the average of all of the elements, or zero if there are no
 // elements.
 func (ss myInt32s) Average() float64 {
-	if l := int(len(ss)); l > 0 {
+	if l := int32(len(ss)); l > 0 {
 		return float64(ss.Sum()) / float64(l)
 	}
 
@@ -11,7 +11,7 @@ func (ss myInt32s) Average() float64 {
 }
 
 // Sum is the sum of all of the elements.
-func (ss myInt32s) Sum() (sum int) {
+func (ss myInt32s) Sum() (sum int32) {
 	for _, s := range ss {
 		sum += s
 	}

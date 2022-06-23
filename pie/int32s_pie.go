@@ -30,7 +30,7 @@ func (ss Int32s) Abs() Int32s {
 // as the all() function in Python.
 //
 // If the list is empty then true is always returned.
-func (ss Int32s) All(fn func(value int) bool) bool {
+func (ss Int32s) All(fn func(value int32) bool) bool {
 	for _, value := range ss {
 		if !fn(value) {
 			return false
@@ -44,7 +44,7 @@ func (ss Int32s) All(fn func(value int) bool) bool {
 // as the any() function in Python.
 //
 // If the list is empty then false is always returned.
-func (ss Int32s) Any(fn func(value int) bool) bool {
+func (ss Int32s) Any(fn func(value int32) bool) bool {
 	for _, value := range ss {
 		if fn(value) {
 			return true
@@ -57,7 +57,7 @@ func (ss Int32s) Any(fn func(value int) bool) bool {
 // Append will return a new slice with the elements appended to the end.
 //
 // It is acceptable to provide zero arguments.
-func (ss Int32s) Append(elements ...int) Int32s {
+func (ss Int32s) Append(elements ...int32) Int32s {
 	// Copy ss, to make sure no memory is overlapping between input and
 	// output. See issue #97.
 	result := append(Int32s{}, ss...)
@@ -83,7 +83,7 @@ func (ss Int32s) AreUnique() bool {
 // Average is the average of all of the elements, or zero if there are no
 // elements.
 func (ss Int32s) Average() float64 {
-	if l := int(len(ss)); l > 0 {
+	if l := int32(len(ss)); l > 0 {
 		return float64(ss.Sum()) / float64(l)
 	}
 
@@ -109,7 +109,7 @@ func (ss Int32s) Bottom(n int) (top Int32s) {
 // Contains returns true if the element exists in the slice.
 //
 // When using slices of pointers it will only compare by address, not value.
-func (ss Int32s) Contains(lookingFor int) bool {
+func (ss Int32s) Contains(lookingFor int32) bool {
 	for _, s := range ss {
 		if lookingFor == s {
 			return true
@@ -170,7 +170,7 @@ func (ss Int32s) DropTop(n int) (drop Int32s) {
 
 	// Copy ss, to make sure no memory is overlapping between input and
 	// output. See issue #145.
-	drop = make([]int, len(ss)-n)
+	drop = make([]int32, len(ss)-n)
 	copy(drop, ss[n:])
 
 	return
@@ -178,8 +178,8 @@ func (ss Int32s) DropTop(n int) (drop Int32s) {
 
 // Drop items from the slice while f(item) is true.
 // Afterwards, return every element until the slice is empty. It follows the same logic as the dropwhile() function from itertools in Python.
-func (ss Int32s) DropWhile(f func(s int) bool) (ss2 Int32s) {
-	ss2 = make([]int, len(ss))
+func (ss Int32s) DropWhile(f func(s int32) bool) (ss2 Int32s) {
+	ss2 = make([]int32, len(ss))
 	copy(ss2, ss)
 	for i, value := range ss2 {
 		if !f(value) {
@@ -204,7 +204,7 @@ func (ss Int32s) DropWhile(f func(s int) bool) (ss2 Int32s) {
 //       car.Color = "Red"
 //   })
 //
-func (ss Int32s) Each(fn func(int)) Int32s {
+func (ss Int32s) Each(fn func(int32)) Int32s {
 	for _, s := range ss {
 		fn(s)
 	}
@@ -250,7 +250,7 @@ func (ss Int32s) Extend(slices ...Int32s) (ss2 Int32s) {
 // true from the condition. The returned slice may contain zero elements (nil).
 //
 // FilterNot works in the opposite way of Filter.
-func (ss Int32s) Filter(condition func(int) bool) (ss2 Int32s) {
+func (ss Int32s) Filter(condition func(int32) bool) (ss2 Int32s) {
 	for _, s := range ss {
 		if condition(s) {
 			ss2 = append(ss2, s)
@@ -262,7 +262,7 @@ func (ss Int32s) Filter(condition func(int) bool) (ss2 Int32s) {
 // FilterNot works the same as Filter, with a negated condition. That is, it will
 // return a new slice only containing the elements that returned false from the
 // condition. The returned slice may contain zero elements (nil).
-func (ss Int32s) FilterNot(condition func(int) bool) (ss2 Int32s) {
+func (ss Int32s) FilterNot(condition func(int32) bool) (ss2 Int32s) {
 	for _, s := range ss {
 		if !condition(s) {
 			ss2 = append(ss2, s)
@@ -276,7 +276,7 @@ func (ss Int32s) FilterNot(condition func(int) bool) (ss2 Int32s) {
 // It follows the same logic as the findIndex() function in Javascript.
 //
 // If the list is empty then -1 is always returned.
-func (ss Int32s) FindFirstUsing(fn func(value int) bool) int {
+func (ss Int32s) FindFirstUsing(fn func(value int32) bool) int {
 	for idx, value := range ss {
 		if fn(value) {
 			return idx
@@ -287,13 +287,13 @@ func (ss Int32s) FindFirstUsing(fn func(value int) bool) int {
 }
 
 // First returns the first element, or zero. Also see FirstOr().
-func (ss Int32s) First() int {
+func (ss Int32s) First() int32 {
 	return ss.FirstOr(0)
 }
 
 // FirstOr returns the first element or a default value if there are no
 // elements.
-func (ss Int32s) FirstOr(defaultValue int) int {
+func (ss Int32s) FirstOr(defaultValue int32) int32 {
 	if len(ss) == 0 {
 		return defaultValue
 	}
@@ -321,8 +321,8 @@ func (ss Int32s) Float64s() Float64s {
 
 // Group returns a map of the value with an individual count.
 //
-func (ss Int32s) Group() map[int]int {
-	group := map[int]int{}
+func (ss Int32s) Group() map[int32]int {
+	group := map[int32]int{}
 	for _, n := range ss {
 		group[n]++
 	}
@@ -338,9 +338,9 @@ func (ss Int32s) Intersect(slices ...Int32s) (ss2 Int32s) {
 		return nil
 	}
 
-	var uniqs = make([]map[int]struct{}, len(slices))
+	var uniqs = make([]map[int32]struct{}, len(slices))
 	for i := 0; i < len(slices); i++ {
-		m := make(map[int]struct{})
+		m := make(map[int32]struct{})
 		for _, el := range slices[i] {
 			m[el] = struct{}{}
 		}
@@ -365,7 +365,7 @@ func (ss Int32s) Intersect(slices ...Int32s) (ss2 Int32s) {
 }
 
 // Insert a value at an index
-func (ss Int32s) Insert(index int, values ...int) Int32s {
+func (ss Int32s) Insert(index int, values ...int32) Int32s {
 	if index >= ss.Len() {
 		return Int32s.Extend(ss, Int32s(values))
 	}
@@ -394,7 +394,7 @@ func (ss Int32s) Ints() Ints {
 
 // Join returns a string from joining each of the elements.
 func (ss Int32s) Join(glue string) (s string) {
-	var slice interface{} = []int(ss)
+	var slice interface{} = []int32(ss)
 
 	if y, ok := slice.([]string); ok {
 		// The stdlib is efficient for type []string
@@ -473,12 +473,12 @@ func (ss Int32s) JSONStringIndent(prefix, indent string) string {
 }
 
 // Last returns the last element, or zero. Also see LastOr().
-func (ss Int32s) Last() int {
+func (ss Int32s) Last() int32 {
 	return ss.LastOr(0)
 }
 
 // LastOr returns the last element or a default value if there are no elements.
-func (ss Int32s) LastOr(defaultValue int) int {
+func (ss Int32s) LastOr(defaultValue int32) int32 {
 	if len(ss) == 0 {
 		return defaultValue
 	}
@@ -497,12 +497,12 @@ func (ss Int32s) Len() int {
 // Be careful when using this with slices of pointers. If you modify the input
 // value it will affect the original slice. Be sure to return a new allocated
 // object or deep copy the existing one.
-func (ss Int32s) Map(fn func(int) int) (ss2 Int32s) {
+func (ss Int32s) Map(fn func(int32) int32) (ss2 Int32s) {
 	if ss == nil {
 		return nil
 	}
 
-	ss2 = make([]int, len(ss))
+	ss2 = make([]int32, len(ss))
 	for i, s := range ss {
 		ss2[i] = fn(s)
 	}
@@ -511,7 +511,7 @@ func (ss Int32s) Map(fn func(int) int) (ss2 Int32s) {
 }
 
 // Max is the maximum value, or zero.
-func (ss Int32s) Max() (max int) {
+func (ss Int32s) Max() (max int32) {
 	if len(ss) == 0 {
 		return
 	}
@@ -531,9 +531,9 @@ func (ss Int32s) Max() (max int) {
 //
 // Zero is returned if there are no elements in the slice.
 //
-// If the number of elements is even, then the int mean of the two "median values"
+// If the number of elements is even, then the int32 mean of the two "median values"
 // is returned.
-func (ss Int32s) Median() int {
+func (ss Int32s) Median() int32 {
 	n := len(ss)
 	if n == 0 {
 		return 0
@@ -592,7 +592,7 @@ func (ss Int32s) Median() int {
 }
 
 // Min is the minimum value, or zero.
-func (ss Int32s) Min() (min int) {
+func (ss Int32s) Min() (min int32) {
 	if len(ss) == 0 {
 		return
 	}
@@ -615,7 +615,7 @@ func (ss Int32s) Mode() Int32s {
 	if len(ss) == 0 {
 		return nil
 	}
-	values := make(map[int]int)
+	values := make(map[int32]int)
 	for _, s := range ss {
 		values[s]++
 	}
@@ -646,7 +646,7 @@ func (ss Int32s) Mode() Int32s {
 //   for greeting := greetings.Pop(); greeting != nil; greeting = greetings.Pop() {
 //       fmt.Println(*greeting)
 //   }
-func (ss *Int32s) Pop() (popped *int) {
+func (ss *Int32s) Pop() (popped *int32) {
 
 	if len(*ss) == 0 {
 		return
@@ -658,7 +658,7 @@ func (ss *Int32s) Pop() (popped *int) {
 }
 
 // Product is the product of all of the elements.
-func (ss Int32s) Product() (product int) {
+func (ss Int32s) Product() (product int32) {
 	if len(ss) == 0 {
 		return
 	}
@@ -671,7 +671,7 @@ func (ss Int32s) Product() (product int) {
 }
 
 // Random returns a random element by your rand.Source, or zero
-func (ss Int32s) Random(source rand.Source) int {
+func (ss Int32s) Random(source rand.Source) int32 {
 	n := len(ss)
 
 	// Avoid the extra allocation.
@@ -689,9 +689,9 @@ func (ss Int32s) Random(source rand.Source) int {
 // Reduce continually applies the provided function
 // over the slice. Reducing the elements to a single value.
 //
-// Returns a zero value of int if there are no elements in the slice. It will panic if the reducer is nil and the slice has more than one element (required to invoke reduce).
+// Returns a zero value of int32 if there are no elements in the slice. It will panic if the reducer is nil and the slice has more than one element (required to invoke reduce).
 // Otherwise returns result of applying reducer from left to right.
-func (ss Int32s) Reduce(reducer func(int, int) int) (el int) {
+func (ss Int32s) Reduce(reducer func(int32, int32) int32) (el int32) {
 	if len(ss) == 0 {
 		return
 	}
@@ -714,7 +714,7 @@ func (ss Int32s) Reverse() Int32s {
 		return ss
 	}
 
-	sorted := make([]int, len(ss))
+	sorted := make([]int32, len(ss))
 	for i := 0; i < len(ss); i++ {
 		sorted[i] = ss[len(ss)-i-1]
 	}
@@ -728,7 +728,7 @@ func (ss Int32s) Reverse() Int32s {
 // it locks execution of gorutine
 // it doesn't close channel after work
 // returns sended elements if len(this) != len(old) considered func was canceled
-func (ss Int32s) Send(ctx context.Context, ch chan<- int) Int32s {
+func (ss Int32s) Send(ctx context.Context, ch chan<- int32) Int32s {
 	for i, s := range ss {
 		select {
 		case <-ctx.Done():
@@ -756,8 +756,8 @@ func (ss Int32s) Send(ctx context.Context, ch chan<- int) Int32s {
 // where min is the first param, max is the second, step is the third one, [min, max) with step,
 // others params will be ignored
 func (ss Int32s) Sequence(params ...int) Int32s {
-	var creator = func(i int) int {
-		return int(i)
+	var creator = func(i int) int32 {
+		return int32(i)
 	}
 
 	return ss.SequenceUsing(creator, params...)
@@ -777,7 +777,7 @@ func (ss Int32s) Sequence(params ...int) Int32s {
 // if len(params) > 2 considered that will be returned slice between min and max with step,
 // where min is the first param, max is the second, step is the third one, [min, max) with step,
 // others params will be ignored
-func (ss Int32s) SequenceUsing(creator func(int) int, params ...int) Int32s {
+func (ss Int32s) SequenceUsing(creator func(int) int32, params ...int) Int32s {
 	var seq = func(min, max, step int) (seq Int32s) {
 		lenght := int(util.Round(float64(max-min) / float64(step)))
 		if lenght < 1 {
@@ -805,7 +805,7 @@ func (ss Int32s) SequenceUsing(creator func(int) int, params ...int) Int32s {
 }
 
 // Shift will return two values: the shifted value and the rest slice.
-func (ss Int32s) Shift() (int, Int32s) {
+func (ss Int32s) Shift() (int32, Int32s) {
 	return ss.First(), ss.DropTop(1)
 }
 
@@ -821,7 +821,7 @@ func (ss Int32s) Shuffle(source rand.Source) Int32s {
 	// go 1.10+ provides rnd.Shuffle. However, to support older versions we copy
 	// the algorithm directly from the go source: src/math/rand/rand.go below,
 	// with some adjustments:
-	shuffled := make([]int, n)
+	shuffled := make([]int32, n)
 	copy(shuffled, ss)
 
 	rnd := rand.New(source)
@@ -914,11 +914,11 @@ func (ss Int32s) SubSlice(start int, end int) (subSlice Int32s) {
 		if end <= length {
 			subSlice = ss[start:end]
 		} else {
-			zeroArray := make([]int, end-length)
+			zeroArray := make([]int32, end-length)
 			subSlice = ss[start:length].Append(zeroArray[:]...)
 		}
 	} else {
-		zeroArray := make([]int, end-start)
+		zeroArray := make([]int32, end-start)
 		subSlice = zeroArray[:]
 	}
 
@@ -926,7 +926,7 @@ func (ss Int32s) SubSlice(start int, end int) (subSlice Int32s) {
 }
 
 // Sum is the sum of all of the elements.
-func (ss Int32s) Sum() (sum int) {
+func (ss Int32s) Sum() (sum int32) {
 	for _, s := range ss {
 		sum += s
 	}
@@ -947,7 +947,7 @@ func (ss Int32s) Top(n int) (top Int32s) {
 }
 
 // StringsUsing transforms each element to a string.
-func (ss Int32s) StringsUsing(transform func(int) string) Strings {
+func (ss Int32s) StringsUsing(transform func(int32) string) Strings {
 	l := len(ss)
 
 	// Avoid the allocation.
@@ -980,7 +980,7 @@ func (ss Int32s) Unique() Int32s {
 		return ss
 	}
 
-	values := map[int]struct{}{}
+	values := map[int32]struct{}{}
 
 	for _, value := range ss {
 		values[value] = struct{}{}
@@ -996,7 +996,7 @@ func (ss Int32s) Unique() Int32s {
 
 // Unshift adds one or more elements to the beginning of the slice
 // and returns the new slice.
-func (ss Int32s) Unshift(elements ...int) (unshift Int32s) {
+func (ss Int32s) Unshift(elements ...int32) (unshift Int32s) {
 	unshift = append(Int32s{}, elements...)
 	unshift = append(unshift, ss...)
 
