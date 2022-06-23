@@ -1002,3 +1002,21 @@ func (ss Float64s) Unshift(elements ...float64) (unshift Float64s) {
 
 	return
 }
+
+// Chunk Split slice to chunks
+func (ss Float64s) Chunk(chunkSize int, callback func(chunk Float64s) (stopped bool)) {
+	if chunkSize <= 0 {
+		panic(fmt.Sprintf("invalid chunk size %d", chunkSize))
+	}
+	var stopped bool
+	for i := 0; i < len(ss); i += chunkSize {
+		if i+chunkSize < len(ss) {
+			stopped = callback(ss[i : i+chunkSize])
+		} else {
+			stopped = callback(ss[i:])
+		}
+		if stopped {
+			break
+		}
+	}
+}
