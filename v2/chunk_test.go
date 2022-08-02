@@ -6,9 +6,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var splitSliceTests = []struct {
+var chunkTests = []struct {
 	ss          []int
-	splitLength int
+	chunkLength int
 	expected    [][]int
 }{
 	{nil, 1, [][]int{}},
@@ -21,10 +21,10 @@ var splitSliceTests = []struct {
 	{[]int{1, 2, 3}, -1, [][]int{}},
 }
 
-func TestSplitSlice(t *testing.T) {
-	for _, test := range splitSliceTests {
+func TestChunk(t *testing.T) {
+	for _, test := range chunkTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expected, SplitSlice(test.ss, test.splitLength))
+			assert.Equal(t, test.expected, Chunk(test.ss, test.chunkLength))
 		})
 	}
 }

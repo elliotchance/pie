@@ -1,0 +1,35 @@
+package pie
+
+// Chunk returns slices with each length equalling chunkLength, except for the last slice which may contain less.
+// 	The order is maintained in each of the slices and slices themselves.
+//
+// Examples:
+//
+// 	Input       chunkLength   Output
+// 	[1, 2, 3]   4             [ [1, 2, 3] ]
+// 	[1, 2, 3]   3             [ [1, 2, 3] ]
+// 	[1, 2, 3]   2             [ [1, 2], [3] ]
+// 	[1, 2, 3]   1             [ [1], [2], [3] ]
+// 	[1, 2, 3]   0             [ [] ]
+// 	[]          0             [ [] ]
+func Chunk[T any](ss []T, chunkLength int) [][]T {
+	result := make([][]T, 0)
+	l := len(ss)
+	if l == 0 || chunkLength <= 0 {
+		return result
+	}
+
+	var step = l / chunkLength
+	if step == 0 {
+		result = append(result, ss)
+		return result
+	}
+	var remain = l % chunkLength
+	for i := 0; i < step; i++ {
+		result = append(result, ss[i*chunkLength:(i+1)*chunkLength])
+	}
+	if remain != 0 {
+		result = append(result, ss[step*chunkLength:l])
+	}
+	return result
+}
