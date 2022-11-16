@@ -6,10 +6,10 @@ import (
 	"testing"
 )
 
-func TestLastOr(t *testing.T) {
-	for _, test := range firstOrAndLastOrTests {
+func TestLast(t *testing.T) {
+	for _, test := range firstAndLastTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.lastOr, pie.LastOr(test.ss, 202))
+			assert.Equal(t, test.last, pie.Last(test.ss))
 		})
 	}
 }

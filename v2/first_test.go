@@ -6,15 +6,15 @@ import (
 	"testing"
 )
 
-var firstOrAndLastOrTests = []struct {
-	ss      []float64
-	firstOr float64
-	lastOr  float64
+var firstAndLastTests = []struct {
+	ss    []float64
+	first float64
+	last  float64
 }{
 	{
 		nil,
-		102,
-		202,
+		0,
+		0,
 	},
 	{
 		[]float64{100},
@@ -33,10 +33,10 @@ var firstOrAndLastOrTests = []struct {
 	},
 }
 
-func TestFirstOr(t *testing.T) {
-	for _, test := range firstOrAndLastOrTests {
+func TestFirst(t *testing.T) {
+	for _, test := range firstAndLastTests {
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.firstOr, pie.FirstOr(test.ss, 102))
+			assert.Equal(t, test.first, pie.First(test.ss))
 		})
 	}
 }
