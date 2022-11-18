@@ -76,6 +76,10 @@ func (o OfOrderedSlice[T]) FindFirstUsing(fn func(value T) bool) int {
 	return FindFirstUsing(o.Result, fn)
 }
 
+func (o OfOrderedSlice[T]) First() T {
+	return First(o.Result)
+}
+
 func (o OfOrderedSlice[T]) FirstOr(defaultValue T) T {
 	return FirstOr(o.Result, defaultValue)
 }
@@ -118,6 +122,10 @@ func (o OfOrderedSlice[T]) JSONString() string {
 
 func (o OfOrderedSlice[T]) JSONStringIndent(prefix, indent string) string {
 	return JSONStringIndent(o.Result, prefix, indent)
+}
+
+func (o OfOrderedSlice[T]) Last() T {
+	return Last(o.Result)
 }
 
 func (o OfOrderedSlice[T]) LastOr(defaultValue T) T {

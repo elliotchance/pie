@@ -49,7 +49,7 @@ Or, if you need to chain multiple operations you can use one of:
 - [`pie.OfOrdered`](https://pkg.go.dev/github.com/elliotchance/pie/v2#OfOrdered) - only works with numbers and strings, but has more functions.
 - [`pie.OfNumeric`](https://pkg.go.dev/github.com/elliotchance/pie/v2#OfNumeric) - only works with numbers, but has all functions.
 
-[Run this program](https://go.dev/play/p/cDLBYzKJ9ld)
+[Run this program](https://go.dev/play/p/4IhVbw0koxg)
 
 ```go
 package main
@@ -67,7 +67,7 @@ func main() {
             return strings.HasPrefix(name, "J")
         }).
         Map(strings.ToUpper).
-        LastOr("")
+        Last()
 
     fmt.Println(name) // "SALLY"
 }
