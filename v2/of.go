@@ -49,12 +49,20 @@ func (o OfSlice[T]) FindFirstUsing(fn func(value T) bool) int {
 	return FindFirstUsing(o.Result, fn)
 }
 
+func (o OfSlice[T]) First() T {
+	return First(o.Result)
+}
+
 func (o OfSlice[T]) FirstOr(defaultValue T) T {
 	return FirstOr(o.Result, defaultValue)
 }
 
 func (o OfSlice[T]) Insert(index int, values ...T) OfSlice[T] {
 	return OfSlice[T]{Insert(o.Result, index, values...)}
+}
+
+func (o OfSlice[T]) Last() T {
+	return Last(o.Result)
 }
 
 func (o OfSlice[T]) LastOr(defaultValue T) T {
