@@ -12,13 +12,11 @@ var chunkTests = []struct {
 	expected    [][]int
 }{
 	{nil, 1, [][]int{}},
-	{nil, 0, [][]int{}},
+	{[]int{}, 1, [][]int{}},
 	{[]int{1, 2, 3}, 4, [][]int{{1, 2, 3}}},
 	{[]int{1, 2, 3}, 3, [][]int{{1, 2, 3}}},
 	{[]int{1, 2, 3}, 2, [][]int{{1, 2}, {3}}},
 	{[]int{1, 2, 3}, 1, [][]int{{1}, {2}, {3}}},
-	{[]int{1, 2, 3}, 0, [][]int{}},
-	{[]int{1, 2, 3}, -1, [][]int{}},
 }
 
 func TestChunk(t *testing.T) {

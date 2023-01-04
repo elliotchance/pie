@@ -1,16 +1,16 @@
 package pie
 
-// Chunk returns slices with each length equalling chunkLength, except for the last slice which may contain less.
-// The order is maintained in each of the slices and slices themselves.
+// Chunk splits the input and returns multi slices whose length equals chunkLength,
+// except for the last slice which may contain fewer elements.
 //
 // Examples:
 //
-// 	Chunk([1, 2, 3], 4) => [ [1, 2, 3] ]
-// 	Chunk([1, 2, 3], 3) => [ [1, 2, 3] ]
-// 	Chunk([1, 2, 3], 2) => [ [1, 2], [3] ]
-// 	Chunk([1, 2, 3], 1) => [ [1], [2], [3] ]
-// 	Chunk([], 1)        => [ [] ]
-// 	Chunk([1, 2, 3], 0) => panic: chunkLength should be greater than 0
+//   Chunk([1, 2, 3], 4) => [ [1, 2, 3] ]
+//   Chunk([1, 2, 3], 3) => [ [1, 2, 3] ]
+//   Chunk([1, 2, 3], 2) => [ [1, 2], [3] ]
+//   Chunk([1, 2, 3], 1) => [ [1], [2], [3] ]
+//   Chunk([], 1)        => [ [] ]
+//   Chunk([1, 2, 3], 0) => panic: chunkLength should be greater than 0
 func Chunk[T any](ss []T, chunkLength int) [][]T {
 	if chunkLength <= 0 {
 		panic("chunkLength should be greater than 0")
@@ -34,5 +34,6 @@ func Chunk[T any](ss []T, chunkLength int) [][]T {
 	if remain != 0 {
 		result = append(result, ss[step*chunkLength:l])
 	}
+
 	return result
 }
