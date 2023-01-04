@@ -80,6 +80,10 @@ func (o OfNumericSlice[T]) FindFirstUsing(fn func(value T) bool) int {
 	return FindFirstUsing(o.Result, fn)
 }
 
+func (o OfNumericSlice[T]) First() T {
+	return First(o.Result)
+}
+
 func (o OfNumericSlice[T]) FirstOr(defaultValue T) T {
 	return FirstOr(o.Result, defaultValue)
 }
@@ -122,6 +126,10 @@ func (o OfNumericSlice[T]) JSONString() string {
 
 func (o OfNumericSlice[T]) JSONStringIndent(prefix, indent string) string {
 	return JSONStringIndent(o.Result, prefix, indent)
+}
+
+func (o OfNumericSlice[T]) Last() T {
+	return Last(o.Result)
 }
 
 func (o OfNumericSlice[T]) LastOr(defaultValue T) T {
