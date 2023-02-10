@@ -57,6 +57,10 @@ func (o OfSlice[T]) FirstOr(defaultValue T) T {
 	return FirstOr(o.Result, defaultValue)
 }
 
+func (o OfSlice[T]) FlatMap(fn func(T) []T) OfSlice[T] {
+	return OfSlice[T]{FlatMap(o.Result, fn)}
+}
+
 func (o OfSlice[T]) Insert(index int, values ...T) OfSlice[T] {
 	return OfSlice[T]{Insert(o.Result, index, values...)}
 }
