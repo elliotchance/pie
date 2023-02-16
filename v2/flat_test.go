@@ -29,7 +29,7 @@ var flatTests = []struct {
 	},
 	{
 		[][]float64{nil, nil},
-		[]float64{},
+		nil,
 	},
 }
 
