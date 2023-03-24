@@ -9,34 +9,25 @@ package pie
 // The added and removed returned may be blank respectively, or contain upto as
 // many elements that exists in the largest slice.
 func Diff[T comparable](ss []T, against []T) (added, removed []T) {
-	// This is probably not the best way to do it. We do an O(n^2) between the
-	// slices to see which items are missing in each direction.
-
 	diffOneWay := func(ss1, ss2raw []T) (result []T) {
-		ss2 := make([]T, len(ss2raw))
-		copy(ss2, ss2raw)
+		set := make(map[T]struct{}, len(ss1))
 
 		for _, s := range ss1 {
-			found := false
+			set[s] = struct{}{}
+		}
 
-			for i, element := range ss2 {
-				if s == element {
-					ss2 = append(ss2[:i], ss2[i+1:]...)
-					found = true
-					break
-				}
-			}
-
-			if !found {
+		for _, s := range ss2raw {
+			if _, ok := set[s]; ok {
+				delete(set, s) // remove duplicates
+			} else {
 				result = append(result, s)
 			}
 		}
-
 		return
 	}
 
-	removed = diffOneWay(ss, against)
-	added = diffOneWay(against, ss)
+	added = diffOneWay(ss, against)
+	removed = diffOneWay(against, ss)
 
 	return
 }
