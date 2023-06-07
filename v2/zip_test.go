@@ -40,7 +40,6 @@ var zipTests = []struct {
 }
 
 func TestZip(t *testing.T) {
-
 	for _, test := range zipTests {
 
 		t.Run("", func(t *testing.T) {
