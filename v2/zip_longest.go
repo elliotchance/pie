@@ -2,7 +2,7 @@ package pie
 
 // ZipLongest will return a new slice containing pairs with elements from input slices.
 // If input slices have diffrent length, missing elements will be padded with default values.
-func ZipLongest[T1, T2 any](ss1 []T1, ss2 []T2) (ss3 []Zipped[T1, T2]) {
+func ZipLongest[T1, T2 any](ss1 []T1, ss2 []T2) []Zipped[T1, T2] {
 	var minLen, maxLen int
 	var small int8
 
@@ -16,6 +16,7 @@ func ZipLongest[T1, T2 any](ss1 []T1, ss2 []T2) (ss3 []Zipped[T1, T2]) {
 		maxLen = len(ss1)
 	}
 
+	ss3 := []Zipped[T1, T2]{}
 	for i := 0; i < minLen; i++ {
 		ss3 = append(ss3, Zipped[T1, T2]{ss1[i], ss2[i]})
 	}
@@ -32,5 +33,5 @@ func ZipLongest[T1, T2 any](ss1 []T1, ss2 []T2) (ss3 []Zipped[T1, T2]) {
 		}
 	}
 
-	return
+	return ss3
 }
