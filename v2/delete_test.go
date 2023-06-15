@@ -12,9 +12,14 @@ var deleteTests = []struct {
 	expected []int
 }{
 	{
-		[]int{},
+		[]int{1, 2},
 		-1,
-		[]int{},
+		[]int{1, 2},
+	},
+	{
+		[]int{1, 2},
+		2,
+		[]int{1, 2},
 	},
 	{
 		[]int{},
