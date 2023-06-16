@@ -23,4 +23,12 @@ func TestOfONumeric(t *testing.T) {
 
 		assert.Equal(t, []float64{1.23}, names)
 	})
+
+	t.Run("delete", func(t *testing.T) {
+		names := pie.OfNumeric([]float64{1.23, 4.56}).
+			Delete(1).
+			Result
+
+		assert.Equal(t, []float64{1.23}, names)
+	})
 }

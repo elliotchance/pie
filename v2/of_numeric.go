@@ -2,8 +2,9 @@ package pie
 
 import (
 	"context"
-	"golang.org/x/exp/constraints"
 	"math/rand"
+
+	"golang.org/x/exp/constraints"
 )
 
 // OfNumeric encapsulates a slice to be used in multiple chained operations.
@@ -230,4 +231,8 @@ func (o OfNumericSlice[T]) Unique() OfNumericSlice[T] {
 
 func (o OfNumericSlice[T]) Unshift(elements ...T) OfNumericSlice[T] {
 	return OfNumericSlice[T]{Unshift(o.Result, elements...)}
+}
+
+func (o OfNumericSlice[T]) Delete(idx ...int) OfNumericSlice[T] {
+	return OfNumericSlice[T]{Delete(o.Result, idx...)}
 }
