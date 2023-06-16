@@ -5,13 +5,12 @@ import "sort"
 // Removes elements at indices in idx from input slice, returns resulting slice.
 // If an index is out of bounds, skip it.
 func Delete[T any](ss []T, idx ...int) []T {
-
-	// short path O(1) inplace
+	// short path O(n) inplace
 	if len(idx) == 1 {
 		i := idx[0]
 
 		if i < 0 || i >= len(ss) {
-			return ss // bypass
+			return ss
 		}
 		return append(ss[:i], ss[i+1:]...)
 	}
