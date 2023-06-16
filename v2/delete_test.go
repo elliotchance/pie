@@ -8,33 +8,46 @@ import (
 
 var deleteTests = []struct {
 	ss       []int
-	idx      int
+	idx      []int
 	expected []int
 }{
+	// idx out of bounds
 	{
 		[]int{1, 2},
-		-1,
+		[]int{-1},
 		[]int{1, 2},
 	},
 	{
 		[]int{1, 2},
-		2,
+		[]int{2},
 		[]int{1, 2},
 	},
+	// remove from empty slice
 	{
 		[]int{},
-		0,
+		[]int{0},
 		[]int{},
 	},
 	{
 		[]int{1},
-		0,
+		[]int{0},
 		[]int{},
 	},
 	{
 		[]int{1, 2, 3, 4, 5},
-		2,
+		[]int{2},
 		[]int{1, 2, 4, 5},
+	},
+	{
+		[]int{1, 2, 3, 4, 5},
+		[]int{1, 3},
+		[]int{1, 3, 5},
+	},
+	// mixed indices
+	{
+		[]int{1, 2, 3, 4, 5},
+		[]int{1, -1, 5, 3},
+		[]int{1, 3, 5},
 	},
 }
 
@@ -42,7 +55,7 @@ func TestDelete(t *testing.T) {
 	for _, test := range deleteTests {
 
 		t.Run("", func(t *testing.T) {
-			assert.Equal(t, test.expected, pie.Delete(test.ss, test.idx))
+			assert.Equal(t, test.expected, pie.Delete(test.ss, test.idx...))
 		})
 	}
 }
