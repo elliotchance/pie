@@ -203,3 +203,9 @@ func (o OfSlice[T]) Top(n int) OfSlice[T] {
 func (o OfSlice[T]) Unshift(elements ...T) OfSlice[T] {
 	return OfSlice[T]{Unshift(o.Result, elements...)}
 }
+
+// Removes element at index in idx from input slice, returns resulting slice.
+// If an index in idx out of bounds, skip it.
+func (o OfSlice[T]) Delete(idx ...int) OfSlice[T] {
+	return OfSlice[T]{Delete(o.Result, idx...)}
+}

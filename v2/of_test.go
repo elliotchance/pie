@@ -28,4 +28,12 @@ func TestOf(t *testing.T) {
 
 		assert.Equal(t, []string{"Bob", "Sally"}, names)
 	})
+
+	t.Run("delete", func(t *testing.T) {
+		names := pie.Of([]string{"Bob", "Sally", "John", "Jane"}).
+			Delete(2, 3).
+			Result
+
+		assert.Equal(t, []string{"Bob", "Sally"}, names)
+	})
 }

@@ -2,8 +2,9 @@ package pie
 
 import (
 	"context"
-	"golang.org/x/exp/constraints"
 	"math/rand"
+
+	"golang.org/x/exp/constraints"
 )
 
 // OfOrdered encapsulates a slice to be used in multiple chained operations.
@@ -198,4 +199,8 @@ func (o OfOrderedSlice[T]) Unique() OfOrderedSlice[T] {
 
 func (o OfOrderedSlice[T]) Unshift(elements ...T) OfOrderedSlice[T] {
 	return OfOrderedSlice[T]{Unshift(o.Result, elements...)}
+}
+
+func (o OfOrderedSlice[T]) Delete(idx ...int) OfOrderedSlice[T] {
+	return OfOrderedSlice[T]{Delete(o.Result, idx...)}
 }
