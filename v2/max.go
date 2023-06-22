@@ -5,15 +5,15 @@ import (
 )
 
 // Max is the maximum value, or zero.
-func Max[T constraints.Ordered](ss []T) (min T) {
+func Max[T constraints.Ordered](ss []T) (max T) {
 	if len(ss) == 0 {
 		return
 	}
 
-	min = ss[0]
+	max = ss[0]
 	for _, s := range ss {
-		if s > min {
-			min = s
+		if s > max {
+			max = s
 		}
 	}
 
