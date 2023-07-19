@@ -180,7 +180,7 @@ func main() {
 
 		imports := getAllImports(packageName, templates, explorer)
 		if len(imports) > 0 {
-			t += fmt.Sprintf("import (")
+			t += "import ("
 			for _, imp := range imports {
 				t += fmt.Sprintf("\n\t%s", imp)
 			}
