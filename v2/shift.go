@@ -1,8 +1,8 @@
 package pie
 
-import "golang.org/x/exp/constraints"
-
 // Shift will return two values: the shifted value and the rest slice.
-func Shift[T constraints.Integer | constraints.Float](ss []T) (T, []T) {
-	return FirstOr(ss, 0), DropTop(ss, 1)
+// if the slice is empty then returned shifted value is the zero value of the slice elements and the rest slice is empty slice
+func Shift[T any](ss []T) (T, []T) {
+	var zeroValue T
+	return FirstOr(ss, zeroValue), DropTop(ss, 1)
 }
