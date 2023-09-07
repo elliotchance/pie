@@ -136,6 +136,13 @@ func (o OfSlice[T]) Reverse() OfSlice[T] {
 	return OfSlice[T]{Reverse(o.Result)}
 }
 
+// Rotate returns slice circularly rotated by a number of positions n.
+// If n is positive, the slice is rotated right.
+// If n is negative, the slice is rotated left.
+func (o OfSlice[T]) Rotate(n int) OfSlice[T] {
+	return OfSlice[T]{Rotate(o.Result, n)}
+}
+
 // Send sends elements to channel
 // in normal act it sends all elements but if func canceled it can be less
 //
