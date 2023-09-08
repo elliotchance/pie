@@ -1,10 +1,11 @@
 package pie_test
 
 import (
-	"github.com/elliotchance/pie/v2"
-	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
+
+	"github.com/elliotchance/pie/v2"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestOf(t *testing.T) {
@@ -35,5 +36,13 @@ func TestOf(t *testing.T) {
 			Result
 
 		assert.Equal(t, []string{"Bob", "Sally"}, names)
+	})
+
+	t.Run("rotate", func(t *testing.T) {
+		names := pie.Of([]string{"Bob", "Sally", "John", "Jane"}).
+			Rotate(1).
+			Result
+
+		assert.Equal(t, []string{"Jane", "Bob", "Sally", "John"}, names)
 	})
 }
