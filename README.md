@@ -8,10 +8,10 @@ on slices and maps.
 
 - [Quick Start](#quick-start)
 - [FAQ](#faq)
-  * [What are the requirements?](#what-are-the-requirements-)
-  * [What are the goals of `pie`?](#what-are-the-goals-of--pie--)
-  * [How do I contribute a function?](#how-do-i-contribute-a-function-)
-  * [Why is the emoji a slice of pizza instead of a pie?](#why-is-the-emoji-a-slice-of-pizza-instead-of-a-pie-)
+  * [What are the requirements?](#what-are-the-requirements)
+  * [What are the goals of `pie`?](#what-are-the-goals-of-pie)
+  * [How do I contribute a function?](#how-do-i-contribute-a-function)
+  * [Why is the emoji a slice of pizza instead of a pie?](#why-is-the-emoji-a-slice-of-pizza-instead-of-a-pie)
 
 # Quick Start
 
