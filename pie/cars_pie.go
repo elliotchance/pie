@@ -547,13 +547,13 @@ func (ss cars) Send(ctx context.Context, ch chan<- car) cars {
 // others params will be ignored
 func (ss cars) SequenceUsing(creator func(int) car, params ...int) cars {
 	var seq = func(min, max, step int) (seq cars) {
-		lenght := int(util.Round(float64(max-min) / float64(step)))
-		if lenght < 1 {
+		length := int(util.Round(float64(max-min) / float64(step)))
+		if length < 1 {
 			return
 		}
 
-		seq = make(cars, lenght)
-		for i := 0; i < lenght; min += step {
+		seq = make(cars, length)
+		for i := 0; i < length; min += step {
 			seq[i] = creator(min)
 			i++
 		}

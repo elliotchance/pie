@@ -779,13 +779,13 @@ func (ss Float64s) Sequence(params ...int) Float64s {
 // others params will be ignored
 func (ss Float64s) SequenceUsing(creator func(int) float64, params ...int) Float64s {
 	var seq = func(min, max, step int) (seq Float64s) {
-		lenght := int(util.Round(float64(max-min) / float64(step)))
-		if lenght < 1 {
+		length := int(util.Round(float64(max-min) / float64(step)))
+		if length < 1 {
 			return
 		}
 
-		seq = make(Float64s, lenght)
-		for i := 0; i < lenght; min += step {
+		seq = make(Float64s, length)
+		for i := 0; i < length; min += step {
 			seq[i] = creator(min)
 			i++
 		}

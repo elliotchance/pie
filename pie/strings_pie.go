@@ -654,13 +654,13 @@ func (ss Strings) Send(ctx context.Context, ch chan<- string) Strings {
 // others params will be ignored
 func (ss Strings) SequenceUsing(creator func(int) string, params ...int) Strings {
 	var seq = func(min, max, step int) (seq Strings) {
-		lenght := int(util.Round(float64(max-min) / float64(step)))
-		if lenght < 1 {
+		length := int(util.Round(float64(max-min) / float64(step)))
+		if length < 1 {
 			return
 		}
 
-		seq = make(Strings, lenght)
-		for i := 0; i < lenght; min += step {
+		seq = make(Strings, length)
+		for i := 0; i < length; min += step {
 			seq[i] = creator(min)
 			i++
 		}

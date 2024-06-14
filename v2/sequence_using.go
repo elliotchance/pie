@@ -18,13 +18,13 @@ import "math"
 // others params will be ignored
 func SequenceUsing[T any](ss []T, creator func(int) T, params ...int) []T {
 	var seq = func(min, max, step int) (seq []T) {
-		lenght := int(math.Round(float64(max-min) / float64(step)))
-		if lenght < 1 {
+		length := int(math.Round(float64(max-min) / float64(step)))
+		if length < 1 {
 			return
 		}
 
-		seq = make([]T, lenght)
-		for i := 0; i < lenght; min += step {
+		seq = make([]T, length)
+		for i := 0; i < length; min += step {
 			seq[i] = creator(min)
 			i++
 		}
