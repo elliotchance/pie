@@ -18,13 +18,13 @@ import "github.com/elliotchance/pie/pie/util"
 // others params will be ignored
 func (ss SliceType) SequenceUsing(creator func(int) ElementType, params ...int) SliceType {
 	var seq = func(min, max, step int) (seq SliceType) {
-		lenght := int(util.Round(float64(max-min) / float64(step)))
-		if lenght < 1 {
+		length := int(util.Round(float64(max-min) / float64(step)))
+		if length < 1 {
 			return
 		}
 
-		seq = make(SliceType, lenght)
-		for i := 0; i < lenght; min += step {
+		seq = make(SliceType, length)
+		for i := 0; i < length; min += step {
 			seq[i] = creator(min)
 			i++
 		}

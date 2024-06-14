@@ -547,13 +547,13 @@ func (ss carPointers) Send(ctx context.Context, ch chan<- *car) carPointers {
 // others params will be ignored
 func (ss carPointers) SequenceUsing(creator func(int) *car, params ...int) carPointers {
 	var seq = func(min, max, step int) (seq carPointers) {
-		lenght := int(util.Round(float64(max-min) / float64(step)))
-		if lenght < 1 {
+		length := int(util.Round(float64(max-min) / float64(step)))
+		if length < 1 {
 			return
 		}
 
-		seq = make(carPointers, lenght)
-		for i := 0; i < lenght; min += step {
+		seq = make(carPointers, length)
+		for i := 0; i < length; min += step {
 			seq[i] = creator(min)
 			i++
 		}
