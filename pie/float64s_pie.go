@@ -4,13 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/elliotchance/pie/pie/util"
 	"math"
 	"math/rand"
 	"sort"
 	"strconv"
 	"strings"
-
-	"github.com/elliotchance/pie/pie/util"
 )
 
 // Abs is a function which returns the absolute value of all the
@@ -193,17 +192,18 @@ func (ss Float64s) DropWhile(f func(s float64) bool) (ss2 Float64s) {
 // Each is more condensed version of Transform that allows an action to happen
 // on each elements and pass the original slice on.
 //
-//	cars.Each(func (car *Car) {
-//	    fmt.Printf("Car color is: %s\n", car.Color)
-//	})
+//   cars.Each(func (car *Car) {
+//       fmt.Printf("Car color is: %s\n", car.Color)
+//   })
 //
 // Pie will not ensure immutability on items passed in so they can be
 // manipulated, if you choose to do it this way, for example:
 //
-//	// Set all car colors to Red.
-//	cars.Each(func (car *Car) {
-//	    car.Color = "Red"
-//	})
+//   // Set all car colors to Red.
+//   cars.Each(func (car *Car) {
+//       car.Color = "Red"
+//   })
+//
 func (ss Float64s) Each(fn func(float64)) Float64s {
 	for _, s := range ss {
 		fn(s)
@@ -320,6 +320,7 @@ func (ss Float64s) Float64s() Float64s {
 }
 
 // Group returns a map of the value with an individual count.
+//
 func (ss Float64s) Group() map[float64]int {
 	group := map[float64]int{}
 	for _, n := range ss {
@@ -640,11 +641,11 @@ func (ss Float64s) Mode() Float64s {
 //
 // Usage Example:
 //
-//	type knownGreetings []string
-//	greetings := knownGreetings{"ciao", "hello", "hola"}
-//	for greeting := greetings.Pop(); greeting != nil; greeting = greetings.Pop() {
-//	    fmt.Println(*greeting)
-//	}
+//   type knownGreetings []string
+//   greetings := knownGreetings{"ciao", "hello", "hola"}
+//   for greeting := greetings.Pop(); greeting != nil; greeting = greetings.Pop() {
+//       fmt.Println(*greeting)
+//   }
 func (ss *Float64s) Pop() (popped *float64) {
 
 	if len(*ss) == 0 {
@@ -704,7 +705,8 @@ func (ss Float64s) Reduce(reducer func(float64, float64) float64) (el float64) {
 // Reverse returns a new copy of the slice with the elements ordered in reverse.
 // This is useful when combined with Sort to get a descending sort order:
 //
-//	ss.Sort().Reverse()
+//   ss.Sort().Reverse()
+//
 func (ss Float64s) Reverse() Float64s {
 	// Avoid the allocation. If there is one element or less it is already
 	// reversed.
@@ -742,9 +744,9 @@ func (ss Float64s) Send(ctx context.Context, ch chan<- float64) Float64s {
 // Sequence generates all numbers in range or returns nil if params invalid
 //
 // There are 3 variations to generate:
-//  1. [0, n).
-//  2. [min, max).
-//  3. [min, max) with step.
+// 		1. [0, n).
+//		2. [min, max).
+//		3. [min, max) with step.
 //
 // if len(params) == 1 considered that will be returned slice between 0 and n,
 // where n is the first param, [0, n).
@@ -764,9 +766,9 @@ func (ss Float64s) Sequence(params ...int) Float64s {
 // SequenceUsing generates slice in range using creator function
 //
 // There are 3 variations to generate:
-//  1. [0, n).
-//  2. [min, max).
-//  3. [min, max) with step.
+// 		1. [0, n).
+//		2. [min, max).
+//		3. [min, max) with step.
 //
 // if len(params) == 1 considered that will be returned slice between 0 and n,
 // where n is the first param, [0, n).
@@ -777,13 +779,13 @@ func (ss Float64s) Sequence(params ...int) Float64s {
 // others params will be ignored
 func (ss Float64s) SequenceUsing(creator func(int) float64, params ...int) Float64s {
 	var seq = func(min, max, step int) (seq Float64s) {
-		length := int(util.Round(float64(max-min) / float64(step)))
-		if length < 1 {
+		lenght := int(util.Round(float64(max-min) / float64(step)))
+		if lenght < 1 {
 			return
 		}
 
-		seq = make(Float64s, length)
-		for i := 0; i < length; min += step {
+		seq = make(Float64s, lenght)
+		for i := 0; i < lenght; min += step {
 			seq[i] = creator(min)
 			i++
 		}
@@ -873,7 +875,8 @@ func (ss Float64s) Stddev() float64 {
 // If the element type implements fmt.Stringer it will be used. Otherwise it
 // will fallback to the result of:
 //
-//	fmt.Sprintf("%v")
+//   fmt.Sprintf("%v")
+//
 func (ss Float64s) Strings() Strings {
 	l := len(ss)
 

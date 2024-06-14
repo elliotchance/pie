@@ -4,12 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/elliotchance/pie/pie/util"
 	"math/rand"
 	"sort"
 	"strconv"
 	"strings"
-
-	"github.com/elliotchance/pie/pie/util"
 )
 
 // All will return true if all callbacks return true. It follows the same logic
@@ -168,17 +167,18 @@ func (ss Strings) DropWhile(f func(s string) bool) (ss2 Strings) {
 // Each is more condensed version of Transform that allows an action to happen
 // on each elements and pass the original slice on.
 //
-//	cars.Each(func (car *Car) {
-//	    fmt.Printf("Car color is: %s\n", car.Color)
-//	})
+//   cars.Each(func (car *Car) {
+//       fmt.Printf("Car color is: %s\n", car.Color)
+//   })
 //
 // Pie will not ensure immutability on items passed in so they can be
 // manipulated, if you choose to do it this way, for example:
 //
-//	// Set all car colors to Red.
-//	cars.Each(func (car *Car) {
-//	    car.Color = "Red"
-//	})
+//   // Set all car colors to Red.
+//   cars.Each(func (car *Car) {
+//       car.Color = "Red"
+//   })
+//
 func (ss Strings) Each(fn func(string)) Strings {
 	for _, s := range ss {
 		fn(s)
@@ -295,6 +295,7 @@ func (ss Strings) Float64s() Float64s {
 }
 
 // Group returns a map of the value with an individual count.
+//
 func (ss Strings) Group() map[string]int {
 	group := map[string]int{}
 	for _, n := range ss {
@@ -550,11 +551,11 @@ func (ss Strings) Mode() Strings {
 //
 // Usage Example:
 //
-//	type knownGreetings []string
-//	greetings := knownGreetings{"ciao", "hello", "hola"}
-//	for greeting := greetings.Pop(); greeting != nil; greeting = greetings.Pop() {
-//	    fmt.Println(*greeting)
-//	}
+//   type knownGreetings []string
+//   greetings := knownGreetings{"ciao", "hello", "hola"}
+//   for greeting := greetings.Pop(); greeting != nil; greeting = greetings.Pop() {
+//       fmt.Println(*greeting)
+//   }
 func (ss *Strings) Pop() (popped *string) {
 
 	if len(*ss) == 0 {
@@ -601,7 +602,8 @@ func (ss Strings) Reduce(reducer func(string, string) string) (el string) {
 // Reverse returns a new copy of the slice with the elements ordered in reverse.
 // This is useful when combined with Sort to get a descending sort order:
 //
-//	ss.Sort().Reverse()
+//   ss.Sort().Reverse()
+//
 func (ss Strings) Reverse() Strings {
 	// Avoid the allocation. If there is one element or less it is already
 	// reversed.
@@ -639,9 +641,9 @@ func (ss Strings) Send(ctx context.Context, ch chan<- string) Strings {
 // SequenceUsing generates slice in range using creator function
 //
 // There are 3 variations to generate:
-//  1. [0, n).
-//  2. [min, max).
-//  3. [min, max) with step.
+// 		1. [0, n).
+//		2. [min, max).
+//		3. [min, max) with step.
 //
 // if len(params) == 1 considered that will be returned slice between 0 and n,
 // where n is the first param, [0, n).
@@ -652,13 +654,13 @@ func (ss Strings) Send(ctx context.Context, ch chan<- string) Strings {
 // others params will be ignored
 func (ss Strings) SequenceUsing(creator func(int) string, params ...int) Strings {
 	var seq = func(min, max, step int) (seq Strings) {
-		length := int(util.Round(float64(max-min) / float64(step)))
-		if length < 1 {
+		lenght := int(util.Round(float64(max-min) / float64(step)))
+		if lenght < 1 {
 			return
 		}
 
-		seq = make(Strings, length)
-		for i := 0; i < length; min += step {
+		seq = make(Strings, lenght)
+		for i := 0; i < lenght; min += step {
 			seq[i] = creator(min)
 			i++
 		}
@@ -767,7 +769,8 @@ func (ss Strings) SortUsing(less func(a, b string) bool) Strings {
 // If the element type implements fmt.Stringer it will be used. Otherwise it
 // will fallback to the result of:
 //
-//	fmt.Sprintf("%v")
+//   fmt.Sprintf("%v")
+//
 func (ss Strings) Strings() Strings {
 	l := len(ss)
 
