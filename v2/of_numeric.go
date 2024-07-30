@@ -229,6 +229,10 @@ func (o OfNumericSlice[T]) Unique() OfNumericSlice[T] {
 	return OfNumericSlice[T]{Unique(o.Result)}
 }
 
+func (o OfNumericSlice[T]) UniqueStable() OfNumericSlice[T] {
+	return OfNumericSlice[T]{UniqueStable(o.Result)}
+}
+
 func (o OfNumericSlice[T]) Unshift(elements ...T) OfNumericSlice[T] {
 	return OfNumericSlice[T]{Unshift(o.Result, elements...)}
 }
