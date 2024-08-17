@@ -1,9 +1,10 @@
 package pie_test
 
 import (
+	"testing"
+
 	"github.com/elliotchance/pie/v2"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestOfOrdered(t *testing.T) {
@@ -30,5 +31,13 @@ func TestOfOrdered(t *testing.T) {
 			Result
 
 		assert.Equal(t, []string{"Bob", "Sally"}, names)
+	})
+
+	t.Run("unique_stable", func(t *testing.T) {
+		names := pie.OfNumeric([]float64{-4.56, 1.23, -4.56}).
+			UniqueStable().
+			Result
+
+		assert.Equal(t, []float64{-4.56, 1.23}, names)
 	})
 }

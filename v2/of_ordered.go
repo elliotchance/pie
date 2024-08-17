@@ -197,6 +197,10 @@ func (o OfOrderedSlice[T]) Unique() OfOrderedSlice[T] {
 	return OfOrderedSlice[T]{Unique(o.Result)}
 }
 
+func (o OfOrderedSlice[T]) UniqueStable() OfOrderedSlice[T] {
+	return OfOrderedSlice[T]{UniqueStable(o.Result)}
+}
+
 func (o OfOrderedSlice[T]) Unshift(elements ...T) OfOrderedSlice[T] {
 	return OfOrderedSlice[T]{Unshift(o.Result, elements...)}
 }
