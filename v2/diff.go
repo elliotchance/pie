@@ -10,15 +10,15 @@ package pie
 // many elements that exists in the largest slice.
 func Diff[T comparable](ss []T, against []T) (added, removed []T) {
 	diffOneWay := func(ss1, ss2raw []T) (result []T) {
-		set := make(map[T]struct{}, len(ss1))
+		counts := make(map[T]int, len(ss1))
 
 		for _, s := range ss1 {
-			set[s] = struct{}{}
+			counts[s]++
 		}
 
 		for _, s := range ss2raw {
-			if _, ok := set[s]; ok {
-				delete(set, s) // remove duplicates
+			if counts[s] > 0 {
+				counts[s]--
 			} else {
 				result = append(result, s)
 			}
